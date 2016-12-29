@@ -26,7 +26,7 @@ public class Album {
     public final String title_en;
     public final String title_jp;
     final String type;
-    private Date date;
+    public Date date;
     public String coverUrlMedium;
     private Image cover;
 

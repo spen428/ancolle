@@ -16,7 +16,6 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.image.Image;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -30,8 +29,7 @@ public class VGMdbAPI {
 
     public static final String CACHE_DIR = "ancolle" + File.separator + "cache";
     private static final String API_URL = "http://vgmdb.info";
-
-    private static final JSONParser parser = new JSONParser();
+    private static final JSONParser JSON_PARSER = new JSONParser();
 
     public static void download(URL url, File file) throws IOException {
         InputStream in = url.openStream();
@@ -64,7 +62,7 @@ public class VGMdbAPI {
             }
         }
         try {
-            return (JSONObject) parser.parse(new FileReader(file));
+            return (JSONObject) JSON_PARSER.parse(new FileReader(file));
         } catch (IOException ex) {
             Logger.getLogger(VGMdbAPI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
@@ -76,6 +74,11 @@ public class VGMdbAPI {
     public static Product getProductById(int id) {
         JSONObject jo = request("product", id);
         if (jo != null) {
+            String title_en = (String) jo.get("name");
+            String title_jp = (String) jo.get("name_real");
+            String typeString = (String) jo.get("type");
+            String pictureUrl = (String) jo.get("picture_small");
+            // Get albums
             ArrayList<Album> albums = new ArrayList<>();
             try {
                 JSONArray arr = (JSONArray) jo.get("albums");
@@ -85,14 +88,19 @@ public class VGMdbAPI {
                     String[] spl = link.split("/");
                     int album_id = Integer.valueOf(spl[spl.length - 1]);
                     JSONObject titles = (JSONObject) obj.get("titles");
-                    String title_en = (String) titles.get("en");
-                    String title_jp = (String) titles.get("jp");
+                    String album_title_en = (String) titles.get("en");
+                    String album_title_jp = (String) titles.get("jp");
                     String type = (String) obj.get("type");
                     String dateString = (String) obj.get("date");
-                    Date date = Date.valueOf(dateString);
-                    albums.add(new Album(album_id, title_en, title_jp, type, date));
+                    Date date = null;
+                    try {
+                        date = Date.valueOf(dateString);
+                    } catch (IllegalArgumentException ex) {
+                        ex.printStackTrace();
+                    }
+                    albums.add(new Album(album_id, album_title_en, album_title_jp, type, date));
                 }
-                return new Product(id, albums);
+                return new Product(id, title_en, title_jp, typeString, pictureUrl, albums);
             } catch (Exception e) {
                 e.printStackTrace();
             }
