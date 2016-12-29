@@ -19,6 +19,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -83,6 +84,7 @@ public class AnColle extends Application {
         });
         root.setBackground(new Background(
                 new BackgroundFill(Color.AZURE, null, null)));
+        VBox.setVgrow(scrollPane, Priority.ALWAYS);
         root.getChildren().add(scrollPane);
         Scene scene = new Scene(root, 1280, 720);
         primaryStage.setTitle("AnColle");
