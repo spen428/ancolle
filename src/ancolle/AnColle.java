@@ -15,6 +15,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
@@ -64,6 +66,24 @@ public class AnColle extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        MenuBar menu = new MenuBar();
+        root.getChildren().add(menu);
+
+        Menu menuFile = new Menu("File");
+        menu.getMenus().add(menuFile);
+
+        Menu menuEdit = new Menu("Edit");
+        menu.getMenus().add(menuEdit);
+
+        Menu menuView = new Menu("View");
+        menu.getMenus().add(menuView);
+
+        Menu menuTools = new Menu("Tools");
+        menu.getMenus().add(menuTools);
+
+        Menu menuHelp = new Menu("Help");
+        menu.getMenus().add(menuHelp);
+
         for (int id : tracked_products) {
             productView.addProductById(id);
         }
@@ -74,8 +94,8 @@ public class AnColle extends Application {
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
-
         viewProducts();
+        root.getChildren().add(scrollPane);
 
         root.setOnKeyPressed(evt -> {
             if (evt.getCode() == KeyCode.ESCAPE) {
@@ -85,7 +105,7 @@ public class AnColle extends Application {
         root.setBackground(new Background(
                 new BackgroundFill(Color.AZURE, null, null)));
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
-        root.getChildren().add(scrollPane);
+
         Scene scene = new Scene(root, 1280, 720);
         primaryStage.setTitle("AnColle");
         primaryStage.setScene(scene);
