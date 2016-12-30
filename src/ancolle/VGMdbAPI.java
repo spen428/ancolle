@@ -12,8 +12,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.simple.JSONArray;
@@ -35,8 +36,7 @@ public class VGMdbAPI {
         InputStream in = url.openStream();
         FileOutputStream fos = new FileOutputStream(file);
         int length = -1;
-        byte[] buffer = new byte[1024];// buffer for portion of data from
-        // connection
+        byte[] buffer = new byte[1024];
         while ((length = in.read(buffer)) > -1) {
             fos.write(buffer, 0, length);
         }
@@ -63,9 +63,7 @@ public class VGMdbAPI {
         }
         try {
             return (JSONObject) JSON_PARSER.parse(new FileReader(file));
-        } catch (IOException ex) {
-            Logger.getLogger(VGMdbAPI.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
+        } catch (IOException | ParseException ex) {
             Logger.getLogger(VGMdbAPI.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
@@ -79,7 +77,7 @@ public class VGMdbAPI {
             String typeString = (String) jo.get("type");
             String pictureUrl = (String) jo.get("picture_small");
             // Get albums
-            ArrayList<Album> albums = new ArrayList<>();
+            ArrayList<AlbumPreview> albums = new ArrayList<>();
             try {
                 JSONArray arr = (JSONArray) jo.get("albums");
                 for (int i = 0; i < arr.size(); i++) {
@@ -93,22 +91,36 @@ public class VGMdbAPI {
                     String type = (String) obj.get("type");
                     String dateString = (String) obj.get("date");
                     Date date = null;
-                    try {
-                        date = Date.valueOf(dateString);
-                    } catch (IllegalArgumentException ex) {
-                        ex.printStackTrace();
+                    if (dateString != null) {
+                        try {
+                            date = SDF.parse(dateString);
+                        } catch (java.text.ParseException ex) {
+                            Logger.getLogger(VGMdbAPI.class.getName()).log(Level.SEVERE,
+                                    "Failed to parse date string: " + dateString, ex);
+                            // Try parsing just the year and month yyyy-MM
+                            try {
+                                date = SDF2.parse(dateString);
+                            } catch (java.text.ParseException ex2) {
+                                Logger.getLogger(VGMdbAPI.class.getName()).log(Level.SEVERE,
+                                        "Failed to parse date string: " + dateString, ex2);
+                            }
+                        }
                     }
-                    albums.add(new Album(album_id, album_title_en, album_title_jp, type, date));
+                    albums.add(new AlbumPreview(album_id, album_title_en, album_title_jp, type, date));
                 }
                 return new Product(id, title_en, title_jp, typeString, pictureUrl, albums);
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ex) {
+                Logger.getLogger(VGMdbAPI.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return null;
     }
 
-    static Album getAlbumById(int id) {
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd");
+
+    private static final SimpleDateFormat SDF2 = new SimpleDateFormat("yyyy-MM");
+
+    public static Album getAlbumById(int id) {
         JSONObject obj = request("album", id);
         if (obj != null) {
             try {
@@ -120,9 +132,18 @@ public class VGMdbAPI {
                 String title_jp = (String) titles.get("jp");
                 String type = (String) obj.get("type");
                 String coverMedium = (String) obj.get("picture_small");
-                return new Album(album_id, title_en, title_jp, type, null, coverMedium);
-            } catch (Exception e) {
-                e.printStackTrace();
+                String dateString = (String) obj.get("date");
+                Date date = null;
+                if (dateString != null) {
+                    try {
+                        date = SDF.parse(dateString);
+                    } catch (java.text.ParseException ex) {
+                        Logger.getLogger(VGMdbAPI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                return new Album(album_id, title_en, title_jp, type, date, coverMedium);
+            } catch (NumberFormatException ex) {
+                Logger.getLogger(VGMdbAPI.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return null;

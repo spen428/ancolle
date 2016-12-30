@@ -31,10 +31,10 @@ public class Product {
     public final String type;
     private Image cover;
     public final String pictureUrlSmall;
-    private final List<Album> albums;
+    private final List<AlbumPreview> albums;
 
     public Product(int id, String title_en, String title_jp, String type,
-            String coverUrl, Collection<Album> albums) {
+            String coverUrl, Collection<AlbumPreview> albums) {
         this.id = id;
         this.title_en = title_en;
         this.title_jp = title_jp;
@@ -44,7 +44,7 @@ public class Product {
         this.albums = new ArrayList<>(albums);
     }
 
-    public List<Album> albums() {
+    public List<AlbumPreview> albums() {
         return Collections.unmodifiableList(albums);
     }
 
@@ -63,17 +63,17 @@ public class Product {
                 try {
                     VGMdbAPI.download(new URL(pictureUrlSmall), file);
                 } catch (MalformedURLException ex) {
-                    Logger.getLogger(Album.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Product.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
-                    Logger.getLogger(Album.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Product.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else {
-                Logger.getLogger(Album.class.getName()).log(Level.FINE, "Loading cached cover");
+                Logger.getLogger(Product.class.getName()).log(Level.FINE, "Loading cached cover");
             }
             try {
                 cover = new Image(new FileInputStream(file));
             } catch (FileNotFoundException ex) {
-                Logger.getLogger(Album.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Product.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return cover;

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ancolle;
 
 import java.io.File;
@@ -17,6 +12,7 @@ import java.util.logging.Logger;
 import javafx.scene.image.Image;
 
 /**
+ * Full album details
  *
  * @author samuel
  */
@@ -25,15 +21,19 @@ public class Album {
     public final int id;
     public final String title_en;
     public final String title_jp;
-    final String type;
-    public Date date;
-    public String coverUrlMedium;
+    public final String type;
+    public final Date date;
+    public final String coverUrlMedium;
     private Image cover;
-
-    private boolean gotFullDetails = false;
 
     public Album(int id, String title_en, String title_jp, String type,
             Date date) {
+        this(id, title_en, title_jp, type, date, null);
+    }
+
+    public Album(int id, String title_en, String title_jp, String type,
+            Date date, String coverMedium) {
+        super();
         this.id = id;
         this.title_en = title_en;
         this.title_jp = title_jp;
@@ -43,28 +43,10 @@ public class Album {
         this.cover = null;
     }
 
-    public Album(int id, String title_en, String title_jp, String type, java.sql.Date date, String coverMedium) {
-        this(id, title_en, title_jp, type, date);
-        this.coverUrlMedium = coverMedium;
-        gotFullDetails = true;
-    }
-
-    public void getFullDetails() {
-        if (gotFullDetails) {
-            return;
-        }
-        Album fullAlbum = VGMdbAPI.getAlbumById(id);
-        if (fullAlbum != null) {
-            this.coverUrlMedium = fullAlbum.getCoverUrl();
-            // TODO
-            gotFullDetails = true;
-        }
-    }
-
     public Image getImage() {
         if (cover == null) {
             if (coverUrlMedium == null) {
-                getFullDetails();
+                return null;
             }
             String[] spl = coverUrlMedium.split("\\.");
             String ext = spl[spl.length - 1];
@@ -72,6 +54,7 @@ public class Album {
                     + File.separator + "covers" + File.separator + id
                     + "_medium" + "." + ext);
             if (!file.exists()) {
+                Logger.getLogger(Album.class.getName()).log(Level.FINE, "Downloading album cover");
                 file.getParentFile().mkdirs();
                 try {
                     VGMdbAPI.download(new URL(coverUrlMedium), file);
@@ -90,10 +73,6 @@ public class Album {
             }
         }
         return cover;
-    }
-
-    private String getCoverUrl() {
-        return coverUrlMedium;
     }
 
 }
