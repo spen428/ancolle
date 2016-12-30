@@ -7,9 +7,7 @@ import ancolle.items.Product;
 import ancolle.io.VgmdbApi;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -23,7 +21,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 
 /**
@@ -31,50 +28,24 @@ import javafx.scene.layout.VBox;
  *
  * @author samuel
  */
-public class AlbumView extends TilePane {
+public class AlbumView extends TilePaneView {
 
-    private static final int PANE_PADDING_PX = 25;
-    private static final double COVER_WIDTH_PX = 100;
-    private static final double COVER_PADDING = 10;
+    private static final double MAX_TILE_WIDTH_PX = 100;
 
-    private final AnColle ancolle;
     private Product product;
-    private final ConcurrentHashMap<AlbumPreview, Album> fullAlbumMap;
 
-    private final Thread workerThread;
-    private final BlockingQueue<Runnable> jobQueue;
+    private final ConcurrentHashMap<AlbumPreview, Album> fullAlbumMap;
 
     public AlbumView(AnColle ancolle) {
         this(ancolle, null);
     }
 
     public AlbumView(AnColle ancolle, Product product) {
-
-        this.jobQueue = new LinkedBlockingQueue<>();
-        this.workerThread = new Thread(() -> {
-            while (true) {
-                try {
-                    Runnable task = jobQueue.take();
-                    task.run();
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(AlbumView.class.getName()).log(Level.SEVERE,
-                            null, ex);
-                    break;
-                }
-            }
-        });
-        this.workerThread.setDaemon(true);
-        this.workerThread.start();
-
-        this.ancolle = ancolle;
+        super(ancolle);
         this.fullAlbumMap = new ConcurrentHashMap<>();
         setPadding(new Insets(PANE_PADDING_PX));
         setAlignment(Pos.BASELINE_CENTER);
         setProduct(product);
-    }
-
-    public void cancelQueuedTasks() {
-        jobQueue.clear();
     }
 
     private void updateProduct() {
@@ -104,15 +75,15 @@ public class AlbumView extends TilePane {
 
     private Node createAlbumView(AlbumPreview album) {
         final VBox node = new VBox();
-        node.setPadding(new Insets(COVER_PADDING));
-        node.setMaxWidth(COVER_WIDTH_PX + COVER_PADDING + COVER_PADDING);
+        node.setPadding(new Insets(TILE_PADDING_PX));
+        node.setMaxWidth(MAX_TILE_WIDTH_PX + (2 * TILE_PADDING_PX));
         node.setAlignment(Pos.BOTTOM_CENTER);
 
         final ImageView albumCover = new ImageView();
         albumCover.setSmooth(true);
         albumCover.setPreserveRatio(true);
-        albumCover.setFitWidth(COVER_WIDTH_PX);
-        albumCover.setFitHeight(COVER_WIDTH_PX);
+        albumCover.setFitWidth(MAX_TILE_WIDTH_PX);
+        albumCover.setFitHeight(MAX_TILE_WIDTH_PX);
         node.getChildren().add(albumCover);
 
         Label label1 = new Label(album.title_en);
@@ -154,7 +125,7 @@ public class AlbumView extends TilePane {
         });
 
         // Fetch album cover in the background
-        jobQueue.add(() -> {
+        submitBackgroundTask(() -> {
             Logger.getLogger(AlbumView.class.getName()).log(Level.FINE,
                     "Fetching album cover for album #", album.id);
             Album fullAlbum = fullAlbumMap.get(album);
