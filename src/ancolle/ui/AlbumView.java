@@ -80,7 +80,7 @@ public class AlbumView extends TilePane {
             return;
         }
 
-        fullAlbumMap.clear();
+        fullAlbumMap.clear(); // Clear album cache
         List<AlbumPreview> albums = product.albums();
         albums.forEach((album) -> {
             getChildren().add(createAlbumView(album));
@@ -151,7 +151,7 @@ public class AlbumView extends TilePane {
                 }
             }
             if (fullAlbum != null) {
-                Image image = fullAlbum.getImage();
+                Image image = fullAlbum.getPicture();
                 Logger.getLogger(AlbumView.class.getName()).log(Level.FINE,
                         "Fetched album cover for album #", album.id);
                 Platform.runLater(() -> {

@@ -78,75 +78,94 @@ public class VGMdbAPI {
             String pictureUrl = (String) jo.get("picture_small");
             // Get albums
             ArrayList<AlbumPreview> albums = new ArrayList<>();
-            try {
-                JSONArray arr = (JSONArray) jo.get("albums");
-                for (int i = 0; i < arr.size(); i++) {
-                    JSONObject obj = (JSONObject) arr.get(i);
-                    String link = (String) obj.get("link");
-                    String[] spl = link.split("/");
-                    int album_id = Integer.valueOf(spl[spl.length - 1]);
-                    JSONObject titles = (JSONObject) obj.get("titles");
-                    String album_title_en = (String) titles.get("en");
-                    String album_title_jp = (String) titles.get("jp");
-                    String type = (String) obj.get("type");
-                    String dateString = (String) obj.get("date");
-                    Date date = null;
-                    if (dateString != null) {
-                        try {
-                            date = SDF.parse(dateString);
-                        } catch (java.text.ParseException ex) {
-                            Logger.getLogger(VGMdbAPI.class.getName()).log(Level.SEVERE,
-                                    "Failed to parse date string: " + dateString, ex);
-                            // Try parsing just the year and month yyyy-MM
-                            try {
-                                date = SDF2.parse(dateString);
-                            } catch (java.text.ParseException ex2) {
-                                Logger.getLogger(VGMdbAPI.class.getName()).log(Level.SEVERE,
-                                        "Failed to parse date string: " + dateString, ex2);
-                            }
-                        }
-                    }
-                    albums.add(new AlbumPreview(album_id, album_title_en, album_title_jp, type, date));
+            JSONArray arr = (JSONArray) jo.get("albums");
+            for (int i = 0; i < arr.size(); i++) {
+                JSONObject obj = (JSONObject) arr.get(i);
+                String link = (String) obj.get("link");
+                String[] spl = link.split("/");
+                int album_id = Integer.valueOf(spl[spl.length - 1]);
+                JSONObject titles = (JSONObject) obj.get("titles");
+                String album_title_en = (String) titles.get("en");
+                String album_title_jp = (String) titles.get("jp");
+                String type = (String) obj.get("type");
+                String dateString = (String) obj.get("date");
+                Date date = null;
+                if (dateString != null) {
+                    date = parseDate(dateString);
                 }
-                return new Product(id, title_en, title_jp, typeString, pictureUrl, albums);
-            } catch (Exception ex) {
-                Logger.getLogger(VGMdbAPI.class.getName()).log(Level.SEVERE, null, ex);
+                albums.add(new AlbumPreview(album_id, album_title_en, album_title_jp, type, date));
             }
+            return new Product(id, title_en, title_jp, typeString, pictureUrl, albums);
         }
         return null;
     }
 
-    private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat SDF_YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat SDF_YYYY_MM = new SimpleDateFormat("yyyy-MM");
 
-    private static final SimpleDateFormat SDF2 = new SimpleDateFormat("yyyy-MM");
+    /**
+     * Attempt to parse a UTC date string into a {@link Date} object. Supported
+     * forms are yyyy-MM-dd and yyyy-MM.
+     *
+     * @param dateString the date string, e.g. "2000-01-02" or "2003-06"
+     * @return the {@link Date} object, or null if the string failed to parse
+     */
+    private static Date parseDate(String dateString) {
+        Date date = null;
+        try {
+            date = SDF_YYYY_MM_DD.parse(dateString);
+        } catch (java.text.ParseException ex) {
+            // Try parsing just the year and month yyyy-MM
+            try {
+                date = SDF_YYYY_MM.parse(dateString);
+            } catch (java.text.ParseException ex2) {
+                Logger.getLogger(VGMdbAPI.class.getName()).log(Level.SEVERE,
+                        "Failed to parse date string: " + dateString, ex2);
+            }
+        }
+        return date;
+    }
 
     public static Album getAlbumById(int id) {
         JSONObject obj = request("album", id);
-        if (obj != null) {
-            try {
-                String link = (String) obj.get("link");
-                String[] spl = link.split("/");
-                int album_id = Integer.valueOf(spl[spl.length - 1]);
-                JSONObject titles = (JSONObject) obj.get("names");
-                String title_en = (String) titles.get("en");
-                String title_jp = (String) titles.get("jp");
-                String type = (String) obj.get("type");
-                String coverMedium = (String) obj.get("picture_small");
-                String dateString = (String) obj.get("date");
-                Date date = null;
-                if (dateString != null) {
-                    try {
-                        date = SDF.parse(dateString);
-                    } catch (java.text.ParseException ex) {
-                        Logger.getLogger(VGMdbAPI.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-                return new Album(album_id, title_en, title_jp, type, date, coverMedium);
-            } catch (NumberFormatException ex) {
-                Logger.getLogger(VGMdbAPI.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        if (obj == null) {
+            Logger.getLogger(VGMdbAPI.class.getName()).log(Level.INFO,
+                    "Failed to retrieve album with id {0}", id);
+            return null;
         }
-        return null;
+
+        String link = (String) obj.get("link");
+
+        // The link above contains the album id, parse it
+        String[] spl = link.split("/");
+        String album_id_str = spl[spl.length - 1];
+        int album_id = -1;
+        try {
+            album_id = Integer.valueOf(album_id_str);
+        } catch (NumberFormatException ex) {
+            Logger.getLogger(VGMdbAPI.class.getName()).log(Level.SEVERE,
+                    "Failed to parse string as integer {0}", album_id_str);
+        }
+        if (album_id == -1 || album_id != id) {
+            Logger.getLogger(VGMdbAPI.class.getName()).log(Level.SEVERE,
+                    "Album id mismatch {0} != {1}, using id {1}",
+                    new int[]{album_id, id});
+            album_id = id;
+        }
+
+        JSONObject titles = (JSONObject) obj.get("names");
+        String title_en = (String) titles.get("en");
+        String title_ja = (String) titles.get("ja");
+        String title_ja_latn = (String) titles.get("ja-latn");
+        String type = (String) obj.get("classification");
+        String picture_small = (String) obj.get("picture_small");
+        String dateString = (String) obj.get("release_date");
+        Date date = null;
+        if (dateString != null) {
+            date = parseDate(dateString);
+        }
+        return new Album(album_id, title_en, title_ja, title_ja_latn, type,
+                date, picture_small);
     }
 
 }
