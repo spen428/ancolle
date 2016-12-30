@@ -1,6 +1,6 @@
 package ancolle.ui;
 
-import ancolle.Album;
+import ancolle.items.Album;
 import java.text.SimpleDateFormat;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

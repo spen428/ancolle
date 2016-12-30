@@ -1,10 +1,10 @@
 package ancolle.ui;
 
-import ancolle.Album;
-import ancolle.AlbumPreview;
-import ancolle.AnColle;
-import ancolle.Product;
-import ancolle.VGMdbAPI;
+import ancolle.items.AlbumPreview;
+import ancolle.items.Album;
+import ancolle.main.AnColle;
+import ancolle.items.Product;
+import ancolle.io.VgmdbApi;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -159,7 +159,7 @@ public class AlbumView extends TilePane {
                     "Fetching album cover for album #", album.id);
             Album fullAlbum = fullAlbumMap.get(album);
             if (fullAlbum == null) {
-                fullAlbum = VGMdbAPI.getAlbumById(album.id);
+                fullAlbum = VgmdbApi.getAlbumById(album.id);
                 if (fullAlbum != null) {
                     fullAlbumMap.put(album, fullAlbum);
                 }
