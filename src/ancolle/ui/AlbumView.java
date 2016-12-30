@@ -84,7 +84,7 @@ public class AlbumView extends TilePane {
         }
 
         fullAlbumMap.clear(); // Clear album cache
-        List<AlbumPreview> albums = product.albums();
+        List<AlbumPreview> albums = product.getAlbums();
         albums.forEach((album) -> {
             getChildren().add(createAlbumView(album));
         });
