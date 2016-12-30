@@ -19,8 +19,10 @@ import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 
@@ -59,7 +61,8 @@ public class AlbumView extends TilePane {
                     Runnable task = jobQueue.take();
                     task.run();
                 } catch (InterruptedException ex) {
-                    ex.printStackTrace();
+                    Logger.getLogger(AlbumView.class.getName()).log(Level.SEVERE,
+                            null, ex);
                     break;
                 }
             }
@@ -137,6 +140,17 @@ public class AlbumView extends TilePane {
         node.setOnMouseExited(evt -> {
             node.setStyle("-fx-background-color: none;");
             contextMenu.hide();
+        });
+        node.setOnMouseClicked(evt -> {
+            if (evt.getButton() == MouseButton.PRIMARY && evt.getClickCount() > 1) {
+                // If full album details are loaded, open in a new tab, else ignore
+                Album fullAlbum = fullAlbumMap.get(album);
+                if (fullAlbum != null) {
+                    AlbumDetailsView adv = new AlbumDetailsView(fullAlbum);
+                    Tab tab = ancolle.newTab(fullAlbum.title_ja, adv);
+                    ancolle.setSelectedTab(tab);
+                }
+            }
         });
 
         // Fetch album cover in the background

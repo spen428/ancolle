@@ -7,18 +7,17 @@ package ancolle;
 
 import ancolle.ui.ProductView;
 import ancolle.ui.AlbumView;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
-import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -37,14 +36,32 @@ public class AnColle extends Application {
     private final ProductView productView;
     private final AlbumView albumView;
     private final VBox root;
+    private final VBox mainContent;
     private final ScrollPane scrollPane;
+    private final Tab mainTab;
+    private final TabPane tabPane;
 
     public AnColle() {
         super();
         this.root = new VBox();
+        this.mainContent = new VBox();
         this.scrollPane = new ScrollPane();
         this.productView = new ProductView(this);
         this.albumView = new AlbumView(this);
+        this.mainTab = new Tab("Explorer", mainContent);
+        this.mainTab.setClosable(false);
+        this.tabPane = new TabPane();
+        this.tabPane.getTabs().add(mainTab);
+    }
+
+    public Tab newTab(String title, Node content) {
+        Tab tab = new Tab(title, content);
+        tabPane.getTabs().add(tab);
+        return tab;
+    }
+    
+    public void setSelectedTab(Tab tab) {
+        tabPane.getSelectionModel().select(tab);
     }
 
     public void viewProducts() {
@@ -62,6 +79,14 @@ public class AnColle extends Application {
     public void start(Stage primaryStage) {
         MenuBar menu = new MenuBar();
         root.getChildren().add(menu);
+
+        VBox.setVgrow(tabPane, Priority.ALWAYS);
+        root.getChildren().add(tabPane);
+        root.setOnKeyPressed(evt -> {
+            if (evt.getCode() == KeyCode.ESCAPE) {
+                viewProducts();
+            }
+        });
 
         Menu menuFile = new Menu("File");
         menu.getMenus().add(menuFile);
@@ -88,18 +113,15 @@ public class AnColle extends Application {
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
-        viewProducts();
-        root.getChildren().add(scrollPane);
-
-        root.setOnKeyPressed(evt -> {
-            if (evt.getCode() == KeyCode.ESCAPE) {
-                viewProducts();
-            }
-        });
-        root.setBackground(new Background(
-                new BackgroundFill(Color.AZURE, null, null)));
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
+        viewProducts();
+        mainContent.getChildren().add(scrollPane);
 
+        mainContent.setBackground(new Background(
+                new BackgroundFill(Color.AZURE, null, null)));
+        VBox.setVgrow(mainContent, Priority.ALWAYS);
+
+        mainTab.setContent(mainContent);
         Scene scene = new Scene(root, 1280, 720);
         primaryStage.setTitle("AnColle");
         primaryStage.setScene(scene);

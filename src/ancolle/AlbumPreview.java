@@ -1,5 +1,6 @@
 package ancolle;
 
+import java.util.Date;
 
 /**
  * Album information as it appears when retrieving Product information
@@ -10,15 +11,15 @@ public class AlbumPreview {
 
     public final int id;
     public final String title_en;
-    public final String title_jp;
+    public final String title_ja;
     public final String type;
-    public final java.util.Date date;
+    public final Date date;
 
     public AlbumPreview(int id, String title_en, String title_jp, String type,
-            java.util.Date date) {
+            Date date) {
         this.id = id;
         this.title_en = title_en;
-        this.title_jp = title_jp;
+        this.title_ja = title_jp;
         this.type = type;
         this.date = date;
     }
