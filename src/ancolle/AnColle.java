@@ -5,12 +5,8 @@
  */
 package ancolle;
 
-import ancolle.ui.ProductView;
 import ancolle.ui.AlbumView;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
+import ancolle.ui.ProductView;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,7 +19,6 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Priority;
@@ -36,6 +31,18 @@ import javafx.stage.Stage;
  */
 public class AnColle extends Application {
 
+    private static final Background AZURE_BACKGROUND = new Background(
+            new BackgroundFill(Color.AZURE, null, null));
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        Logger.getGlobal().setLevel(Level.FINE);
+        Logger.getGlobal().addHandler(new ConsoleHandler());
+        launch(args);
+    }
+
     private final Settings settings;
     private final ProductView productView;
     private final AlbumView albumView;
@@ -44,8 +51,6 @@ public class AnColle extends Application {
     private final ScrollPane scrollPane;
     private final Tab mainTab;
     private final TabPane tabPane;
-    private static final Background AZURE_BACKGROUND = new Background(
-            new BackgroundFill(Color.AZURE, null, null));
 
     public AnColle() {
         super();
@@ -115,12 +120,18 @@ public class AnColle extends Application {
 
         root.setOnKeyPressed(evt -> {
             if (tabPane.getSelectionModel().getSelectedItem() == mainTab) {
-                if (evt.getCode() == KeyCode.ESCAPE) {
-                    viewProducts();
-                } else if (evt.getCode() == KeyCode.S) {
-                    saveSettings();
-                } else if (evt.getCode() == KeyCode.A) {
-                    productView.doAddProductDialog();
+                switch (evt.getCode()) {
+                    case ESCAPE:
+                        viewProducts();
+                        break;
+                    case S:
+                        saveSettings();
+                        break;
+                    case A:
+                        productView.doAddProductDialog();
+                        break;
+                    default:
+                        break;
                 }
             }
         });
@@ -142,15 +153,6 @@ public class AnColle extends Application {
         primaryStage.setTitle("AnColle");
         primaryStage.setScene(scene);
         primaryStage.show();
-    }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        Logger.getGlobal().setLevel(Level.FINE);
-        Logger.getGlobal().addHandler(new ConsoleHandler());
-        launch(args);
     }
 
     private void saveSettings() {

@@ -10,16 +10,12 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.simple.JSONArray;
@@ -33,6 +29,8 @@ import org.json.simple.parser.ParseException;
 public class VGMdbAPI {
 
     private static final String API_URL = "http://vgmdb.info";
+    private static final SimpleDateFormat SDF_YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat SDF_YYYY_MM = new SimpleDateFormat("yyyy-MM");
 
     public static void download(URL url, File file) throws IOException {
         InputStream in = url.openStream();
@@ -101,9 +99,6 @@ public class VGMdbAPI {
         }
         return null;
     }
-
-    private static final SimpleDateFormat SDF_YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
-    private static final SimpleDateFormat SDF_YYYY_MM = new SimpleDateFormat("yyyy-MM");
 
     /**
      * Attempt to parse a UTC date string into a {@link Date} object. Supported

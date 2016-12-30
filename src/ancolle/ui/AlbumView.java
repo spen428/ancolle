@@ -1,7 +1,7 @@
 package ancolle.ui;
 
-import ancolle.AlbumPreview;
 import ancolle.Album;
+import ancolle.AlbumPreview;
 import ancolle.AnColle;
 import ancolle.Product;
 import ancolle.VGMdbAPI;
@@ -44,10 +44,6 @@ public class AlbumView extends TilePane {
     private final Thread workerThread;
     private final BlockingQueue<Runnable> jobQueue;
 
-    public void cancelQueuedTasks() {
-        jobQueue.clear();
-    }
-
     public AlbumView(AnColle ancolle) {
         this(ancolle, null);
     }
@@ -75,6 +71,10 @@ public class AlbumView extends TilePane {
         setPadding(new Insets(PANE_PADDING_PX));
         setAlignment(Pos.BASELINE_CENTER);
         setProduct(product);
+    }
+
+    public void cancelQueuedTasks() {
+        jobQueue.clear();
     }
 
     private void updateProduct() {
