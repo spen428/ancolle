@@ -27,17 +27,18 @@ public class Product {
 
     public final int id;
     public final String title_en;
-    public final String title_jp;
+    public final String title_ja;
     public final String type;
     private Image cover;
     public final String pictureUrlSmall;
     private final List<AlbumPreview> albums;
 
-    public Product(int id, String title_en, String title_jp, String type,
-            String coverUrl, Collection<AlbumPreview> albums) {
+    public Product(int id, String title_en, String title_ja,
+            String type, String coverUrl,
+            Collection<AlbumPreview> albums) {
         this.id = id;
         this.title_en = title_en;
-        this.title_jp = title_jp;
+        this.title_ja = title_ja;
         this.type = type;
         this.pictureUrlSmall = coverUrl;
         this.cover = null;
@@ -55,7 +56,7 @@ public class Product {
             }
             String[] spl = pictureUrlSmall.split("\\.");
             String ext = spl[spl.length - 1];
-            File file = new File(VGMdbAPI.CACHE_DIR + File.separator + "product"
+            File file = new File(IO.CACHE_DIR + File.separator + "product"
                     + File.separator + "pictures" + File.separator + id
                     + "_small" + "." + ext);
             if (!file.exists()) {

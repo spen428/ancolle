@@ -47,7 +47,7 @@ public class Album {
             }
             String[] spl = picture_small_url.split("\\.");
             String ext = spl[spl.length - 1];
-            File file = new File(VGMdbAPI.CACHE_DIR + File.separator + "album"
+            File file = new File(IO.CACHE_DIR + File.separator + "album"
                     + File.separator + "covers" + File.separator + id
                     + "_medium" + "." + ext);
             if (!file.exists()) {

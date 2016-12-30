@@ -10,16 +10,20 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 /**
@@ -28,9 +32,7 @@ import org.json.simple.parser.ParseException;
  */
 public class VGMdbAPI {
 
-    public static final String CACHE_DIR = "ancolle" + File.separator + "cache";
     private static final String API_URL = "http://vgmdb.info";
-    private static final JSONParser JSON_PARSER = new JSONParser();
 
     public static void download(URL url, File file) throws IOException {
         InputStream in = url.openStream();
@@ -45,7 +47,7 @@ public class VGMdbAPI {
     }
 
     public static JSONObject request(String subpath, int id) {
-        String filePath = CACHE_DIR + File.separator + subpath + File.separator + id + ".json";
+        String filePath = IO.CACHE_DIR + File.separator + subpath + File.separator + id + ".json";
         File file = new File(filePath);
         if (!file.exists()) {
             file.getParentFile().mkdirs();
@@ -62,7 +64,7 @@ public class VGMdbAPI {
             }
         }
         try {
-            return (JSONObject) JSON_PARSER.parse(new FileReader(file));
+            return (JSONObject) IO.JSON_PARSER.parse(new FileReader(file));
         } catch (IOException | ParseException ex) {
             Logger.getLogger(VGMdbAPI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -73,7 +75,7 @@ public class VGMdbAPI {
         JSONObject jo = request("product", id);
         if (jo != null) {
             String title_en = (String) jo.get("name");
-            String title_jp = (String) jo.get("name_real");
+            String title_ja = (String) jo.get("name_real");
             String typeString = (String) jo.get("type");
             String pictureUrl = (String) jo.get("picture_small");
             // Get albums
@@ -86,16 +88,16 @@ public class VGMdbAPI {
                 int album_id = Integer.valueOf(spl[spl.length - 1]);
                 JSONObject titles = (JSONObject) obj.get("titles");
                 String album_title_en = (String) titles.get("en");
-                String album_title_jp = (String) titles.get("jp");
+                String album_title_ja = (String) titles.get("ja");
                 String type = (String) obj.get("type");
                 String dateString = (String) obj.get("date");
                 Date date = null;
                 if (dateString != null) {
                     date = parseDate(dateString);
                 }
-                albums.add(new AlbumPreview(album_id, album_title_en, album_title_jp, type, date));
+                albums.add(new AlbumPreview(album_id, album_title_en, album_title_ja, type, date));
             }
-            return new Product(id, title_en, title_jp, typeString, pictureUrl, albums);
+            return new Product(id, title_en, title_ja, typeString, pictureUrl, albums);
         }
         return null;
     }
@@ -166,6 +168,66 @@ public class VGMdbAPI {
         }
         return new Album(album_id, title_en, title_ja, title_ja_latn, type,
                 date, picture_small);
+    }
+
+    public static JSONObject search(String subpath, String searchString) {
+        String filePath = IO.CACHE_DIR + File.separator + subpath + File.separator + "search.json";
+        File file = new File(filePath);
+        if (!file.exists()) {
+            file.getParentFile().mkdirs();
+        }
+
+        URL url;
+        try {
+            url = new URL(API_URL + "/search/" + subpath + "/" + searchString + "?format=json");
+            download(url, file);
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(VGMdbAPI.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        } catch (IOException ex) {
+            Logger.getLogger(VGMdbAPI.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+        try {
+            return (JSONObject) IO.JSON_PARSER.parse(new FileReader(file));
+        } catch (IOException | ParseException ex) {
+            Logger.getLogger(VGMdbAPI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    public static List<ProductPreview> searchProducts(String text) {
+        ArrayList<ProductPreview> results = new ArrayList<>();
+        JSONObject jo = search("products", text);
+        if (jo != null) {
+            JSONObject resultsObj = (JSONObject) jo.get("results");
+            JSONArray prods = (JSONArray) resultsObj.get("products");
+            for (int i = 0; i < prods.size(); i++) {
+                JSONObject product = (JSONObject) prods.get(i);
+
+                String link = (String) product.get("link");
+                // The link above contains the album id, parse it
+                String[] spl = link.split("/");
+                String id_str = spl[spl.length - 1];
+                int id = -1;
+                try {
+                    id = Integer.valueOf(id_str);
+                } catch (NumberFormatException ex) {
+                    Logger.getLogger(VGMdbAPI.class.getName()).log(Level.SEVERE,
+                            "Failed to parse string as integer {0}", id_str);
+                }
+
+                JSONObject titles = (JSONObject) product.get("names");
+                String title_en = (String) titles.get("en");
+                String title_ja = (String) titles.get("ja");
+                String title_ja_latn = (String) titles.get("ja-latn");
+                String type = (String) product.get("type");
+
+                results.add(new ProductPreview(id, title_en, title_ja,
+                        title_ja_latn, type));
+            }
+        }
+        return results;
     }
 
 }

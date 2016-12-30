@@ -7,10 +7,15 @@ package ancolle;
 
 import ancolle.ui.ProductView;
 import ancolle.ui.AlbumView;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
@@ -31,8 +36,7 @@ import javafx.stage.Stage;
  */
 public class AnColle extends Application {
 
-    private static final int[] tracked_products = {4277, 3270, 1757, 3939, 2981};
-
+    private final Settings settings;
     private final ProductView productView;
     private final AlbumView albumView;
     private final VBox root;
@@ -40,6 +44,8 @@ public class AnColle extends Application {
     private final ScrollPane scrollPane;
     private final Tab mainTab;
     private final TabPane tabPane;
+    private static final Background AZURE_BACKGROUND = new Background(
+            new BackgroundFill(Color.AZURE, null, null));
 
     public AnColle() {
         super();
@@ -52,6 +58,7 @@ public class AnColle extends Application {
         this.mainTab.setClosable(false);
         this.tabPane = new TabPane();
         this.tabPane.getTabs().add(mainTab);
+        this.settings = IO.loadSettings();
     }
 
     public Tab newTab(String title, Node content) {
@@ -59,7 +66,7 @@ public class AnColle extends Application {
         tabPane.getTabs().add(tab);
         return tab;
     }
-    
+
     public void setSelectedTab(Tab tab) {
         tabPane.getSelectionModel().select(tab);
     }
@@ -82,11 +89,6 @@ public class AnColle extends Application {
 
         VBox.setVgrow(tabPane, Priority.ALWAYS);
         root.getChildren().add(tabPane);
-        root.setOnKeyPressed(evt -> {
-            if (evt.getCode() == KeyCode.ESCAPE) {
-                viewProducts();
-            }
-        });
 
         Menu menuFile = new Menu("File");
         menu.getMenus().add(menuFile);
@@ -103,25 +105,37 @@ public class AnColle extends Application {
         Menu menuHelp = new Menu("Help");
         menu.getMenus().add(menuHelp);
 
-        for (int id : tracked_products) {
-            productView.addProductById(id);
-        }
-        productView.setBackground(new Background(
-                new BackgroundFill(Color.AZURE, null, null)));
+        productView.setBackground(AZURE_BACKGROUND);
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
-        viewProducts();
+
+        root.setOnKeyPressed(evt -> {
+            if (tabPane.getSelectionModel().getSelectedItem() == mainTab) {
+                if (evt.getCode() == KeyCode.ESCAPE) {
+                    viewProducts();
+                } else if (evt.getCode() == KeyCode.S) {
+                    saveSettings();
+                }
+            }
+        });
         mainContent.getChildren().add(scrollPane);
 
-        mainContent.setBackground(new Background(
-                new BackgroundFill(Color.AZURE, null, null)));
+        mainContent.setBackground(AZURE_BACKGROUND);
         VBox.setVgrow(mainContent, Priority.ALWAYS);
-
         mainTab.setContent(mainContent);
+        viewProducts();
+
+        // Load and display tracked products in the background
+        Platform.runLater(() -> {
+            settings.trackedProducts.forEach((id) -> {
+                productView.addProductById(id);
+            });
+        });
+
         Scene scene = new Scene(root, 1280, 720);
         primaryStage.setTitle("AnColle");
         primaryStage.setScene(scene);
@@ -135,6 +149,16 @@ public class AnColle extends Application {
         Logger.getGlobal().setLevel(Level.FINE);
         Logger.getGlobal().addHandler(new ConsoleHandler());
         launch(args);
+    }
+
+    private void saveSettings() {
+        IO.saveSettings(settings);
+    }
+
+    public void addTrackedProduct(int id) {
+        settings.trackedProducts.add(id);
+        productView.addProductById(id);
+        saveSettings();
     }
 
 }
