@@ -119,6 +119,8 @@ public class AnColle extends Application {
                     viewProducts();
                 } else if (evt.getCode() == KeyCode.S) {
                     saveSettings();
+                } else if (evt.getCode() == KeyCode.A) {
+                    productView.doAddProductDialog();
                 }
             }
         });
