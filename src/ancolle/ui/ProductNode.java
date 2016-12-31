@@ -43,7 +43,7 @@ public class ProductNode extends VBox {
         imageView.setSmooth(true);
         imageView.setPreserveRatio(true);
         imageView.setFitWidth(maxWidth);
-        // imageView.setFitHeight(MAX_TILE_WIDTH_PX);
+        imageView.setFitHeight(maxWidth / 4);
         getChildren().add(imageView);
 
         label1 = new Label();
