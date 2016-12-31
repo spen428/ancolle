@@ -66,7 +66,7 @@ public class Settings {
      * @return success
      */
     public static boolean saveSettings(Settings settings) {
-        Logger.getLogger(IO.class.getName()).log(Level.INFO, "Saving settings");
+        Logger.getLogger(IO.class.getName()).log(Level.INFO, "Saving settings to {0}", SETTINGS_PATH);
         File file = new File(SETTINGS_PATH);
         if (!file.exists()) {
             file.getParentFile().mkdirs();

@@ -33,7 +33,8 @@ import org.json.simple.parser.JSONParser;
 public class IO {
 
     public static final JSONParser JSON_PARSER = new JSONParser();
-    public static final String BASE_DIR = "ancolle";
+    public static final String USER_HOME = System.getProperty("user.home");
+    public static final String BASE_DIR = USER_HOME + File.separator + "ancolle";
 
     /**
      * Get an image, downloading it from the given URL and storing it in the
