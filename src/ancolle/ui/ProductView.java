@@ -187,7 +187,7 @@ public class ProductView extends TilePaneView {
                 for (int idx = 0; idx < searchResults.size(); idx++) {
                     ProductPreview p = searchResults.get(idx);
                     String str = String.format("#%d (%s) %s | %s", p.id,
-                            p.type, p.title_en, p.title_ja);
+                            p.type.typeString, p.title_en, p.title_ja);
                     choices.add(str);
 
                     // Use first Franchise as default choice

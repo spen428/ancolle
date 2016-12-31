@@ -3,11 +3,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/samuel/Documents/NetBeansProjects/AnColle/src/ancolle/AnColle.java</file>
-            <file>file:/C:/Users/samuel/Documents/NetBeansProjects/AnColle/src/ancolle/Album.java</file>
+            <file>file:/C:/Users/samuel/Documents/NetBeansProjects/AnColle/src/ancolle/items/ProductType.java</file>
             <file>file:/C:/Users/samuel/Documents/NetBeansProjects/AnColle/src/ancolle/ui/ProductView.java</file>
-            <file>file:/C:/Users/samuel/Documents/NetBeansProjects/AnColle/src/ancolle/VGMdbAPI.java</file>
-            <file>file:/C:/Users/samuel/Documents/NetBeansProjects/AnColle/src/ancolle/ui/AlbumView.java</file>
         </group>
     </open-files>
 </project-private>
