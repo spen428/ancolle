@@ -16,8 +16,10 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.text.Font;
@@ -166,11 +168,12 @@ public class ProductView extends TilePaneView {
     }
 
     public void doAddProductDialog() {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Track a new product");
-        dialog.setContentText("Enter a product name:");
+        TextInputDialog inputDialog = new TextInputDialog();
+        inputDialog.setTitle("Track a new product");
+        inputDialog.setContentText("Enter a product name:");
         ProductPreview chosenProduct = null;
-        Optional<String> result = dialog.showAndWait();
+        centreDialog(inputDialog);
+        Optional<String> result = inputDialog.showAndWait();
         if (result.isPresent()) {
             String text = result.get();
             List<ProductPreview> searchResults = VgmdbApi.searchProducts(text);
@@ -179,6 +182,7 @@ public class ProductView extends TilePaneView {
                 alert.setTitle("No search results");
                 alert.setContentText("No products could be found that "
                         + "matched the search terms: \"" + text + "\"");
+                centreDialog(alert);
                 alert.showAndWait();
             } else {
                 // Build list of choices
@@ -199,6 +203,7 @@ public class ProductView extends TilePaneView {
                 // Show choice dialog
                 ChoiceDialog<String> resultsChooser = new ChoiceDialog(choices
                         .get(defaultChoice), choices);
+                centreDialog(resultsChooser);
                 Optional<String> choice = resultsChooser.showAndWait();
                 chosenProduct = searchResults.get(defaultChoice);
                 if (choice.isPresent()) {
@@ -215,6 +220,22 @@ public class ProductView extends TilePaneView {
                 ancolle.addTrackedProduct(p.id);
             });
         }
+    }
+
+    /**
+     * Centre a {@link Dialog} relative to the location of the parent
+     * {@link Scene}
+     *
+     * @param dialog the dialog to centre
+     */
+    private void centreDialog(Dialog dialog) {
+        Scene scene = getScene();
+        double x = scene.getX() + scene.getWidth() / 2;
+        double y = scene.getY() + scene.getHeight() / 2;
+        x -= dialog.getWidth() / 2;
+        y -= dialog.getHeight() / 2;
+        dialog.setX(x);
+        dialog.setY(y);
     }
 
 }

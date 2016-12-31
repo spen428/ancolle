@@ -196,19 +196,13 @@ public class VgmdbApi {
         File file = new File(filePath);
         if (!file.exists()) {
             file.getParentFile().mkdirs();
+        } else {
+            file.delete();
         }
 
-        URL url;
-        try {
-            url = new URL(API_URL + "/search/" + subpath + "/" + searchString + "?format=json");
-            download(url, file);
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        } catch (IOException ex) {
-            Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
+        String url = API_URL + "/search/" + subpath + "/" + searchString + "?format=json";
+        download(url, file);
+
         try {
             return (JSONObject) IO.JSON_PARSER.parse(new FileReader(file));
         } catch (IOException | ParseException ex) {
