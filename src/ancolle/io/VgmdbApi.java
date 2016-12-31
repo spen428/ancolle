@@ -20,7 +20,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
 
 /**
  * Static methods for interfacing with VGMdb, the Video Game (and Anime) Music
@@ -35,6 +34,7 @@ public class VgmdbApi {
     private static final String API_URL = "http://vgmdb.info";
     private static final SimpleDateFormat SDF_YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat SDF_YYYY_MM = new SimpleDateFormat("yyyy-MM");
+    private static final SimpleDateFormat SDF_YYYY = new SimpleDateFormat("yyyy");
     private static final int DOWNLOAD_BUFFER_SIZE_BYTES = 1024;
 
     /**
@@ -83,7 +83,7 @@ public class VgmdbApi {
 
         try (FileReader fr = new FileReader(file)) {
             return (JSONObject) IO.JSON_PARSER.parse(fr);
-        } catch (IOException | ParseException ex) {
+        } catch (IOException | org.json.simple.parser.ParseException ex) {
             Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
@@ -134,19 +134,26 @@ public class VgmdbApi {
      * @return the {@link Date} object, or null if the string failed to parse
      */
     private static Date parseDate(String dateString) {
-        Date date = null;
         try {
-            date = SDF_YYYY_MM_DD.parse(dateString);
+            return SDF_YYYY_MM_DD.parse(dateString);
         } catch (java.text.ParseException ex) {
-            // Try parsing just the year and month yyyy-MM
-            try {
-                date = SDF_YYYY_MM.parse(dateString);
-            } catch (java.text.ParseException ex2) {
-                Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE,
-                        "Failed to parse date string: " + dateString, ex2);
-            }
         }
-        return date;
+
+        // Try parsing just the year and month yyyy-MM
+        try {
+            return SDF_YYYY_MM.parse(dateString);
+        } catch (java.text.ParseException ex) {
+        }
+
+        // Try parsing just the year yyyy
+        try {
+            return SDF_YYYY.parse(dateString);
+        } catch (java.text.ParseException ex) {
+            Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE,
+                    "Failed to parse date string: " + dateString, ex);
+        }
+
+        return null;
     }
 
     public static Album getAlbumById(int id) {
@@ -205,7 +212,7 @@ public class VgmdbApi {
 
         try {
             return (JSONObject) IO.JSON_PARSER.parse(new FileReader(file));
-        } catch (IOException | ParseException ex) {
+        } catch (IOException | org.json.simple.parser.ParseException ex) {
             Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
