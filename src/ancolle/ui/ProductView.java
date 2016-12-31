@@ -22,6 +22,7 @@ import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseButton;
 import javafx.scene.text.Font;
 
 /**
@@ -123,7 +124,9 @@ public class ProductView extends TilePaneView {
         node.label1.setFont(new Font("Arial", 40));
 
         node.setOnMouseClicked(evt -> {
-            doAddProductDialog();
+            if (evt.getButton() == MouseButton.PRIMARY) {
+                doAddProductDialog();
+            }
         });
 
         return node;
@@ -136,6 +139,7 @@ public class ProductView extends TilePaneView {
      * @param label2text the lower label text
      * @return the node
      */
+
     private ProductNode createProductNode(String label1text, String label2text) {
         double minWidth = MIN_TILE_WIDTH_PX + (2 * TILE_PADDING_PX);
         double maxWidth = MAX_TILE_WIDTH_PX + (2 * TILE_PADDING_PX);
