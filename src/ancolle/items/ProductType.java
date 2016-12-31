@@ -6,7 +6,8 @@ package ancolle.items;
  * @author samuel
  */
 public enum ProductType {
-    FRANCHISE("Franchise"), GAME("Game"), VIDEO("Video"), UNKNOWN("");
+    FRANCHISE("Franchise"), GAME("Game"), VIDEO("Video"), ANIMATION("Animation"),
+    UNKNOWN("");
 
     private static final ProductType[] values = ProductType.values();
 
