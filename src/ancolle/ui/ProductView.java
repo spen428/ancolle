@@ -211,7 +211,6 @@ public class ProductView extends TilePaneView {
                         .get(defaultChoice), choices);
                 centreDialog(resultsChooser);
                 Optional<String> choice = resultsChooser.showAndWait();
-                chosenProduct = searchResults.get(defaultChoice);
                 if (choice.isPresent()) {
                     String c = choice.get();
                     chosenProduct = searchResults.get(choices.indexOf(c));
