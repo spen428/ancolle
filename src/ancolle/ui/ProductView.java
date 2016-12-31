@@ -6,10 +6,10 @@ import ancolle.items.ProductPreview;
 import ancolle.io.VgmdbApi;
 import ancolle.items.ProductType;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -35,45 +35,44 @@ public class ProductView extends TilePaneView {
     private static final double MIN_TILE_WIDTH_PX = 50;
     private static final double MAX_TILE_WIDTH_PX = 250;
 
-    private final ConcurrentLinkedQueue<Product> products;
+    private final Set<Product> products;
 
     public ProductView(AnColle ancolle) {
-        this(ancolle, null);
-    }
-
-    public ProductView(AnColle ancolle, Collection<Product> products) {
         super(ancolle);
-        this.products = new ConcurrentLinkedQueue<>();
+        this.products = new HashSet<>();
 
         // Button for adding new products to track
         getChildren().add(createProductAdderNode());
-
-        if (products != null) {
-            products.forEach((product) -> {
-                addProduct(product);
-            });
-        }
 
         setPadding(new Insets(PANE_PADDING_PX));
         setAlignment(Pos.BASELINE_CENTER);
     }
 
     /**
-     * Add a product to the view
+     * Add a product to the view. If a product already exists, a duplicate will
+     * not be added. WARNING: This method should only be called by the JavaFX
+     * thread
      *
      * @param product the product
+     * @return true if successfully added
      */
-    public void addProduct(Product product) {
-        addProduct(product, -1);
+    public boolean addProduct(Product product) {
+        return addProduct(product, -1);
     }
 
     /**
-     * Add a product to the view, inserting it at the specified position
+     * Add a product to the view, inserting it at the specified position. If a
+     * product already exists, a duplicate will not be added. WARNING: This
+     * method should only be called by the JavaFX thread
      *
      * @param product the product
      * @param idx where to insert the product node, -1 for default
+     * @return true if successfully added
      */
-    public void addProduct(Product product, int idx) {
+    public boolean addProduct(Product product, int idx) {
+        if (this.products.contains(product)) {
+            return false;
+        }
         this.products.add(product);
         ProductNode node = createProductNode(product.title_en, product.title_ja);
 
@@ -89,10 +88,10 @@ public class ProductView extends TilePaneView {
 
         // Get product logo
         submitBackgroundTask(() -> {
-            Logger.getLogger(AlbumView.class.getName()).log(Level.FINE,
+            Logger.getLogger(ProductView.class.getName()).log(Level.FINE,
                     "Fetching product cover for product #", product.id);
             final Image image = product.getPicture();
-            Logger.getLogger(AlbumView.class.getName()).log(Level.FINE,
+            Logger.getLogger(ProductView.class.getName()).log(Level.FINE,
                     "Fetched product cover for product #", product.id);
             Platform.runLater(() -> {
                 node.imageView.setImage(image);
@@ -107,6 +106,8 @@ public class ProductView extends TilePaneView {
             idx = getChildren().size() - 1;
             getChildren().add(idx, node);
         }
+
+        return true;
     }
 
     /**
@@ -161,7 +162,12 @@ public class ProductView extends TilePaneView {
             // Ensure that UI operations occur on the correct thread.
             Platform.runLater(() -> {
                 int idx = getChildren().indexOf(placeholder);
-                addProduct(product, idx);
+                boolean added = addProduct(product, idx);
+                if (!added) {
+                    Logger.getLogger(ProductView.class.getName())
+                            .log(Level.INFO, "Product with id #{0} was not "
+                                    + "added. Possible duplicate?", product.id);
+                }
                 getChildren().remove(placeholder);
             });
         });

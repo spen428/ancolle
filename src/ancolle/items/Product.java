@@ -27,7 +27,7 @@ public class Product extends ProductPreview {
         this.pictureUrlSmall = pictureUrlSmall;
         this.picture = null;
     }
-
+    
     /**
      * Get a list of albums associated with this {@link Product}
      *
