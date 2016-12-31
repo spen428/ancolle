@@ -8,7 +8,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
 /**
- *
  * @author samuel
  */
 public class ProductNode extends VBox {

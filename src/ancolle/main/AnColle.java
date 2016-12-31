@@ -34,6 +34,7 @@ public class AnColle extends Application {
     private final AlbumView albumView;
     private final VBox root;
     private final VBox mainContent;
+    private final StatusBar statusBar;
     private final ScrollPane scrollPane;
     private final Tab mainTab;
     private final TabPane tabPane;
@@ -50,6 +51,7 @@ public class AnColle extends Application {
         this.tabPane = new TabPane();
         this.tabPane.getTabs().add(mainTab);
         this.settings = Settings.loadSettings();
+        this.statusBar = new StatusBar();
     }
 
     /**
@@ -67,6 +69,24 @@ public class AnColle extends Application {
 
     public void setSelectedTab(Tab tab) {
         tabPane.getSelectionModel().select(tab);
+    }
+
+    /**
+     * Save program settings.
+     */
+    private void saveSettings() {
+        Settings.saveSettings(settings);
+    }
+
+    /**
+     * Add a {@link Product} to the tracked products page
+     *
+     * @param id the {@link Product} id
+     */
+    public void addTrackedProduct(int id) {
+        settings.trackedProducts.add(id);
+        productView.addProductById(id);
+        saveSettings();
     }
 
     /**
@@ -91,9 +111,6 @@ public class AnColle extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        VBox.setVgrow(tabPane, Priority.ALWAYS);
-        root.getChildren().add(tabPane);
-
         // MENU BAR //
         MenuBar menu = new MenuBar();
         root.getChildren().add(menu);
@@ -112,6 +129,11 @@ public class AnColle extends Application {
 
         Menu menuHelp = new Menu("Help");
         menu.getMenus().add(menuHelp);
+
+        VBox.setVgrow(tabPane, Priority.ALWAYS);
+        root.getChildren().add(tabPane);
+
+        root.getChildren().add(statusBar);
 
         productView.setBackground(AZURE_BACKGROUND);
 
@@ -156,24 +178,6 @@ public class AnColle extends Application {
         primaryStage.setTitle("AnColle");
         primaryStage.setScene(scene);
         primaryStage.show();
-    }
-
-    /**
-     * Save program settings.
-     */
-    private void saveSettings() {
-        Settings.saveSettings(settings);
-    }
-
-    /**
-     * Add a {@link Product} to the tracked products page
-     *
-     * @param id the {@link Product} id
-     */
-    public void addTrackedProduct(int id) {
-        settings.trackedProducts.add(id);
-        productView.addProductById(id);
-        saveSettings();
     }
 
 }

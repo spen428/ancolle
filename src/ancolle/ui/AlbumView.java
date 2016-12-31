@@ -13,15 +13,9 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.VBox;
 
 /**
  * View albums belonging to a Product
@@ -57,7 +51,7 @@ public class AlbumView extends TilePaneView {
         fullAlbumMap.clear(); // Clear album cache
         List<AlbumPreview> albums = product.getAlbums();
         albums.forEach((album) -> {
-            getChildren().add(createAlbumView(album));
+            getChildren().add(createAlbumNode(album));
         });
     }
 
@@ -73,48 +67,22 @@ public class AlbumView extends TilePaneView {
         return this.product;
     }
 
-    private Node createAlbumView(AlbumPreview album) {
-        final VBox node = new VBox();
-        node.setPadding(new Insets(TILE_PADDING_PX));
-        node.setMaxWidth(MAX_TILE_WIDTH_PX + (2 * TILE_PADDING_PX));
-        node.setAlignment(Pos.BOTTOM_CENTER);
+    private AlbumNode createAlbumNode(AlbumPreview album) {
+        double maxWidth = MAX_TILE_WIDTH_PX + (2 * TILE_PADDING_PX);
+        AlbumNode node = new AlbumNode(maxWidth);
+        node.label1.setText(album.title_en);
 
-        final ImageView albumCover = new ImageView();
-        albumCover.setSmooth(true);
-        albumCover.setPreserveRatio(true);
-        albumCover.setFitWidth(MAX_TILE_WIDTH_PX);
-        albumCover.setFitHeight(MAX_TILE_WIDTH_PX);
-        node.getChildren().add(albumCover);
-
-        Label label1 = new Label(album.title_en);
-        label1.maxWidthProperty().bind(node.widthProperty());
-        label1.setAlignment(Pos.BOTTOM_CENTER);
-        node.getChildren().add(label1);
-
+        // Get date and set date label
         String dateString = "";
         if (album.date != null) {
             dateString = new SimpleDateFormat("yyyy-MM-dd").format(album.date);
         }
-        Label label2 = new Label(dateString);
-        label2.maxWidthProperty().bind(node.widthProperty());
-        label2.setAlignment(Pos.BOTTOM_CENTER);
-        node.getChildren().add(label2);
+        node.label2.setText(dateString);
 
-        // Context menu
-        ContextMenu contextMenu = new ContextMenu();
-        contextMenu.getItems().add(new MenuItem("Yo"));
-
-        // Mouse/key handlers
-        node.setOnMouseEntered(evt -> {
-            node.setStyle("-fx-background-color: #9ec1ff;");
-        });
-        node.setOnMouseExited(evt -> {
-            node.setStyle("-fx-background-color: none;");
-            contextMenu.hide();
-        });
+        // Mouse listener
         node.setOnMouseClicked(evt -> {
             if (evt.getButton() == MouseButton.PRIMARY && evt.getClickCount() > 1) {
-                // If full album details are loaded, open in a new tab, else ignore
+                // If full album details are loaded, open details in a new tab
                 Album fullAlbum = fullAlbumMap.get(album);
                 if (fullAlbum != null) {
                     AlbumDetailsView adv = new AlbumDetailsView(fullAlbum);
@@ -136,15 +104,16 @@ public class AlbumView extends TilePaneView {
                 }
             }
             if (fullAlbum != null) {
-                Image image = fullAlbum.getPicture();
+                final Image image = fullAlbum.getPicture();
                 Logger.getLogger(AlbumView.class.getName()).log(Level.FINE,
                         "Fetched album cover for album #", album.id);
                 Platform.runLater(() -> {
-                    albumCover.setImage(image);
+                    node.albumCover.setImage(image);
                 });
             } else {
                 Logger.getLogger(AlbumView.class.getName()).log(Level.FINE,
-                        "Failed to fetch full album details for album #", album.id);
+                        "Failed to fetch full album details for album #",
+                        album.id);
             }
         });
         return node;

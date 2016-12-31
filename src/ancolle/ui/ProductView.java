@@ -4,6 +4,7 @@ import ancolle.main.AnColle;
 import ancolle.items.Product;
 import ancolle.items.ProductPreview;
 import ancolle.io.VgmdbApi;
+import ancolle.items.ProductType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -17,13 +18,13 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceDialog;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 
 /**
- * View products
+ * View tracked products as tiled {@link ProductNode} objects on a
+ * {@link TilePaneView}
  *
  * @author samuel
  */
@@ -55,19 +56,31 @@ public class ProductView extends TilePaneView {
         setAlignment(Pos.BASELINE_CENTER);
     }
 
+    /**
+     * Add a product to the view
+     *
+     * @param product the product
+     */
     public void addProduct(Product product) {
         addProduct(product, -1);
     }
 
+    /**
+     * Add a product to the view, inserting it at the specified position
+     *
+     * @param product the product
+     * @param idx where to insert the product node, -1 for default
+     */
     public void addProduct(Product product, int idx) {
         this.products.add(product);
         ProductNode node = createProductNode(product.title_en, product.title_ja);
-        Label label1 = (Label) node.getChildren().get(1);
 
         // Styling
-        if (product.type.equals("Franchise")) {
-            label1.setStyle("-fx-font-weight: bold;");
+        if (product.type == ProductType.FRANCHISE) {
+            node.label1.setStyle("-fx-font-weight: bold;");
         }
+
+        // Mouse listener
         node.setOnMouseClicked(evt -> {
             ancolle.view(product);
         });
@@ -83,6 +96,8 @@ public class ProductView extends TilePaneView {
                 node.imageView.setImage(image);
             });
         });
+
+        // Insert into view
         if (idx != -1) {
             getChildren().add(idx, node);
         } else {
@@ -92,6 +107,12 @@ public class ProductView extends TilePaneView {
         }
     }
 
+    /**
+     * Create an "adder" node, which when clicked will bring up a dialog to add
+     * a new product to the tracker.
+     *
+     * @return the adder node
+     */
     private ProductNode createProductAdderNode() {
         ProductNode node = createProductNode("+", "");
         node.getChildren().remove(node.label2);
@@ -105,6 +126,13 @@ public class ProductView extends TilePaneView {
         return node;
     }
 
+    /**
+     * Create a new {@link ProductNode} with the default min and max widths
+     *
+     * @param label1text the upper label text
+     * @param label2text the lower label text
+     * @return the node
+     */
     private ProductNode createProductNode(String label1text, String label2text) {
         double minWidth = MIN_TILE_WIDTH_PX + (2 * TILE_PADDING_PX);
         double maxWidth = MAX_TILE_WIDTH_PX + (2 * TILE_PADDING_PX);
@@ -114,6 +142,14 @@ public class ProductView extends TilePaneView {
         return node;
     }
 
+    /**
+     * Add a product to the view by id, looking it up by using the
+     * {@link VgmdbApi}. A placeholder will be displayed while the details are
+     * loading, which will be automatically replaced with the full details on
+     * completion.
+     *
+     * @param id the product id
+     */
     public void addProductById(int id) {
         final Node placeholder = createProductNode("Product #" + id, "Loading...");
         // Insert before "Add"  button
@@ -154,14 +190,15 @@ public class ProductView extends TilePaneView {
                             p.type, p.title_en, p.title_ja);
                     choices.add(str);
 
-                    // Use first "Franchise" as default choice
-                    if (defaultChoice == 0 && p.type.equals("Franchise")) {
+                    // Use first Franchise as default choice
+                    if (defaultChoice == 0 && p.type == ProductType.FRANCHISE) {
                         defaultChoice = idx;
                     }
                 }
 
                 // Show choice dialog
-                ChoiceDialog<String> resultsChooser = new ChoiceDialog(choices.get(defaultChoice), choices);
+                ChoiceDialog<String> resultsChooser = new ChoiceDialog(choices
+                        .get(defaultChoice), choices);
                 Optional<String> choice = resultsChooser.showAndWait();
                 chosenProduct = searchResults.get(defaultChoice);
                 if (choice.isPresent()) {
