@@ -1,4 +1,4 @@
-package ancolle;
+package ancolle.items;
 
 import java.util.Date;
 
@@ -15,11 +15,11 @@ public class AlbumPreview {
     public final String type;
     public final Date date;
 
-    public AlbumPreview(int id, String title_en, String title_jp, String type,
+    public AlbumPreview(int id, String title_en, String title_ja, String type,
             Date date) {
         this.id = id;
         this.title_en = title_en;
-        this.title_ja = title_jp;
+        this.title_ja = title_ja;
         this.type = type;
         this.date = date;
     }

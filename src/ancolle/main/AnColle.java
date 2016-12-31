@@ -1,19 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package ancolle;
+package ancolle.main;
 
-import ancolle.ui.ProductView;
+import ancolle.items.Product;
 import ancolle.ui.AlbumView;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import ancolle.ui.ProductView;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Node;
@@ -23,7 +12,6 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Priority;
@@ -32,20 +20,24 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 /**
+ * The JavaFX application class
+ *
  * @author samuel
  */
 public class AnColle extends Application {
+
+    private static final Background AZURE_BACKGROUND = new Background(
+            new BackgroundFill(Color.AZURE, null, null));
 
     private final Settings settings;
     private final ProductView productView;
     private final AlbumView albumView;
     private final VBox root;
     private final VBox mainContent;
+    private final StatusBar statusBar;
     private final ScrollPane scrollPane;
     private final Tab mainTab;
     private final TabPane tabPane;
-    private static final Background AZURE_BACKGROUND = new Background(
-            new BackgroundFill(Color.AZURE, null, null));
 
     public AnColle() {
         super();
@@ -58,9 +50,17 @@ public class AnColle extends Application {
         this.mainTab.setClosable(false);
         this.tabPane = new TabPane();
         this.tabPane.getTabs().add(mainTab);
-        this.settings = IO.loadSettings();
+        this.settings = Settings.loadSettings();
+        this.statusBar = new StatusBar();
     }
 
+    /**
+     * Create a new tab and add it to the tab pane
+     *
+     * @param title the tab title
+     * @param content the tab content
+     * @return the newly created tab
+     */
     public Tab newTab(String title, Node content) {
         Tab tab = new Tab(title, content);
         tabPane.getTabs().add(tab);
@@ -71,11 +71,38 @@ public class AnColle extends Application {
         tabPane.getSelectionModel().select(tab);
     }
 
+    /**
+     * Save program settings.
+     */
+    private void saveSettings() {
+        Settings.saveSettings(settings);
+    }
+
+    /**
+     * Add a {@link Product} to the tracked products page
+     *
+     * @param id the {@link Product} id
+     */
+    public void addTrackedProduct(int id) {
+        settings.trackedProducts.add(id);
+        productView.addProductById(id);
+        saveSettings();
+    }
+
+    /**
+     * Set the main content view to the {@link ProductView} page
+     */
     public void viewProducts() {
         scrollPane.setContent(productView);
         albumView.cancelQueuedTasks();
     }
 
+    /**
+     * Set the main content view to the {@link AlbumView} page, and display the
+     * given product on it
+     *
+     * @param product the product
+     */
     public void view(Product product) {
         scrollPane.setContent(albumView);
         productView.cancelQueuedTasks();
@@ -84,11 +111,9 @@ public class AnColle extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        // MENU BAR //
         MenuBar menu = new MenuBar();
         root.getChildren().add(menu);
-
-        VBox.setVgrow(tabPane, Priority.ALWAYS);
-        root.getChildren().add(tabPane);
 
         Menu menuFile = new Menu("File");
         menu.getMenus().add(menuFile);
@@ -105,6 +130,11 @@ public class AnColle extends Application {
         Menu menuHelp = new Menu("Help");
         menu.getMenus().add(menuHelp);
 
+        VBox.setVgrow(tabPane, Priority.ALWAYS);
+        root.getChildren().add(tabPane);
+
+        root.getChildren().add(statusBar);
+
         productView.setBackground(AZURE_BACKGROUND);
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -115,12 +145,18 @@ public class AnColle extends Application {
 
         root.setOnKeyPressed(evt -> {
             if (tabPane.getSelectionModel().getSelectedItem() == mainTab) {
-                if (evt.getCode() == KeyCode.ESCAPE) {
-                    viewProducts();
-                } else if (evt.getCode() == KeyCode.S) {
-                    saveSettings();
-                } else if (evt.getCode() == KeyCode.A) {
-                    productView.doAddProductDialog();
+                switch (evt.getCode()) {
+                    case ESCAPE:
+                        viewProducts();
+                        break;
+                    case S:
+                        saveSettings();
+                        break;
+                    case A:
+                        productView.doAddProductDialog();
+                        break;
+                    default:
+                        break;
                 }
             }
         });
@@ -142,25 +178,6 @@ public class AnColle extends Application {
         primaryStage.setTitle("AnColle");
         primaryStage.setScene(scene);
         primaryStage.show();
-    }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        Logger.getGlobal().setLevel(Level.FINE);
-        Logger.getGlobal().addHandler(new ConsoleHandler());
-        launch(args);
-    }
-
-    private void saveSettings() {
-        IO.saveSettings(settings);
-    }
-
-    public void addTrackedProduct(int id) {
-        settings.trackedProducts.add(id);
-        productView.addProductById(id);
-        saveSettings();
     }
 
 }
