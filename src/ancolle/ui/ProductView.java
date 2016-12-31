@@ -1,3 +1,19 @@
+/*  AnColle, an anime and video game music collection tracker
+ *  Copyright (C) 2016-17  lykat
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package ancolle.ui;
 
 import ancolle.main.AnColle;
@@ -139,7 +155,6 @@ public class ProductView extends TilePaneView {
      * @param label2text the lower label text
      * @return the node
      */
-
     private ProductNode createProductNode(String label1text, String label2text) {
         double minWidth = MIN_TILE_WIDTH_PX + (2 * TILE_PADDING_PX);
         double maxWidth = MAX_TILE_WIDTH_PX + (2 * TILE_PADDING_PX);
