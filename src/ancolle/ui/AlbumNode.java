@@ -40,7 +40,7 @@ public class AlbumNode extends VBox {
     public final Label label1;
     public final Label label2;
 
-    public boolean collected = false;
+    private boolean collected = false;
 
     public AlbumNode(double maxWidth) {
 	super();
@@ -71,8 +71,36 @@ public class AlbumNode extends VBox {
 	    setBackground(COLOR_HOVERING);
 	});
 	setOnMouseExited(evt -> {
-	    setBackground(collected ? COLOR_COLLECTED : COLOR_NOT_COLLECTED);
+	    updateBackground();
 	});
+    }
+
+    /**
+     * Update the background colour of this {@link AlbumNode}, setting it to be
+     * indicative of its `collected` status.
+     */
+    public void updateBackground() {
+	setBackground(collected ? COLOR_COLLECTED : COLOR_NOT_COLLECTED);
+    }
+
+    /**
+     * Set the `collected` status of this {@link AlbumNode}. This will
+     * automatically call {@link AlbumNode#updateBackground()}
+     *
+     * @param collected the value to set
+     */
+    public void setCollected(boolean collected) {
+	this.collected = collected;
+	updateBackground();
+    }
+
+    /**
+     * Whether this {@link AlbumNode} has been marked as "collected"
+     *
+     * @return the `collected` status
+     */
+    public boolean isCollected() {
+	return this.collected;
     }
 
 }

@@ -44,24 +44,7 @@ public class Settings {
     public static final String TRACKED_PRODUCTS_KEY = "trackedProducts";
     public static final String COLLECTED_ALBUMS_KEY = "collectedAlbums";
 
-    // Members
-    public final List<Integer> trackedProductIds;
-    public final Set<Integer> collectedAlbumIds;
-
-    public Settings() {
-	this.trackedProductIds = new ArrayList<>();
-	this.collectedAlbumIds = new HashSet<>();
-    }
-
-    /**
-     * Save this {@link Settings} object to {@link Settings#SETTINGS_PATH} in
-     * the JSON format.
-     *
-     * @return success
-     */
-    public boolean save() {
-	return saveSettings(this);
-    }
+    private static final Logger LOG = Logger.getLogger(Settings.class.getName());
 
     /**
      * Save the {@link Settings} object to {@link Settings#SETTINGS_PATH} in the
@@ -70,8 +53,9 @@ public class Settings {
      * @param settings the {@link Settings} instance
      * @return success
      */
+    @SuppressWarnings("unchecked")
     public static boolean saveSettings(Settings settings) {
-	Logger.getLogger(IO.class.getName()).log(Level.INFO, "Saving settings to {0}", SETTINGS_PATH);
+	LOG.log(Level.INFO, "Saving settings to {0}", SETTINGS_PATH);
 	File file = new File(SETTINGS_PATH);
 	if (!file.exists()) {
 	    file.getParentFile().mkdirs();
@@ -88,15 +72,15 @@ public class Settings {
 
 	    JSONArray collectedAlbumIdsArr = new JSONArray();
 	    settings.collectedAlbumIds.forEach((Integer id) -> {
-		trackedProductIdsArr.add(id);
+		collectedAlbumIdsArr.add(id);
 	    });
-	    root.put(Settings.COLLECTED_ALBUMS_KEY, trackedProductIdsArr);
+	    root.put(Settings.COLLECTED_ALBUMS_KEY, collectedAlbumIdsArr);
 
 	    fw.write(root.toJSONString());
 	    fw.flush();
 	    fw.close();
 	} catch (IOException ex) {
-	    Logger.getLogger(IO.class.getName()).log(Level.SEVERE, null, ex);
+	    LOG.log(Level.SEVERE, null, ex);
 	    return false;
 	}
 
@@ -136,10 +120,29 @@ public class Settings {
 		}
 	    }
 	} catch (ParseException | IOException ex) {
-	    Logger.getLogger(IO.class.getName()).log(Level.SEVERE, null, ex);
+	    LOG.log(Level.SEVERE, null, ex);
 	}
 
 	return settings;
+    }
+
+    // Members
+    public final List<Integer> trackedProductIds;
+    public final Set<Integer> collectedAlbumIds;
+
+    public Settings() {
+	this.trackedProductIds = new ArrayList<>(10);
+	this.collectedAlbumIds = new HashSet<>(100);
+    }
+
+    /**
+     * Save this {@link Settings} object to {@link Settings#SETTINGS_PATH} in
+     * the JSON format.
+     *
+     * @return success
+     */
+    public boolean save() {
+	return saveSettings(this);
     }
 
 }

@@ -41,6 +41,7 @@ import javafx.scene.input.MouseButton;
 public class AlbumView extends TilePaneView {
 
     private static final double MAX_TILE_WIDTH_PX = 100;
+    private static final Logger LOG = Logger.getLogger(AlbumView.class.getName());
 
     private Product product;
 
@@ -52,7 +53,7 @@ public class AlbumView extends TilePaneView {
 
     public AlbumView(AnColle ancolle, Product product) {
 	super(ancolle);
-	this.fullAlbumMap = new ConcurrentHashMap<>();
+	this.fullAlbumMap = new ConcurrentHashMap<>(20);
 	setPadding(new Insets(PANE_PADDING_PX));
 	setAlignment(Pos.BASELINE_CENTER);
 	setProduct(product);
@@ -67,7 +68,9 @@ public class AlbumView extends TilePaneView {
 	fullAlbumMap.clear(); // Clear album cache
 	List<AlbumPreview> albums = product.getAlbums();
 	albums.forEach((album) -> {
-	    getChildren().add(createAlbumNode(album));
+	    AlbumNode node = createAlbumNode(album);
+	    node.setCollected(ancolle.settings.collectedAlbumIds.contains(album.id));
+	    getChildren().add(node);
 	});
     }
 
@@ -95,8 +98,6 @@ public class AlbumView extends TilePaneView {
 	}
 	node.label2.setText(dateString);
 
-	node.collected = ancolle.settings.collectedAlbumIds.contains(album.id);
-
 	// Mouse listener
 	// TODO: would this be better in AlbumNode class?
 	node.setOnMouseClicked(evt -> {
@@ -118,16 +119,14 @@ public class AlbumView extends TilePaneView {
 			ancolle.settings.collectedAlbumIds.remove(album_id);
 		    }
 		    contains = !contains;
-		    node.collected = contains;
-		    node.setBackground(contains ? AlbumNode.COLOR_COLLECTED : AlbumNode.COLOR_NOT_COLLECTED);
+		    node.setCollected(contains);
 		});
 	    }
 	});
 
 	// Fetch album cover in the background
 	submitBackgroundTask(() -> {
-	    Logger.getLogger(AlbumView.class.getName()).log(Level.FINE,
-		    "Fetching album cover for album #", album.id);
+	    LOG.log(Level.FINE, "Fetching album cover for album #", album.id);
 	    Album fullAlbum = fullAlbumMap.get(album);
 	    if (fullAlbum == null) {
 		fullAlbum = VgmdbApi.getAlbumById(album.id);
@@ -137,15 +136,12 @@ public class AlbumView extends TilePaneView {
 	    }
 	    if (fullAlbum != null) {
 		final Image image = fullAlbum.getPicture();
-		Logger.getLogger(AlbumView.class.getName()).log(Level.FINE,
-			"Fetched album cover for album #", album.id);
+		LOG.log(Level.FINE, "Fetched album cover for album #", album.id);
 		Platform.runLater(() -> {
 		    node.albumCover.setImage(image);
 		});
 	    } else {
-		Logger.getLogger(AlbumView.class.getName()).log(Level.FINE,
-			"Failed to fetch full album details for album #",
-			album.id);
+		LOG.log(Level.FINE, "Failed to fetch full album details for album #", album.id);
 	    }
 	});
 	return node;
