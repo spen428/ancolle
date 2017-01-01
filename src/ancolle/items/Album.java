@@ -37,18 +37,18 @@ public class Album extends AlbumPreview {
     private final List<Track> tracks;
 
     public Album(int id, String title_en, String title_ja, String title_ja_latn,
-            String type, Date date, String pictureUrlSmall,
-            Collection<Track> tracks) {
-        super(id, title_en, title_ja, type, date);
-        this.title_ja_latn = title_ja_latn;
-        this.pictureUrlSmall = pictureUrlSmall;
-        this.picture = null; // Load image only when needed
-        this.tracks = new ArrayList<>();
-        if (tracks != null) {
-            tracks.forEach((track) -> {
-                this.tracks.add(track);
-            });
-        }
+	    String type, Date date, String pictureUrlSmall,
+	    Collection<Track> tracks) {
+	super(id, title_en, title_ja, type, date);
+	this.title_ja_latn = title_ja_latn;
+	this.pictureUrlSmall = pictureUrlSmall;
+	this.picture = null; // Load image only when needed
+	this.tracks = new ArrayList<>();
+	if (tracks != null) {
+	    tracks.forEach((track) -> {
+		this.tracks.add(track);
+	    });
+	}
     }
 
     /**
@@ -59,15 +59,15 @@ public class Album extends AlbumPreview {
      * does not exist.
      */
     public Image getPicture() {
-        if (picture == null) {
-            if (pictureUrlSmall == null) {
-                // No URL, can't retrive anything
-                return null;
-            }
-            picture = IO.retrievePicture(pictureUrlSmall, "album",
-                    id + "_medium");
-        }
-        return picture;
+	if (picture == null) {
+	    if (pictureUrlSmall == null) {
+		// No URL, can't retrive anything
+		return null;
+	    }
+	    picture = IO.retrievePicture(pictureUrlSmall, "album",
+		    id + "_medium");
+	}
+	return picture;
     }
 
     /**
@@ -76,8 +76,8 @@ public class Album extends AlbumPreview {
      * @return the track list
      */
     public List<Track> getTracks() {
-        Collections.sort(tracks);
-        return Collections.unmodifiableList(tracks);
+	Collections.sort(tracks);
+	return Collections.unmodifiableList(tracks);
     }
 
 }

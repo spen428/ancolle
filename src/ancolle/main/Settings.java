@@ -49,8 +49,8 @@ public class Settings {
     public final Set<Integer> collectedAlbumIds;
 
     public Settings() {
-        this.trackedProductIds = new ArrayList<>();
-        this.collectedAlbumIds = new HashSet<>();
+	this.trackedProductIds = new ArrayList<>();
+	this.collectedAlbumIds = new HashSet<>();
     }
 
     /**
@@ -60,7 +60,7 @@ public class Settings {
      * @return success
      */
     public boolean save() {
-        return saveSettings(this);
+	return saveSettings(this);
     }
 
     /**
@@ -71,36 +71,36 @@ public class Settings {
      * @return success
      */
     public static boolean saveSettings(Settings settings) {
-        Logger.getLogger(IO.class.getName()).log(Level.INFO, "Saving settings to {0}", SETTINGS_PATH);
-        File file = new File(SETTINGS_PATH);
-        if (!file.exists()) {
-            file.getParentFile().mkdirs();
-        }
+	Logger.getLogger(IO.class.getName()).log(Level.INFO, "Saving settings to {0}", SETTINGS_PATH);
+	File file = new File(SETTINGS_PATH);
+	if (!file.exists()) {
+	    file.getParentFile().mkdirs();
+	}
 
-        try (FileWriter fw = new FileWriter(file)) {
-            JSONObject root = new JSONObject();
+	try (FileWriter fw = new FileWriter(file)) {
+	    JSONObject root = new JSONObject();
 
-            JSONArray trackedProductIdsArr = new JSONArray();
-            settings.trackedProductIds.forEach((Integer id) -> {
-                trackedProductIdsArr.add(id);
-            });
-            root.put(Settings.TRACKED_PRODUCTS_KEY, trackedProductIdsArr);
+	    JSONArray trackedProductIdsArr = new JSONArray();
+	    settings.trackedProductIds.forEach((Integer id) -> {
+		trackedProductIdsArr.add(id);
+	    });
+	    root.put(Settings.TRACKED_PRODUCTS_KEY, trackedProductIdsArr);
 
-            JSONArray collectedAlbumIdsArr = new JSONArray();
-            settings.collectedAlbumIds.forEach((Integer id) -> {
-                trackedProductIdsArr.add(id);
-            });
-            root.put(Settings.COLLECTED_ALBUMS_KEY, trackedProductIdsArr);
+	    JSONArray collectedAlbumIdsArr = new JSONArray();
+	    settings.collectedAlbumIds.forEach((Integer id) -> {
+		trackedProductIdsArr.add(id);
+	    });
+	    root.put(Settings.COLLECTED_ALBUMS_KEY, trackedProductIdsArr);
 
-            fw.write(root.toJSONString());
-            fw.flush();
-            fw.close();
-        } catch (IOException ex) {
-            Logger.getLogger(IO.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
+	    fw.write(root.toJSONString());
+	    fw.flush();
+	    fw.close();
+	} catch (IOException ex) {
+	    Logger.getLogger(IO.class.getName()).log(Level.SEVERE, null, ex);
+	    return false;
+	}
 
-        return true;
+	return true;
     }
 
     /**
@@ -110,36 +110,36 @@ public class Settings {
      * @return the new {@link Settings} instance
      */
     public static Settings loadSettings() {
-        final Settings settings = new Settings();
-        File file = new File(SETTINGS_PATH);
-        if (!file.exists() || file.length() == 0) {
-            return settings;
-        }
+	final Settings settings = new Settings();
+	File file = new File(SETTINGS_PATH);
+	if (!file.exists() || file.length() == 0) {
+	    return settings;
+	}
 
-        try (FileReader fr = new FileReader(file)) {
-            JSONObject root = (JSONObject) IO.JSON_PARSER.parse(fr);
-            JSONArray arr = (JSONArray) root.get(TRACKED_PRODUCTS_KEY);
-            if (arr != null) {
-                for (int i = 0; i < arr.size(); i++) {
-                    // Number literals in json are always longs, so we must cast down
-                    Long longVal = (Long) arr.get(i);
-                    int id = longVal.intValue();
-                    settings.trackedProductIds.add(id);
-                }
-            }
-            arr = (JSONArray) root.get(COLLECTED_ALBUMS_KEY);
-            if (arr != null) {
-                for (int i = 0; i < arr.size(); i++) {
-                    Long longVal = (Long) arr.get(i);
-                    int id = longVal.intValue();
-                    settings.collectedAlbumIds.add(id);
-                }
-            }
-        } catch (ParseException | IOException ex) {
-            Logger.getLogger(IO.class.getName()).log(Level.SEVERE, null, ex);
-        }
+	try (FileReader fr = new FileReader(file)) {
+	    JSONObject root = (JSONObject) IO.JSON_PARSER.parse(fr);
+	    JSONArray arr = (JSONArray) root.get(TRACKED_PRODUCTS_KEY);
+	    if (arr != null) {
+		for (int i = 0; i < arr.size(); i++) {
+		    // Number literals in json are always longs, so we must cast down
+		    Long longVal = (Long) arr.get(i);
+		    int id = longVal.intValue();
+		    settings.trackedProductIds.add(id);
+		}
+	    }
+	    arr = (JSONArray) root.get(COLLECTED_ALBUMS_KEY);
+	    if (arr != null) {
+		for (int i = 0; i < arr.size(); i++) {
+		    Long longVal = (Long) arr.get(i);
+		    int id = longVal.intValue();
+		    settings.collectedAlbumIds.add(id);
+		}
+	    }
+	} catch (ParseException | IOException ex) {
+	    Logger.getLogger(IO.class.getName()).log(Level.SEVERE, null, ex);
+	}
 
-        return settings;
+	return settings;
     }
 
 }

@@ -61,11 +61,11 @@ public class VgmdbApi {
      * @param file the output file
      */
     public static void download(String url, File file) {
-        try {
-            download(new URL(url), file);
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE, null, ex);
-        }
+	try {
+	    download(new URL(url), file);
+	} catch (MalformedURLException ex) {
+	    Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     /**
@@ -75,72 +75,72 @@ public class VgmdbApi {
      * @param file the output file
      */
     public static void download(URL url, File file) {
-        try (InputStream in = url.openStream();
-                FileOutputStream fos = new FileOutputStream(file)) {
-            int length;
-            byte[] buffer = new byte[DOWNLOAD_BUFFER_SIZE_BYTES];
-            while ((length = in.read(buffer)) > -1) {
-                fos.write(buffer, 0, length);
-            }
-            fos.close();
-            in.close();
-        } catch (IOException ex) {
-            Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE, null, ex);
-        }
+	try (InputStream in = url.openStream();
+		FileOutputStream fos = new FileOutputStream(file)) {
+	    int length;
+	    byte[] buffer = new byte[DOWNLOAD_BUFFER_SIZE_BYTES];
+	    while ((length = in.read(buffer)) > -1) {
+		fos.write(buffer, 0, length);
+	    }
+	    fos.close();
+	    in.close();
+	} catch (IOException ex) {
+	    Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     public static JSONObject request(String subpath, int id) {
-        String filePath = CACHE_DIR + File.separator + subpath + File.separator + id + ".json";
-        File file = new File(filePath);
-        if (!file.exists()) {
-            file.getParentFile().mkdirs();
-            String url = API_URL + "/" + subpath + "/" + id + "?format=json";
-            download(url, file);
-        }
+	String filePath = CACHE_DIR + File.separator + subpath + File.separator + id + ".json";
+	File file = new File(filePath);
+	if (!file.exists()) {
+	    file.getParentFile().mkdirs();
+	    String url = API_URL + "/" + subpath + "/" + id + "?format=json";
+	    download(url, file);
+	}
 
-        try (FileReader fr = new FileReader(file)) {
-            return (JSONObject) IO.JSON_PARSER.parse(fr);
-        } catch (IOException | org.json.simple.parser.ParseException ex) {
-            Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
+	try (FileReader fr = new FileReader(file)) {
+	    return (JSONObject) IO.JSON_PARSER.parse(fr);
+	} catch (IOException | org.json.simple.parser.ParseException ex) {
+	    Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE, null, ex);
+	}
+	return null;
     }
 
     public static Product getProductById(int id) {
-        JSONObject jo = request("product", id);
-        if (jo != null) {
-            String title_en = (String) jo.get("name");
-            String title_ja = (String) jo.get("name_real");
-            String typeString = (String) jo.get("type");
-            String pictureUrl = (String) jo.get("picture_small");
-            // Get albums
-            ArrayList<AlbumPreview> albums = new ArrayList<>();
-            JSONArray arr = (JSONArray) jo.get("albums");
-            for (int i = 0; i < arr.size(); i++) {
-                JSONObject obj = (JSONObject) arr.get(i);
-                String link = (String) obj.get("link");
-                String[] spl = link.split("/");
-                int album_id = Integer.valueOf(spl[spl.length - 1]);
-                JSONObject titles = (JSONObject) obj.get("titles");
-                String album_title_en = (String) titles.get("en");
-                String album_title_ja = (String) titles.get("ja");
-                String albumTypeString = (String) obj.get("type");
-                String dateString = (String) obj.get("date");
-                Date date = null;
-                if (dateString != null) {
-                    date = parseDate(dateString);
-                }
-                albums.add(new AlbumPreview(album_id, album_title_en,
-                        album_title_ja, albumTypeString, date));
-            }
-            ProductType type = ProductType.getProductTypeFromString(typeString);
-            if (type == ProductType.UNKNOWN) {
-                Logger.getLogger(VgmdbApi.class.getName()).log(Level.WARNING,
-                        "Unknown ProductType string: {0}", typeString);
-            }
-            return new Product(id, title_en, title_ja, type, pictureUrl, albums);
-        }
-        return null;
+	JSONObject jo = request("product", id);
+	if (jo != null) {
+	    String title_en = (String) jo.get("name");
+	    String title_ja = (String) jo.get("name_real");
+	    String typeString = (String) jo.get("type");
+	    String pictureUrl = (String) jo.get("picture_small");
+	    // Get albums
+	    ArrayList<AlbumPreview> albums = new ArrayList<>();
+	    JSONArray arr = (JSONArray) jo.get("albums");
+	    for (int i = 0; i < arr.size(); i++) {
+		JSONObject obj = (JSONObject) arr.get(i);
+		String link = (String) obj.get("link");
+		String[] spl = link.split("/");
+		int album_id = Integer.valueOf(spl[spl.length - 1]);
+		JSONObject titles = (JSONObject) obj.get("titles");
+		String album_title_en = (String) titles.get("en");
+		String album_title_ja = (String) titles.get("ja");
+		String albumTypeString = (String) obj.get("type");
+		String dateString = (String) obj.get("date");
+		Date date = null;
+		if (dateString != null) {
+		    date = parseDate(dateString);
+		}
+		albums.add(new AlbumPreview(album_id, album_title_en,
+			album_title_ja, albumTypeString, date));
+	    }
+	    ProductType type = ProductType.getProductTypeFromString(typeString);
+	    if (type == ProductType.UNKNOWN) {
+		Logger.getLogger(VgmdbApi.class.getName()).log(Level.WARNING,
+			"Unknown ProductType string: {0}", typeString);
+	    }
+	    return new Product(id, title_en, title_ja, type, pictureUrl, albums);
+	}
+	return null;
     }
 
     /**
@@ -151,157 +151,157 @@ public class VgmdbApi {
      * @return the {@link Date} object, or null if the string failed to parse
      */
     private static Date parseDate(String dateString) {
-        try {
-            return SDF_YYYY_MM_DD.parse(dateString);
-        } catch (java.text.ParseException ex) {
-        }
+	try {
+	    return SDF_YYYY_MM_DD.parse(dateString);
+	} catch (java.text.ParseException ex) {
+	}
 
-        // Try parsing just the year and month yyyy-MM
-        try {
-            return SDF_YYYY_MM.parse(dateString);
-        } catch (java.text.ParseException ex) {
-        }
+	// Try parsing just the year and month yyyy-MM
+	try {
+	    return SDF_YYYY_MM.parse(dateString);
+	} catch (java.text.ParseException ex) {
+	}
 
-        // Try parsing just the year yyyy
-        try {
-            return SDF_YYYY.parse(dateString);
-        } catch (java.text.ParseException ex) {
-            Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE,
-                    "Failed to parse date string: " + dateString, ex);
-        }
+	// Try parsing just the year yyyy
+	try {
+	    return SDF_YYYY.parse(dateString);
+	} catch (java.text.ParseException ex) {
+	    Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE,
+		    "Failed to parse date string: " + dateString, ex);
+	}
 
-        return null;
+	return null;
     }
 
     public static Album getAlbumById(int id) {
-        JSONObject obj = request("album", id);
-        if (obj == null) {
-            Logger.getLogger(VgmdbApi.class.getName()).log(Level.INFO,
-                    "Failed to retrieve album with id {0}", id);
-            return null;
-        }
+	JSONObject obj = request("album", id);
+	if (obj == null) {
+	    Logger.getLogger(VgmdbApi.class.getName()).log(Level.INFO,
+		    "Failed to retrieve album with id {0}", id);
+	    return null;
+	}
 
-        String link = (String) obj.get("link");
+	String link = (String) obj.get("link");
 
-        // The link above contains the album id, parse it
-        String[] spl = link.split("/");
-        String album_id_str = spl[spl.length - 1];
-        int album_id = -1;
-        try {
-            album_id = Integer.valueOf(album_id_str);
-        } catch (NumberFormatException ex) {
-            Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE,
-                    "Failed to parse string as integer {0}", album_id_str);
-        }
-        if (album_id == -1 || album_id != id) {
-            Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE,
-                    "Album id mismatch {0} != {1}, using id {1}",
-                    new int[]{album_id, id});
-            album_id = id;
-        }
+	// The link above contains the album id, parse it
+	String[] spl = link.split("/");
+	String album_id_str = spl[spl.length - 1];
+	int album_id = -1;
+	try {
+	    album_id = Integer.valueOf(album_id_str);
+	} catch (NumberFormatException ex) {
+	    Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE,
+		    "Failed to parse string as integer {0}", album_id_str);
+	}
+	if (album_id == -1 || album_id != id) {
+	    Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE,
+		    "Album id mismatch {0} != {1}, using id {1}",
+		    new int[]{album_id, id});
+	    album_id = id;
+	}
 
-        JSONObject titles = (JSONObject) obj.get("names");
-        String title_en = (String) titles.get("en");
-        String title_ja = (String) titles.get("ja");
-        String title_ja_latn = (String) titles.get("ja-latn");
-        String type = (String) obj.get("classification");
-        String picture_small = (String) obj.get("picture_small");
-        String dateString = (String) obj.get("release_date");
-        Date date = null;
-        if (dateString != null) {
-            date = parseDate(dateString);
-        }
+	JSONObject titles = (JSONObject) obj.get("names");
+	String title_en = (String) titles.get("en");
+	String title_ja = (String) titles.get("ja");
+	String title_ja_latn = (String) titles.get("ja-latn");
+	String type = (String) obj.get("classification");
+	String picture_small = (String) obj.get("picture_small");
+	String dateString = (String) obj.get("release_date");
+	Date date = null;
+	if (dateString != null) {
+	    date = parseDate(dateString);
+	}
 
-        // Get tracks
-        List<Track> trackList = new ArrayList<>();
-        JSONArray discs = (JSONArray) obj.get("discs");
-        for (int i = 0; i < discs.size(); i++) {
-            JSONObject disc = (JSONObject) discs.get(i);
-            String discName = (String) disc.get("name");
-            int discNumber = 0;
-            try {
-                discNumber = Integer.valueOf(discName.split("Disc ")[1]);
-            } catch (NumberFormatException ex) {
-                Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE,
-                        "Failed to parse disc number from disc name: {0}",
-                        discName);
-            }
-            JSONArray tracks = (JSONArray) disc.get("tracks");
-            for (int j = 0; j < tracks.size(); j++) {
-                JSONObject track = (JSONObject) tracks.get(j);
-                String length = (String) track.get("track_length");
-                JSONObject names = (JSONObject) track.get("names");
-                String name;
-                // TODO: This assumption is bad
-                // Assume Japanese name is canonical
-                name = (String) names.get("Japanese");
-                if (name == null) {
-                    // Try again, if this fails, just accept that it is null
-                    name = (String) names.get("English");
-                }
-                int trackNumber = j + 1;
-                trackList.add(new Track(name, length, trackNumber, discNumber));
-            }
-        }
+	// Get tracks
+	List<Track> trackList = new ArrayList<>();
+	JSONArray discs = (JSONArray) obj.get("discs");
+	for (int i = 0; i < discs.size(); i++) {
+	    JSONObject disc = (JSONObject) discs.get(i);
+	    String discName = (String) disc.get("name");
+	    int discNumber = 0;
+	    try {
+		discNumber = Integer.valueOf(discName.split("Disc ")[1]);
+	    } catch (NumberFormatException ex) {
+		Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE,
+			"Failed to parse disc number from disc name: {0}",
+			discName);
+	    }
+	    JSONArray tracks = (JSONArray) disc.get("tracks");
+	    for (int j = 0; j < tracks.size(); j++) {
+		JSONObject track = (JSONObject) tracks.get(j);
+		String length = (String) track.get("track_length");
+		JSONObject names = (JSONObject) track.get("names");
+		String name;
+		// TODO: This assumption is bad
+		// Assume Japanese name is canonical
+		name = (String) names.get("Japanese");
+		if (name == null) {
+		    // Try again, if this fails, just accept that it is null
+		    name = (String) names.get("English");
+		}
+		int trackNumber = j + 1;
+		trackList.add(new Track(name, length, trackNumber, discNumber));
+	    }
+	}
 
-        return new Album(album_id, title_en, title_ja, title_ja_latn, type,
-                date, picture_small, trackList);
+	return new Album(album_id, title_en, title_ja, title_ja_latn, type,
+		date, picture_small, trackList);
     }
 
     public static JSONObject search(String subpath, String searchString) {
-        String filePath = CACHE_DIR + File.separator + subpath + File.separator + "search.json";
-        File file = new File(filePath);
-        if (!file.exists()) {
-            file.getParentFile().mkdirs();
-        } else {
-            file.delete();
-        }
+	String filePath = CACHE_DIR + File.separator + subpath + File.separator + "search.json";
+	File file = new File(filePath);
+	if (!file.exists()) {
+	    file.getParentFile().mkdirs();
+	} else {
+	    file.delete();
+	}
 
-        String url = API_URL + "/search/" + subpath + "/" + searchString + "?format=json";
-        download(url, file);
+	String url = API_URL + "/search/" + subpath + "/" + searchString + "?format=json";
+	download(url, file);
 
-        try {
-            return (JSONObject) IO.JSON_PARSER.parse(new FileReader(file));
-        } catch (IOException | org.json.simple.parser.ParseException ex) {
-            Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
+	try {
+	    return (JSONObject) IO.JSON_PARSER.parse(new FileReader(file));
+	} catch (IOException | org.json.simple.parser.ParseException ex) {
+	    Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE, null, ex);
+	}
+	return null;
     }
 
     public static List<ProductPreview> searchProducts(String text) {
-        ArrayList<ProductPreview> results = new ArrayList<>();
-        JSONObject jo = search("products", text);
-        if (jo != null) {
-            JSONObject resultsObj = (JSONObject) jo.get("results");
-            JSONArray prods = (JSONArray) resultsObj.get("products");
-            for (int i = 0; i < prods.size(); i++) {
-                JSONObject product = (JSONObject) prods.get(i);
+	ArrayList<ProductPreview> results = new ArrayList<>();
+	JSONObject jo = search("products", text);
+	if (jo != null) {
+	    JSONObject resultsObj = (JSONObject) jo.get("results");
+	    JSONArray prods = (JSONArray) resultsObj.get("products");
+	    for (int i = 0; i < prods.size(); i++) {
+		JSONObject product = (JSONObject) prods.get(i);
 
-                String link = (String) product.get("link");
-                // The link above contains the album id, parse it
-                String[] spl = link.split("/");
-                String id_str = spl[spl.length - 1];
-                int id = -1;
-                try {
-                    id = Integer.valueOf(id_str);
-                } catch (NumberFormatException ex) {
-                    Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE,
-                            "Failed to parse string as integer {0}", id_str);
-                }
+		String link = (String) product.get("link");
+		// The link above contains the album id, parse it
+		String[] spl = link.split("/");
+		String id_str = spl[spl.length - 1];
+		int id = -1;
+		try {
+		    id = Integer.valueOf(id_str);
+		} catch (NumberFormatException ex) {
+		    Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE,
+			    "Failed to parse string as integer {0}", id_str);
+		}
 
-                JSONObject titles = (JSONObject) product.get("names");
-                String title_en = (String) titles.get("en");
-                String title_ja = (String) titles.get("ja");
-                String typeString = (String) product.get("type");
-                ProductType type = ProductType.getProductTypeFromString(typeString);
-                if (type == ProductType.UNKNOWN) {
-                    Logger.getLogger(VgmdbApi.class.getName()).log(Level.WARNING,
-                            "Unknown ProductType string: {0}", typeString);
-                }
-                results.add(new ProductPreview(id, title_en, title_ja, type));
-            }
-        }
-        return results;
+		JSONObject titles = (JSONObject) product.get("names");
+		String title_en = (String) titles.get("en");
+		String title_ja = (String) titles.get("ja");
+		String typeString = (String) product.get("type");
+		ProductType type = ProductType.getProductTypeFromString(typeString);
+		if (type == ProductType.UNKNOWN) {
+		    Logger.getLogger(VgmdbApi.class.getName()).log(Level.WARNING,
+			    "Unknown ProductType string: {0}", typeString);
+		}
+		results.add(new ProductPreview(id, title_en, title_ja, type));
+	    }
+	}
+	return results;
     }
 
 }

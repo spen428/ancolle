@@ -37,20 +37,20 @@ public class Product extends ProductPreview {
     private final List<AlbumPreview> albums;
 
     public Product(int id, String title_en, String title_ja, ProductType type,
-            String pictureUrlSmall, Collection<AlbumPreview> albums) {
-        super(id, title_en, title_ja, type);
-        this.albums = new ArrayList<>(albums);
-        this.pictureUrlSmall = pictureUrlSmall;
-        this.picture = null;
+	    String pictureUrlSmall, Collection<AlbumPreview> albums) {
+	super(id, title_en, title_ja, type);
+	this.albums = new ArrayList<>(albums);
+	this.pictureUrlSmall = pictureUrlSmall;
+	this.picture = null;
     }
-    
+
     /**
      * Get a list of albums associated with this {@link Product}
      *
      * @return an unmodifiable list of albums
      */
     public List<AlbumPreview> getAlbums() {
-        return Collections.unmodifiableList(albums);
+	return Collections.unmodifiableList(albums);
     }
 
     /**
@@ -61,15 +61,15 @@ public class Product extends ProductPreview {
      * does not exist.
      */
     public Image getPicture() {
-        if (picture == null) {
-            if (pictureUrlSmall == null) {
-                // No URL, can't retrive anything
-                return null;
-            }
-            picture = IO.retrievePicture(pictureUrlSmall, "product",
-                    id + "_small");
-        }
-        return picture;
+	if (picture == null) {
+	    if (pictureUrlSmall == null) {
+		// No URL, can't retrive anything
+		return null;
+	    }
+	    picture = IO.retrievePicture(pictureUrlSmall, "product",
+		    id + "_small");
+	}
+	return picture;
     }
 
 }

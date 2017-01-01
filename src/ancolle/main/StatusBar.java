@@ -31,15 +31,15 @@ public class StatusBar extends HBox {
     public final Label statusLabel;
 
     public StatusBar() {
-        super();
-        setMinHeight(HEIGHT_PX);
-        setMaxHeight(HEIGHT_PX);
-        setAlignment(Pos.CENTER_LEFT);
+	super();
+	setMinHeight(HEIGHT_PX);
+	setMaxHeight(HEIGHT_PX);
+	setAlignment(Pos.CENTER_LEFT);
 
-        statusLabel = new Label("Ready.");
-        statusLabel.setPadding(new Insets(2, 20, 2, 20));
-        statusLabel.setAlignment(Pos.CENTER);
-        getChildren().add(statusLabel);
+	statusLabel = new Label("Ready.");
+	statusLabel.setPadding(new Insets(2, 20, 2, 20));
+	statusLabel.setAlignment(Pos.CENTER);
+	getChildren().add(statusLabel);
     }
 
 }

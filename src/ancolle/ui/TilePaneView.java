@@ -39,22 +39,22 @@ public class TilePaneView extends TilePane {
     private final Thread workerThread;
 
     public TilePaneView(AnColle ancolle) {
-        this.ancolle = ancolle;
-        this.jobQueue = new LinkedBlockingQueue<>();
-        this.workerThread = new Thread(() -> {
-            while (true) {
-                try {
-                    Runnable task = jobQueue.take();
-                    task.run();
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(ProductView.class.getName())
-                            .log(Level.SEVERE, null, ex);
-                    break;
-                }
-            }
-        });
-        this.workerThread.setDaemon(true);
-        this.workerThread.start();
+	this.ancolle = ancolle;
+	this.jobQueue = new LinkedBlockingQueue<>();
+	this.workerThread = new Thread(() -> {
+	    while (true) {
+		try {
+		    Runnable task = jobQueue.take();
+		    task.run();
+		} catch (InterruptedException ex) {
+		    Logger.getLogger(ProductView.class.getName())
+			    .log(Level.SEVERE, null, ex);
+		    break;
+		}
+	    }
+	});
+	this.workerThread.setDaemon(true);
+	this.workerThread.start();
     }
 
     /**
@@ -63,11 +63,11 @@ public class TilePaneView extends TilePane {
      * @param task the task
      */
     public void submitBackgroundTask(Runnable task) {
-        this.jobQueue.add(task);
+	this.jobQueue.add(task);
     }
 
     public void cancelQueuedTasks() {
-        jobQueue.clear();
+	jobQueue.clear();
     }
 
 }

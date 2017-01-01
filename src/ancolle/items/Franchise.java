@@ -31,9 +31,9 @@ public class Franchise extends Product {
     private final List<Product> products;
 
     public Franchise(int id, String title_en, String title_ja,
-            Collection<Product> products) {
-        super(id, title_en, title_ja, ProductType.FRANCHISE, null, null);
-        this.products = new ArrayList<>(products);
+	    Collection<Product> products) {
+	super(id, title_en, title_ja, ProductType.FRANCHISE, null, null);
+	this.products = new ArrayList<>(products);
     }
 
     /**
@@ -42,7 +42,7 @@ public class Franchise extends Product {
      * @return an unmodifiable list of products
      */
     public List<Product> getProducts() {
-        return Collections.unmodifiableList(products);
+	return Collections.unmodifiableList(products);
     }
 
 }

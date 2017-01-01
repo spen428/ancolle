@@ -27,25 +27,25 @@ public class Track implements Comparable<Track> {
     public final int discNumber;
 
     public Track(String name, String length, int trackNumber, int discNumber) {
-        this.name = name;
-        this.trackLength = length;
-        this.trackNumber = trackNumber;
-        this.discNumber = discNumber;
+	this.name = name;
+	this.trackLength = length;
+	this.trackNumber = trackNumber;
+	this.discNumber = discNumber;
 
     }
 
     @Override
     public int compareTo(Track t) {
-        int c = Integer.compare(discNumber, t.discNumber);
-        if (c != 0) {
-            return c;
-        }
-        c = Integer.compare(trackNumber, t.trackNumber);
-        if (c != 0) {
-            return c;
-        }
-        c = name.compareTo(t.name);
-        return c;
+	int c = Integer.compare(discNumber, t.discNumber);
+	if (c != 0) {
+	    return c;
+	}
+	c = Integer.compare(trackNumber, t.trackNumber);
+	if (c != 0) {
+	    return c;
+	}
+	c = name.compareTo(t.name);
+	return c;
     }
 
 }

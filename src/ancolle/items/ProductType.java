@@ -30,7 +30,7 @@ public enum ProductType {
     public final String typeString;
 
     ProductType(String typeString) {
-        this.typeString = typeString;
+	this.typeString = typeString;
     }
 
     /**
@@ -41,12 +41,12 @@ public enum ProductType {
      * was found
      */
     public static ProductType getProductTypeFromString(String str) {
-        for (ProductType pt : values) {
-            if (pt.typeString.equals(str)) {
-                return pt;
-            }
-        }
-        return UNKNOWN;
+	for (ProductType pt : values) {
+	    if (pt.typeString.equals(str)) {
+		return pt;
+	    }
+	}
+	return UNKNOWN;
     }
 
 }

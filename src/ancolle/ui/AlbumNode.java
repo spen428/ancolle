@@ -43,36 +43,36 @@ public class AlbumNode extends VBox {
     public boolean collected = false;
 
     public AlbumNode(double maxWidth) {
-        super();
+	super();
 
-        setPadding(new Insets(TILE_PADDING_PX));
-        setMaxWidth(maxWidth);
-        setAlignment(Pos.BOTTOM_CENTER);
+	setPadding(new Insets(TILE_PADDING_PX));
+	setMaxWidth(maxWidth);
+	setAlignment(Pos.BOTTOM_CENTER);
 
-        albumCover = new ImageView();
-        albumCover.setSmooth(true);
-        albumCover.setPreserveRatio(true);
-        albumCover.setFitWidth(maxWidth);
-        albumCover.setFitHeight(maxWidth);
-        getChildren().add(albumCover);
+	albumCover = new ImageView();
+	albumCover.setSmooth(true);
+	albumCover.setPreserveRatio(true);
+	albumCover.setFitWidth(maxWidth);
+	albumCover.setFitHeight(maxWidth);
+	getChildren().add(albumCover);
 
-        label1 = new Label();
-        label1.maxWidthProperty().bind(widthProperty());
-        label1.setAlignment(Pos.BOTTOM_CENTER);
-        getChildren().add(label1);
+	label1 = new Label();
+	label1.maxWidthProperty().bind(widthProperty());
+	label1.setAlignment(Pos.BOTTOM_CENTER);
+	getChildren().add(label1);
 
-        label2 = new Label();
-        label2.maxWidthProperty().bind(widthProperty());
-        label2.setAlignment(Pos.BOTTOM_CENTER);
-        getChildren().add(label2);
+	label2 = new Label();
+	label2.maxWidthProperty().bind(widthProperty());
+	label2.setAlignment(Pos.BOTTOM_CENTER);
+	getChildren().add(label2);
 
-        // Mouse/key handlers
-        setOnMouseEntered(evt -> {
-            setBackground(COLOR_HOVERING);
-        });
-        setOnMouseExited(evt -> {
-            setBackground(collected ? COLOR_COLLECTED : COLOR_NOT_COLLECTED);
-        });
+	// Mouse/key handlers
+	setOnMouseEntered(evt -> {
+	    setBackground(COLOR_HOVERING);
+	});
+	setOnMouseExited(evt -> {
+	    setBackground(collected ? COLOR_COLLECTED : COLOR_NOT_COLLECTED);
+	});
     }
 
 }

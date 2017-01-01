@@ -48,26 +48,26 @@ public class IO {
      * does not exist.
      */
     public static Image retrievePicture(String url, String itemDirName, String fileName) {
-        Image picture = null;
-        // Build the path to the cached image file
-        String[] spl = url.split("\\.");
-        String ext = spl[spl.length - 1];
-        File file = new File(VgmdbApi.CACHE_DIR + File.separator + itemDirName + File.separator + "pictures" + File.separator + fileName + "." + ext);
-        // Download image if it cannot be found in the cache
-        if (!file.exists()) {
-            Logger.getLogger(Album.class.getName()).log(Level.FINE, "Downloading image");
-            file.getParentFile().mkdirs();
-            VgmdbApi.download(url, file);
-        } else {
-            Logger.getLogger(Album.class.getName()).log(Level.FINE, "Loading image file from cache");
-        }
-        // Load the image
-        try (final FileInputStream fis = new FileInputStream(file)) {
-            picture = new Image(fis);
-        } catch (IOException ex) {
-            Logger.getLogger(Album.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return picture;
+	Image picture = null;
+	// Build the path to the cached image file
+	String[] spl = url.split("\\.");
+	String ext = spl[spl.length - 1];
+	File file = new File(VgmdbApi.CACHE_DIR + File.separator + itemDirName + File.separator + "pictures" + File.separator + fileName + "." + ext);
+	// Download image if it cannot be found in the cache
+	if (!file.exists()) {
+	    Logger.getLogger(Album.class.getName()).log(Level.FINE, "Downloading image");
+	    file.getParentFile().mkdirs();
+	    VgmdbApi.download(url, file);
+	} else {
+	    Logger.getLogger(Album.class.getName()).log(Level.FINE, "Loading image file from cache");
+	}
+	// Load the image
+	try (final FileInputStream fis = new FileInputStream(file)) {
+	    picture = new Image(fis);
+	} catch (IOException ex) {
+	    Logger.getLogger(Album.class.getName()).log(Level.SEVERE, null, ex);
+	}
+	return picture;
     }
 
 }

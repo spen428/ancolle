@@ -28,9 +28,9 @@ import java.util.logging.Logger;
 public class Main {
 
     public static void main(String[] args) {
-        Logger.getGlobal().setLevel(Level.FINE);
-        Logger.getGlobal().addHandler(new ConsoleHandler());
-        AnColle.launch(args);
+	Logger.getGlobal().setLevel(Level.FINE);
+	Logger.getGlobal().addHandler(new ConsoleHandler());
+	AnColle.launch(args);
     }
 
 }
