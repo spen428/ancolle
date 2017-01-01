@@ -92,16 +92,12 @@ public class ProductView extends TilePaneView {
 	}
 	this.products.add(product);
 	ProductNode node = createProductNode(product.title_en, product.title_ja);
+	node.setProduct(product);
 
 	// Styling
 	if (product.type == ProductType.FRANCHISE) {
 	    node.label1.setStyle("-fx-font-weight: bold;");
 	}
-
-	// Mouse listener
-	node.setOnMouseClicked(evt -> {
-	    ancolle.view(product);
-	});
 
 	// Get product logo
 	submitBackgroundTask(() -> {
@@ -120,8 +116,7 @@ public class ProductView extends TilePaneView {
 	    getChildren().add(idx, node);
 	} else {
 	    // Insert before "Add" button
-	    idx = getChildren().size() - 1;
-	    getChildren().add(idx, node);
+	    getChildren().add(getChildren().size() - 1, node);
 	}
 
 	return true;
@@ -158,7 +153,7 @@ public class ProductView extends TilePaneView {
     private ProductNode createProductNode(String label1text, String label2text) {
 	double minWidth = MIN_TILE_WIDTH_PX + (2 * TILE_PADDING_PX);
 	double maxWidth = MAX_TILE_WIDTH_PX + (2 * TILE_PADDING_PX);
-	ProductNode node = new ProductNode(minWidth, maxWidth);
+	ProductNode node = new ProductNode(minWidth, maxWidth, this);
 	node.label1.setText(label1text);
 	node.label2.setText(label2text);
 	return node;
@@ -260,6 +255,29 @@ public class ProductView extends TilePaneView {
 	y -= dialog.getHeight() / 2;
 	dialog.setX(x);
 	dialog.setY(y);
+    }
+
+    /**
+     * Remove a product from the tracker
+     *
+     * @param product the {@link Product} to remove
+     * @return whether the product was removed
+     */
+    boolean removeProduct(Product product) {
+	if (!this.products.contains(product)) {
+	    return false;
+	}
+
+	// Be careful to use Integer object here, otherwise the remove by idx
+	// method will be called
+	ancolle.settings.trackedProductIds.remove((Integer) product.id);
+	this.products.remove(product);
+	// Find and remove the product node
+	boolean removed = getChildren()
+		.removeIf(child -> (child instanceof ProductNode)
+		&& ((ProductNode) child).getProduct() == product);
+
+	return removed;
     }
 
 }
