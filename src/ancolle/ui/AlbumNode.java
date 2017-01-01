@@ -42,6 +42,10 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 	MenuItem menuItemHide = new MenuItem("Hide Album");
 	menuItemHide.setOnAction(evt -> {
 	});
+	MenuItem menuItemReload = new MenuItem("Reload Album");
+	menuItemReload.setOnAction(evt -> {
+	    // TODO
+	});
 	ALBUM_NODE_CONTEXT_MENU.getItems().add(menuItemHide);
 	ALBUM_NODE_CONTEXT_MENU.getItems().add(new MenuItem("Cancel"));
 	ALBUM_NODE_CONTEXT_MENU.setAutoHide(true);
