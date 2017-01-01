@@ -21,6 +21,7 @@ import ancolle.items.Album;
 import ancolle.items.Product;
 import ancolle.items.AlbumPreview;
 import ancolle.items.ProductType;
+import ancolle.items.Track;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -210,8 +211,41 @@ public class VgmdbApi {
         if (dateString != null) {
             date = parseDate(dateString);
         }
+
+        // Get tracks
+        List<Track> trackList = new ArrayList<>();
+        JSONArray discs = (JSONArray) obj.get("discs");
+        for (int i = 0; i < discs.size(); i++) {
+            JSONObject disc = (JSONObject) discs.get(i);
+            String discName = (String) disc.get("name");
+            int discNumber = 0;
+            try {
+                discNumber = Integer.valueOf(discName.split("Disc ")[1]);
+            } catch (NumberFormatException ex) {
+                Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE,
+                        "Failed to parse disc number from disc name: {0}",
+                        discName);
+            }
+            JSONArray tracks = (JSONArray) disc.get("tracks");
+            for (int j = 0; j < tracks.size(); j++) {
+                JSONObject track = (JSONObject) tracks.get(j);
+                String length = (String) track.get("track_length");
+                JSONObject names = (JSONObject) track.get("names");
+                String name;
+                // TODO: This assumption is bad
+                // Assume Japanese name is canonical
+                name = (String) names.get("Japanese");
+                if (name == null) {
+                    // Try again, if this fails, just accept that it is null
+                    name = (String) names.get("English");
+                }
+                int trackNumber = j + 1;
+                trackList.add(new Track(name, length, trackNumber, discNumber));
+            }
+        }
+
         return new Album(album_id, title_en, title_ja, title_ja_latn, type,
-                date, picture_small);
+                date, picture_small, trackList);
     }
 
     public static JSONObject search(String subpath, String searchString) {

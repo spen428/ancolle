@@ -38,10 +38,10 @@ public class AlbumDetailsView extends HBox {
     private static final int PANE_PADDING_PX = 25;
     private static final double COVER_WIDTH_PX = 350;
     private static final double COVER_PADDING_PX = 10;
-    private static final double LABEL_PADDING_PX = 20;
+    private static final double LABEL_PADDING_PX = 5;
 
     private static final Album BLANK_ALBUM = new Album(-1, null, null, null,
-            null, null, null);
+            null, null, null, null);
 
     private Album album;
 
@@ -53,6 +53,8 @@ public class AlbumDetailsView extends HBox {
     private final Label labelTitleJaLatn;
     private final Label labelReleaseDate;
 
+    private final VBox trackList;
+
     public AlbumDetailsView(Album album) {
         setPadding(new Insets(PANE_PADDING_PX));
         setAlignment(Pos.BASELINE_CENTER);
@@ -62,7 +64,7 @@ public class AlbumDetailsView extends HBox {
         VBox.setVgrow(albumCoverContainer, Priority.ALWAYS);
         albumCoverContainer.setPadding(new Insets(COVER_PADDING_PX));
         albumCoverContainer.setMaxWidth(COVER_WIDTH_PX + (2 * COVER_PADDING_PX));
-        albumCoverContainer.setAlignment(Pos.BOTTOM_CENTER);
+        albumCoverContainer.setAlignment(Pos.TOP_CENTER);
         albumCoverContainer.getChildren().add(albumCover);
         getChildren().add(albumCoverContainer);
 
@@ -89,6 +91,10 @@ public class AlbumDetailsView extends HBox {
         labelTitleJaLatn = addNewDetailsLabel();
         labelReleaseDate = addNewDetailsLabel();
 
+        // Track List
+        trackList = new VBox();
+        detailsVbox.getChildren().add(trackList);
+
         setAlbum(album);
     }
 
@@ -98,12 +104,28 @@ public class AlbumDetailsView extends HBox {
      * @return the new {@link Label}
      */
     private Label addNewDetailsLabel() {
+        Label label = createNewDetailsLabel();
+        detailsVbox.getChildren().add(label);
+        return label;
+    }
+
+    /**
+     * Create a new details label
+     *
+     * @return the new {@link Label}
+     */
+    private Label createNewDetailsLabel() {
         Label label = new Label();
         label.maxWidthProperty().bind(detailsVbox.widthProperty());
-        label.setAlignment(Pos.BOTTOM_CENTER);
+        label.setAlignment(Pos.BOTTOM_LEFT);
         label.setPadding(new Insets(LABEL_PADDING_PX));
         label.setFont(new Font("Meiryo", 16));
-        detailsVbox.getChildren().add(label);
+        label.setOnMouseEntered(evt -> {
+            label.setStyle("-fx-background-color: #9ec1ff;");
+        });
+        label.setOnMouseExited(evt -> {
+            label.setStyle("-fx-background-color: none;");
+        });
         return label;
     }
 
@@ -126,9 +148,9 @@ public class AlbumDetailsView extends HBox {
         albumCover.setImage(album.getPicture());
 
         // Titles
-        labelTitleEn.setText(album.title_en);
-        labelTitleJa.setText(album.title_ja);
-        labelTitleJaLatn.setText(album.title_ja_latn);
+        labelTitleEn.setText("English Title: " + album.title_en);
+        labelTitleJa.setText("Japanese Title: " + album.title_ja);
+        labelTitleJaLatn.setText("Romanized Title: " + album.title_ja_latn);
 
         // Date
         String dateString = "";
@@ -136,6 +158,25 @@ public class AlbumDetailsView extends HBox {
             dateString = new SimpleDateFormat("yyyy-MM-dd").format(album.date);
         }
         labelReleaseDate.setText("Release Date: " + dateString);
+
+        // Track List
+        trackList.getChildren().clear();
+        Label trackListHeader = createNewDetailsLabel();
+        trackListHeader.setText("Track List:");
+        trackList.getChildren().add(trackListHeader);
+        album.getTracks().stream().map((track) -> {
+            Label trackLabel = createNewDetailsLabel();
+            String trackLengthString = "";
+            if (!track.trackLength.equals("Unknown")) {
+                trackLengthString = "[" + track.trackLength + "]";
+            }
+            String text = String.format("%02d-%02d. %s %s", track.discNumber,
+                    track.trackNumber, track.name, trackLengthString);
+            trackLabel.setText(text);
+            return trackLabel;
+        }).forEachOrdered((trackLabel) -> {
+            trackList.getChildren().add(trackLabel);
+        });
     }
 
     public Album getAlbum() {
