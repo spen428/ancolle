@@ -95,7 +95,10 @@ public class AlbumView extends TilePaneView {
         }
         node.label2.setText(dateString);
 
+        node.collected = ancolle.settings.collectedAlbumIds.contains(album.id);
+
         // Mouse listener
+        // TODO: would this be better in AlbumNode class?
         node.setOnMouseClicked(evt -> {
             if (evt.getButton() == MouseButton.PRIMARY && evt.getClickCount() > 1) {
                 // If full album details are loaded, open details in a new tab
@@ -105,6 +108,19 @@ public class AlbumView extends TilePaneView {
                     Tab tab = ancolle.newTab(fullAlbum.title_ja, adv);
                     ancolle.setSelectedTab(tab);
                 }
+            } else if (evt.getButton() == MouseButton.SECONDARY) {
+                final int album_id = album.id;
+                Platform.runLater(() -> {
+                    boolean contains = ancolle.settings.collectedAlbumIds.contains(album_id);
+                    if (!contains) {
+                        ancolle.settings.collectedAlbumIds.add(album_id);
+                    } else {
+                        ancolle.settings.collectedAlbumIds.remove(album_id);
+                    }
+                    contains = !contains;
+                    node.collected = contains;
+                    node.setBackground(contains ? AlbumNode.COLOR_COLLECTED : AlbumNode.COLOR_NOT_COLLECTED);
+                });
             }
         });
 

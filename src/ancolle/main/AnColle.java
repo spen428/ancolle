@@ -45,7 +45,7 @@ public class AnColle extends Application {
     private static final Background AZURE_BACKGROUND = new Background(
             new BackgroundFill(Color.AZURE, null, null));
 
-    private final Settings settings;
+    public final Settings settings;
     private final ProductView productView;
     private final AlbumView albumView;
     private final VBox root;
@@ -100,7 +100,7 @@ public class AnColle extends Application {
      * @param id the {@link Product} id
      */
     public void addTrackedProduct(int id) {
-        settings.trackedProducts.add(id);
+        settings.trackedProductIds.add(id);
         productView.addProductById(id);
         saveSettings();
     }
@@ -185,7 +185,7 @@ public class AnColle extends Application {
 
         // Load and display tracked products in the background
         Platform.runLater(() -> {
-            settings.trackedProducts.forEach((id) -> {
+            settings.trackedProductIds.forEach((id) -> {
                 productView.addProductById(id);
             });
         });

@@ -21,7 +21,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 /**
  * @author samuel
@@ -29,9 +32,15 @@ import javafx.scene.layout.VBox;
 // TODO: Almost identical to ProductNode
 public class AlbumNode extends VBox {
 
+    public static final Background COLOR_NOT_COLLECTED = new Background(new BackgroundFill(null, null, null));
+    public static final Background COLOR_COLLECTED = new Background(new BackgroundFill(Color.FORESTGREEN, null, null));
+    public static final Background COLOR_HOVERING = new Background(new BackgroundFill(Color.AQUAMARINE, null, null));
+
     public final ImageView albumCover;
     public final Label label1;
     public final Label label2;
+
+    public boolean collected = false;
 
     public AlbumNode(double maxWidth) {
         super();
@@ -59,10 +68,10 @@ public class AlbumNode extends VBox {
 
         // Mouse/key handlers
         setOnMouseEntered(evt -> {
-            setStyle("-fx-background-color: #9ec1ff;");
+            setBackground(COLOR_HOVERING);
         });
         setOnMouseExited(evt -> {
-            setStyle("-fx-background-color: none;");
+            setBackground(collected ? COLOR_COLLECTED : COLOR_NOT_COLLECTED);
         });
     }
 

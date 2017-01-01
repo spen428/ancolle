@@ -22,7 +22,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.simple.JSONArray;
@@ -40,12 +42,15 @@ public class Settings {
 
     // Keys (for JSON load/saving)
     public static final String TRACKED_PRODUCTS_KEY = "trackedProducts";
+    public static final String COLLECTED_ALBUMS_KEY = "collectedAlbums";
 
     // Members
-    public final List<Integer> trackedProducts;
+    public final List<Integer> trackedProductIds;
+    public final Set<Integer> collectedAlbumIds;
 
     public Settings() {
-        this.trackedProducts = new ArrayList<>();
+        this.trackedProductIds = new ArrayList<>();
+        this.collectedAlbumIds = new HashSet<>();
     }
 
     /**
@@ -73,14 +78,21 @@ public class Settings {
         }
 
         try (FileWriter fw = new FileWriter(file)) {
-            JSONObject jo = new JSONObject();
-            JSONArray arr = new JSONArray();
-            settings.trackedProducts.forEach((Integer id) -> {
-                arr.add(id);
-            });
-            jo.put(Settings.TRACKED_PRODUCTS_KEY, arr);
+            JSONObject root = new JSONObject();
 
-            fw.write(jo.toJSONString());
+            JSONArray trackedProductIdsArr = new JSONArray();
+            settings.trackedProductIds.forEach((Integer id) -> {
+                trackedProductIdsArr.add(id);
+            });
+            root.put(Settings.TRACKED_PRODUCTS_KEY, trackedProductIdsArr);
+
+            JSONArray collectedAlbumIdsArr = new JSONArray();
+            settings.collectedAlbumIds.forEach((Integer id) -> {
+                trackedProductIdsArr.add(id);
+            });
+            root.put(Settings.COLLECTED_ALBUMS_KEY, trackedProductIdsArr);
+
+            fw.write(root.toJSONString());
             fw.flush();
             fw.close();
         } catch (IOException ex) {
@@ -105,13 +117,23 @@ public class Settings {
         }
 
         try (FileReader fr = new FileReader(file)) {
-            JSONObject jo = (JSONObject) IO.JSON_PARSER.parse(fr);
-            JSONArray arr = (JSONArray) jo.get(TRACKED_PRODUCTS_KEY);
-            for (int i = 0; i < arr.size(); i++) {
-                // Number literals in json are always longs, so we must cast down
-                Long longVal = (Long) arr.get(i);
-                int id = longVal.intValue();
-                settings.trackedProducts.add(id);
+            JSONObject root = (JSONObject) IO.JSON_PARSER.parse(fr);
+            JSONArray arr = (JSONArray) root.get(TRACKED_PRODUCTS_KEY);
+            if (arr != null) {
+                for (int i = 0; i < arr.size(); i++) {
+                    // Number literals in json are always longs, so we must cast down
+                    Long longVal = (Long) arr.get(i);
+                    int id = longVal.intValue();
+                    settings.trackedProductIds.add(id);
+                }
+            }
+            arr = (JSONArray) root.get(COLLECTED_ALBUMS_KEY);
+            if (arr != null) {
+                for (int i = 0; i < arr.size(); i++) {
+                    Long longVal = (Long) arr.get(i);
+                    int id = longVal.intValue();
+                    settings.collectedAlbumIds.add(id);
+                }
             }
         } catch (ParseException | IOException ex) {
             Logger.getLogger(IO.class.getName()).log(Level.SEVERE, null, ex);
