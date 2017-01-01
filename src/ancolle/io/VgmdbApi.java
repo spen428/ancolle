@@ -16,10 +16,10 @@
  */
 package ancolle.io;
 
-import ancolle.items.ProductPreview;
 import ancolle.items.Album;
-import ancolle.items.Product;
 import ancolle.items.AlbumPreview;
+import ancolle.items.Product;
+import ancolle.items.ProductPreview;
 import ancolle.items.ProductType;
 import ancolle.items.Track;
 import java.io.File;
