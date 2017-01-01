@@ -16,62 +16,70 @@
  */
 package ancolle.ui;
 
-import static ancolle.ui.TilePaneView.TILE_PADDING_PX;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
+import ancolle.items.Album;
+import ancolle.items.AlbumPreview;
+import java.util.logging.Logger;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tab;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 /**
  * @author samuel
  */
-// TODO: Almost identical to ProductNode
-public class AlbumNode extends VBox {
+public class AlbumNode extends ItemNode<AlbumPreview> {
 
     public static final Background COLOR_NOT_COLLECTED = new Background(new BackgroundFill(null, null, null));
     public static final Background COLOR_COLLECTED = new Background(new BackgroundFill(Color.FORESTGREEN, null, null));
-    public static final Background COLOR_HOVERING = new Background(new BackgroundFill(Color.AQUAMARINE, null, null));
 
-    public final ImageView albumCover;
-    public final Label label1;
-    public final Label label2;
+    private static final ContextMenu ALBUM_NODE_CONTEXT_MENU;
+    private static final Logger LOG = Logger.getLogger(AlbumNode.class.getName());
+
+    static {
+	ALBUM_NODE_CONTEXT_MENU = new ContextMenu();
+	MenuItem menuItemHide = new MenuItem("Hide Album");
+	menuItemHide.setOnAction(evt -> {
+	});
+	ALBUM_NODE_CONTEXT_MENU.getItems().add(menuItemHide);
+	ALBUM_NODE_CONTEXT_MENU.getItems().add(new MenuItem("Cancel"));
+	ALBUM_NODE_CONTEXT_MENU.setAutoHide(true);
+    }
+
+    private final AlbumView albumView;
 
     private boolean collected = false;
 
-    public AlbumNode(double maxWidth) {
+    public AlbumNode(double maxWidth, AlbumView albumView) {
 	super();
+	this.albumView = albumView;
 
-	setPadding(new Insets(TILE_PADDING_PX));
 	setMaxWidth(maxWidth);
-	setAlignment(Pos.BOTTOM_CENTER);
 
-	albumCover = new ImageView();
-	albumCover.setSmooth(true);
-	albumCover.setPreserveRatio(true);
-	albumCover.setFitWidth(maxWidth);
-	albumCover.setFitHeight(maxWidth);
-	getChildren().add(albumCover);
-
-	label1 = new Label();
-	label1.maxWidthProperty().bind(widthProperty());
-	label1.setAlignment(Pos.BOTTOM_CENTER);
-	getChildren().add(label1);
-
-	label2 = new Label();
-	label2.maxWidthProperty().bind(widthProperty());
-	label2.setAlignment(Pos.BOTTOM_CENTER);
-	getChildren().add(label2);
-
-	// Mouse/key handlers
-	setOnMouseEntered(evt -> {
-	    setBackground(COLOR_HOVERING);
-	});
 	setOnMouseExited(evt -> {
 	    updateBackground();
+	});
+	setOnMouseClicked(evt -> {
+	    switch (evt.getButton()) {
+		case PRIMARY:
+		    toggleCollected();
+		    break;
+		case MIDDLE:
+		    // If full album details are loaded, open details in a new tab
+		    Album fullAlbum = albumView.fullAlbumMap.get(getAlbum());
+		    if (fullAlbum != null) {
+			AlbumDetailsView adv = new AlbumDetailsView(fullAlbum);
+			Tab tab = albumView.ancolle.newTab(fullAlbum.title_ja, adv);
+			albumView.ancolle.setSelectedTab(tab);
+		    }
+		    break;
+		case SECONDARY:
+		    showContextMenu(evt);
+		    break;
+		default:
+		    break;
+	    }
 	});
     }
 
@@ -101,6 +109,34 @@ public class AlbumNode extends VBox {
      */
     public boolean isCollected() {
 	return this.collected;
+    }
+
+    @Override
+    protected ContextMenu getContextMenu() {
+	return ALBUM_NODE_CONTEXT_MENU;
+    }
+
+    private void toggleCollected() {
+	AlbumPreview album = getAlbum();
+	if (album == null) {
+	    return;
+	}
+	boolean contains = albumView.ancolle.settings.collectedAlbumIds.contains(album.id);
+	if (!contains) {
+	    albumView.ancolle.settings.collectedAlbumIds.add(album.id);
+	} else {
+	    albumView.ancolle.settings.collectedAlbumIds.remove(album.id);
+	}
+	contains = !contains;
+	setCollected(contains);
+    }
+
+    public AlbumPreview getAlbum() {
+	return getItem();
+    }
+
+    public void setAlbum(AlbumPreview album) {
+	setItem(album);
     }
 
 }
