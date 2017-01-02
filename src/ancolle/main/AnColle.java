@@ -66,10 +66,11 @@ public class AnColle extends Application {
 	this.mainTab = new Tab("Explorer", mainContent);
 	this.mainTab.setClosable(false);
 	this.tabPane = new TabPane();
-	this.tabPane.getTabs().add(mainTab);
 	this.settings = new Settings();
 	this.statusBar = new StatusBar();
 
+	this.tabPane.getTabs().add(mainTab);
+	this.tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
 	this.settings.load();
     }
 
