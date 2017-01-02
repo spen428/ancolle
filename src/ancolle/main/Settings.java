@@ -45,6 +45,7 @@ public class Settings {
     public static final String TRACKED_PRODUCTS_KEY = "trackedProducts";
     public static final String COLLECTED_ALBUMS_KEY = "collectedAlbums";
     public static final String HIDDEN_ALBUMS_KEY = "hiddenAlbums";
+    public static final String SHOW_HIDDEN_ITEMS_KEY = "showHiddenItems";
 
     private static final Logger LOG = Logger.getLogger(Settings.class.getName());
 
@@ -78,11 +79,13 @@ public class Settings {
     public final List<Integer> trackedProductIds;
     public final Set<Integer> collectedAlbumIds;
     public final Set<Integer> hiddenAlbumIds;
+    private boolean showHiddenItems;
 
     public Settings() {
 	this.trackedProductIds = new ArrayList<>(10);
 	this.collectedAlbumIds = new HashSet<>(50);
 	this.hiddenAlbumIds = new HashSet<>(20);
+	this.showHiddenItems = false;
     }
 
     /**
@@ -104,6 +107,8 @@ public class Settings {
 	    loadIntegerArray(root, TRACKED_PRODUCTS_KEY, trackedProductIds);
 	    loadIntegerArray(root, COLLECTED_ALBUMS_KEY, collectedAlbumIds);
 	    loadIntegerArray(root, HIDDEN_ALBUMS_KEY, hiddenAlbumIds);
+	    Object value = root.get(SHOW_HIDDEN_ITEMS_KEY);
+	    showHiddenItems = value == null ? false : (boolean) value;
 	} catch (ParseException | IOException ex) {
 	    LOG.log(Level.SEVERE, null, ex);
 	    return false;
@@ -129,6 +134,7 @@ public class Settings {
 	try (FileWriter fw = new FileWriter(file)) {
 	    JSONObject root = new JSONObject();
 
+	    // TODO: duplicate code
 	    JSONArray trackedProductIdsArr = new JSONArray();
 	    trackedProductIds.forEach((Integer id) -> {
 		trackedProductIdsArr.add(id);
@@ -147,6 +153,8 @@ public class Settings {
 	    });
 	    root.put(Settings.HIDDEN_ALBUMS_KEY, hiddenAlbumIdsArr);
 
+	    root.put(Settings.SHOW_HIDDEN_ITEMS_KEY, showHiddenItems);
+
 	    fw.write(root.toJSONString());
 	    fw.flush();
 	    fw.close();
@@ -156,6 +164,14 @@ public class Settings {
 	}
 
 	return true;
+    }
+
+    public boolean isShowHiddenItems() {
+	return showHiddenItems;
+    }
+
+    public void setShowHiddenItems(boolean value) {
+	this.showHiddenItems = value;
     }
 
 }

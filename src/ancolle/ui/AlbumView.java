@@ -88,6 +88,8 @@ public class AlbumView extends TilePaneView {
 	double maxWidth = MAX_TILE_WIDTH_PX + (2 * TILE_PADDING_PX);
 	AlbumNode node = new AlbumNode(maxWidth, this);
 	node.setAlbum(album);
+	node.setHidden(ancolle.settings.hiddenAlbumIds.contains(album.id));
+
 	node.label1.setText(album.title_en);
 
 	// Get date and set date label

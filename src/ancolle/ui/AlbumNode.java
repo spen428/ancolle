@@ -33,6 +33,7 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 
     public static final Background COLOR_NOT_COLLECTED = new Background(new BackgroundFill(null, null, null));
     public static final Background COLOR_COLLECTED = new Background(new BackgroundFill(Color.FORESTGREEN, null, null));
+    public static final double HIDDEN_OPACITY = 0.4;
 
     private static final ContextMenu ALBUM_NODE_CONTEXT_MENU;
     private static final Logger LOG = Logger.getLogger(AlbumNode.class.getName());
@@ -79,7 +80,7 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 		    if (fullAlbum != null) {
 			AlbumDetailsView adv = new AlbumDetailsView(fullAlbum);
 			Tab tab = albumView.ancolle.newTab(fullAlbum.title_ja, adv);
-			albumView.ancolle.setSelectedTab(tab);
+			// albumView.ancolle.setSelectedTab(tab);
 		    }
 		    break;
 		case SECONDARY:
@@ -93,17 +94,6 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 
     public boolean isHidden() {
 	return hidden;
-    }
-
-    /**
-     * Set the `hidden` status of this {@link AlbumNode}. This will
-     * automatically update the parent {@link AlbumView}
-     *
-     * @param hidden the value to set
-     */
-    public void setHidden(boolean hidden) {
-	this.hidden = hidden;
-	updateHiddenStatus();
     }
 
     private AlbumView getAlbumView() {
@@ -176,7 +166,8 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
     }
 
     private void updateHiddenStatus() {
-	// TODO
+	// TODO: More efficient to process single album?
+	albumView.ancolle.updateHiddenItems();
     }
 
     private void toggleHidden() {
@@ -192,6 +183,18 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 	}
 	status = !status;
 	setHidden(status);
+    }
+
+    /**
+     * Set the `hidden` status of this {@link AlbumNode}. This will
+     * automatically update the parent {@link AlbumView}
+     *
+     * @param hidden the value to set
+     */
+    public void setHidden(boolean hidden) {
+	this.hidden = hidden;
+	setOpacity(hidden ? HIDDEN_OPACITY : 1.0);
+	updateHiddenStatus();
     }
 
 }

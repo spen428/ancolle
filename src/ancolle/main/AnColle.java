@@ -23,6 +23,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
@@ -141,6 +142,13 @@ public class AnColle extends Application {
 
 	Menu menuView = new Menu("View");
 	menu.getMenus().add(menuView);
+	CheckMenuItem menuItemShowHiddenItems = new CheckMenuItem("Show hidden items");
+	menuItemShowHiddenItems.setSelected(settings.isShowHiddenItems());
+	menuItemShowHiddenItems.setOnAction(evt -> {
+	    settings.setShowHiddenItems(!settings.isShowHiddenItems());
+	    updateHiddenItems();
+	});
+	menuView.getItems().add(menuItemShowHiddenItems);
 
 	Menu menuTools = new Menu("Tools");
 	menu.getMenus().add(menuTools);
@@ -196,6 +204,10 @@ public class AnColle extends Application {
 	primaryStage.setTitle("AnColle");
 	primaryStage.setScene(scene);
 	primaryStage.show();
+    }
+
+    public void updateHiddenItems() {
+	// TODO
     }
 
 }
