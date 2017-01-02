@@ -41,10 +41,13 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 	ALBUM_NODE_CONTEXT_MENU = new ContextMenu();
 	MenuItem menuItemHide = new MenuItem("Hide Album");
 	menuItemHide.setOnAction(evt -> {
+	    AlbumNode node = (AlbumNode) ALBUM_NODE_CONTEXT_MENU.getOwnerNode();
+	    node.toggleHidden();
 	});
 	MenuItem menuItemReload = new MenuItem("Reload Album");
 	menuItemReload.setOnAction(evt -> {
-	    // TODO
+	    AlbumNode node = (AlbumNode) ALBUM_NODE_CONTEXT_MENU.getOwnerNode();
+	    node.reloadAlbum();
 	});
 	ALBUM_NODE_CONTEXT_MENU.getItems().add(menuItemHide);
 	ALBUM_NODE_CONTEXT_MENU.getItems().add(new MenuItem("Cancel"));
@@ -54,6 +57,7 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
     private final AlbumView albumView;
 
     private boolean collected = false;
+    private boolean hidden = false;
 
     public AlbumNode(double maxWidth, AlbumView albumView) {
 	super();
@@ -85,6 +89,25 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 		    break;
 	    }
 	});
+    }
+
+    public boolean isHidden() {
+	return hidden;
+    }
+
+    /**
+     * Set the `hidden` status of this {@link AlbumNode}. This will
+     * automatically update the parent {@link AlbumView}
+     *
+     * @param hidden the value to set
+     */
+    public void setHidden(boolean hidden) {
+	this.hidden = hidden;
+	updateHiddenStatus();
+    }
+
+    private AlbumView getAlbumView() {
+	return albumView;
     }
 
     /**
@@ -141,6 +164,34 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 
     public void setAlbum(AlbumPreview album) {
 	setItem(album);
+    }
+
+    private void reloadAlbum() {
+	AlbumPreview album = getAlbum();
+	if (album == null) {
+	    return;
+	}
+	// TODO
+	// albumView.fullAlbumMap.remove(album);
+    }
+
+    private void updateHiddenStatus() {
+	// TODO
+    }
+
+    private void toggleHidden() {
+	AlbumPreview album = getAlbum();
+	if (album == null) {
+	    return;
+	}
+	boolean status = albumView.ancolle.settings.hiddenAlbumIds.contains(album.id);
+	if (!status) {
+	    albumView.ancolle.settings.hiddenAlbumIds.add(album.id);
+	} else {
+	    albumView.ancolle.settings.hiddenAlbumIds.remove(album.id);
+	}
+	status = !status;
+	setHidden(status);
     }
 
 }

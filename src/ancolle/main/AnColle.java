@@ -66,8 +66,10 @@ public class AnColle extends Application {
 	this.mainTab.setClosable(false);
 	this.tabPane = new TabPane();
 	this.tabPane.getTabs().add(mainTab);
-	this.settings = Settings.loadSettings();
+	this.settings = new Settings();
 	this.statusBar = new StatusBar();
+
+	this.settings.load();
     }
 
     /**
@@ -91,7 +93,7 @@ public class AnColle extends Application {
      * Save program settings.
      */
     private void saveSettings() {
-	Settings.saveSettings(settings);
+	settings.save();
     }
 
     /**

@@ -22,6 +22,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,18 +44,82 @@ public class Settings {
     // Keys (for JSON load/saving)
     public static final String TRACKED_PRODUCTS_KEY = "trackedProducts";
     public static final String COLLECTED_ALBUMS_KEY = "collectedAlbums";
+    public static final String HIDDEN_ALBUMS_KEY = "hiddenAlbums";
 
     private static final Logger LOG = Logger.getLogger(Settings.class.getName());
 
     /**
-     * Save the {@link Settings} object to {@link Settings#SETTINGS_PATH} in the
-     * JSON format.
+     * Load all integers from a JSON array into a collection. If successful, the
+     * collection will be cleared in the process.
      *
-     * @param settings the {@link Settings} instance
+     * @param root the root JSON object containing the JSON array
+     * @param key the key pointing to the JSON array
+     * @param collection the {@link Collection} into which to load the values
+     * @return true if successful, false if an array could not be found for the
+     * given key
+     */
+    private static boolean loadIntegerArray(JSONObject root, String key,
+	    Collection<Integer> collection) {
+	JSONArray arr = (JSONArray) root.get(key);
+	if (arr == null) {
+	    return false;
+	}
+
+	collection.clear();
+	for (int i = 0; i < arr.size(); i++) {
+	    Long longVal = (Long) arr.get(i);
+	    int id = longVal.intValue();
+	    collection.add(id);
+	}
+	return true;
+    }
+
+    // Members
+    public final List<Integer> trackedProductIds;
+    public final Set<Integer> collectedAlbumIds;
+    public final Set<Integer> hiddenAlbumIds;
+
+    public Settings() {
+	this.trackedProductIds = new ArrayList<>(10);
+	this.collectedAlbumIds = new HashSet<>(50);
+	this.hiddenAlbumIds = new HashSet<>(20);
+    }
+
+    /**
+     * Load settings from {@link Settings#SETTINGS_PATH} into this
+     * {@link Settings} instance. If successful, this will overwrite any
+     * existing data in this settings instance
+     *
+     * @return false if the settings file does not exist or was empty, or
+     * loading was otherwise unsuccessful, else true
+     */
+    public boolean load() {
+	File file = new File(SETTINGS_PATH);
+	if (!file.exists() || file.length() == 0) {
+	    return false;
+	}
+
+	try (FileReader fr = new FileReader(file)) {
+	    JSONObject root = (JSONObject) IO.JSON_PARSER.parse(fr);
+	    loadIntegerArray(root, TRACKED_PRODUCTS_KEY, trackedProductIds);
+	    loadIntegerArray(root, COLLECTED_ALBUMS_KEY, collectedAlbumIds);
+	    loadIntegerArray(root, HIDDEN_ALBUMS_KEY, hiddenAlbumIds);
+	} catch (ParseException | IOException ex) {
+	    LOG.log(Level.SEVERE, null, ex);
+	    return false;
+	}
+
+	return true;
+    }
+
+    /**
+     * Save this {@link Settings} object to {@link Settings#SETTINGS_PATH} in
+     * the JSON format.
+     *
      * @return success
      */
     @SuppressWarnings("unchecked")
-    public static boolean saveSettings(Settings settings) {
+    public boolean save() {
 	LOG.log(Level.INFO, "Saving settings to {0}", SETTINGS_PATH);
 	File file = new File(SETTINGS_PATH);
 	if (!file.exists()) {
@@ -65,16 +130,22 @@ public class Settings {
 	    JSONObject root = new JSONObject();
 
 	    JSONArray trackedProductIdsArr = new JSONArray();
-	    settings.trackedProductIds.forEach((Integer id) -> {
+	    trackedProductIds.forEach((Integer id) -> {
 		trackedProductIdsArr.add(id);
 	    });
 	    root.put(Settings.TRACKED_PRODUCTS_KEY, trackedProductIdsArr);
 
 	    JSONArray collectedAlbumIdsArr = new JSONArray();
-	    settings.collectedAlbumIds.forEach((Integer id) -> {
+	    collectedAlbumIds.forEach((Integer id) -> {
 		collectedAlbumIdsArr.add(id);
 	    });
 	    root.put(Settings.COLLECTED_ALBUMS_KEY, collectedAlbumIdsArr);
+
+	    JSONArray hiddenAlbumIdsArr = new JSONArray();
+	    hiddenAlbumIds.forEach((Integer id) -> {
+		hiddenAlbumIdsArr.add(id);
+	    });
+	    root.put(Settings.HIDDEN_ALBUMS_KEY, hiddenAlbumIdsArr);
 
 	    fw.write(root.toJSONString());
 	    fw.flush();
@@ -85,64 +156,6 @@ public class Settings {
 	}
 
 	return true;
-    }
-
-    /**
-     * Load settings from {@link Settings#SETTINGS_PATH} into a new
-     * {@link Settings} instance.
-     *
-     * @return the new {@link Settings} instance
-     */
-    public static Settings loadSettings() {
-	final Settings settings = new Settings();
-	File file = new File(SETTINGS_PATH);
-	if (!file.exists() || file.length() == 0) {
-	    return settings;
-	}
-
-	try (FileReader fr = new FileReader(file)) {
-	    JSONObject root = (JSONObject) IO.JSON_PARSER.parse(fr);
-	    JSONArray arr = (JSONArray) root.get(TRACKED_PRODUCTS_KEY);
-	    if (arr != null) {
-		for (int i = 0; i < arr.size(); i++) {
-		    // Number literals in json are always longs, so we must cast down
-		    Long longVal = (Long) arr.get(i);
-		    int id = longVal.intValue();
-		    settings.trackedProductIds.add(id);
-		}
-	    }
-	    arr = (JSONArray) root.get(COLLECTED_ALBUMS_KEY);
-	    if (arr != null) {
-		for (int i = 0; i < arr.size(); i++) {
-		    Long longVal = (Long) arr.get(i);
-		    int id = longVal.intValue();
-		    settings.collectedAlbumIds.add(id);
-		}
-	    }
-	} catch (ParseException | IOException ex) {
-	    LOG.log(Level.SEVERE, null, ex);
-	}
-
-	return settings;
-    }
-
-    // Members
-    public final List<Integer> trackedProductIds;
-    public final Set<Integer> collectedAlbumIds;
-
-    public Settings() {
-	this.trackedProductIds = new ArrayList<>(10);
-	this.collectedAlbumIds = new HashSet<>(100);
-    }
-
-    /**
-     * Save this {@link Settings} object to {@link Settings#SETTINGS_PATH} in
-     * the JSON format.
-     *
-     * @return success
-     */
-    public boolean save() {
-	return saveSettings(this);
     }
 
 }
