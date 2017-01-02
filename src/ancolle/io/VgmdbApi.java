@@ -27,8 +27,10 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -257,8 +259,17 @@ public class VgmdbApi {
 	    file.delete();
 	}
 
-	String url = API_URL + "/search/" + subpath + "/" + searchString + "?format=json";
-	download(url, file);
+	String encodedSearchString;
+	try {
+	    encodedSearchString = URLEncoder.encode(searchString, "UTF-8");
+	    // The URLEncoder above does not encode spaces as expected, fix below
+	    encodedSearchString = encodedSearchString.replace("+", "%20");
+	    String url = API_URL + "/search/" + subpath + "/"
+		    + encodedSearchString + "?format=json";
+	    download(url, file);
+	} catch (UnsupportedEncodingException ex) {
+	    Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE, null, ex);
+	}
 
 	try {
 	    return (JSONObject) IO.JSON_PARSER.parse(new FileReader(file));
