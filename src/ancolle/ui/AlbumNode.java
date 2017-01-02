@@ -45,12 +45,15 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 	    AlbumNode node = (AlbumNode) ALBUM_NODE_CONTEXT_MENU.getOwnerNode();
 	    node.toggleHidden();
 	});
+	ALBUM_NODE_CONTEXT_MENU.getItems().add(menuItemHide);
+
 	MenuItem menuItemReload = new MenuItem("Reload Album");
 	menuItemReload.setOnAction(evt -> {
 	    AlbumNode node = (AlbumNode) ALBUM_NODE_CONTEXT_MENU.getOwnerNode();
 	    node.reloadAlbum();
 	});
-	ALBUM_NODE_CONTEXT_MENU.getItems().add(menuItemHide);
+//	ALBUM_NODE_CONTEXT_MENU.getItems().add(menuItemReload);
+
 	ALBUM_NODE_CONTEXT_MENU.getItems().add(new MenuItem("Cancel"));
 	ALBUM_NODE_CONTEXT_MENU.setAutoHide(true);
     }

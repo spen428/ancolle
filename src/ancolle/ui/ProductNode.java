@@ -40,11 +40,14 @@ public class ProductNode extends ItemNode<Product> {
 		anchor.getProductView().removeProduct(anchor.getProduct());
 	    }
 	});
+	PRODUCT_NODE_CONTEXT_MENU.getItems().add(menuItemRemoveProduct);
+
 	MenuItem menuItemReload = new MenuItem("Reload Product");
 	menuItemReload.setOnAction(evt -> {
 	    // TODO
 	});
-	PRODUCT_NODE_CONTEXT_MENU.getItems().add(menuItemRemoveProduct);
+//	PRODUCT_NODE_CONTEXT_MENU.getItems().add(menuItemReload);
+
 	PRODUCT_NODE_CONTEXT_MENU.getItems().add(new MenuItem("Cancel"));
 	PRODUCT_NODE_CONTEXT_MENU.setAutoHide(true);
     }
