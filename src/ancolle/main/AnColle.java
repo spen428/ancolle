@@ -203,8 +203,11 @@ public class AnColle extends Application {
 	});
 
 	Scene scene = new Scene(root, 1280, 720);
-	primaryStage.setTitle("AnColle");
 	primaryStage.setScene(scene);
+	primaryStage.setTitle("AnColle");
+	primaryStage.setOnCloseRequest(evt -> {
+	    saveSettings();
+	});
 	primaryStage.show();
     }
 
