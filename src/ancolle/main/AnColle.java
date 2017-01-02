@@ -29,6 +29,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Priority;
@@ -160,6 +161,14 @@ public class AnColle extends Application {
 
 	VBox.setVgrow(tabPane, Priority.ALWAYS);
 	root.getChildren().add(tabPane);
+	tabPane.setOnKeyPressed(evt -> {
+	    if (evt.getCode() == KeyCode.W && evt.isControlDown()) {
+		int idx = tabPane.getSelectionModel().getSelectedIndex();
+		if (idx != 0) {
+		    tabPane.getTabs().remove(idx);
+		}
+	    }
+	});
 
 	root.getChildren().add(statusBar);
 
@@ -178,7 +187,9 @@ public class AnColle extends Application {
 			viewProducts();
 			break;
 		    case S:
-			saveSettings();
+			if (evt.isControlDown()) {
+			    saveSettings();
+			}
 			break;
 		    case A:
 			productView.doAddProductDialog();
