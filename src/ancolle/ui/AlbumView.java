@@ -57,18 +57,17 @@ public class AlbumView extends TilePaneView {
 	setProduct(product);
     }
 
-    private void updateProduct() {
-	getChildren().clear();
-	if (product == null) {
-	    return;
-	}
-
-	fullAlbumMap.clear(); // Clear album cache
+    private void addAlbums() {
+	boolean showHidden = ancolle.settings.isShowHiddenItems();
 	List<AlbumPreview> albums = product.getAlbums();
 	albums.forEach((album) -> {
-	    AlbumNode node = createAlbumNode(album);
-	    node.setCollected(ancolle.settings.collectedAlbumIds.contains(album.id));
-	    getChildren().add(node);
+	    if (!showHidden && ancolle.settings.hiddenAlbumIds.contains(album.id)) {
+		// Don't add hidden item
+	    } else {
+		AlbumNode node = createAlbumNode(album);
+		node.setCollected(ancolle.settings.collectedAlbumIds.contains(album.id));
+		getChildren().add(node);
+	    }
 	});
     }
 
@@ -77,7 +76,11 @@ public class AlbumView extends TilePaneView {
 	    return;
 	}
 	this.product = product;
-	updateProduct();
+	if (product != null) {
+	    fullAlbumMap.clear();
+	    getChildren().clear();
+	    addAlbums();
+	}
     }
 
     public Product getProduct() {
@@ -120,6 +123,15 @@ public class AlbumView extends TilePaneView {
 	    }
 	});
 	return node;
+    }
+
+    public void updateHiddenItems() {
+	if (ancolle.settings.isShowHiddenItems()) {
+	    getChildren().clear();
+	    addAlbums();
+	} else {
+	    getChildren().removeIf(child -> ((AlbumNode) child).isHidden());
+	}
     }
 
 }

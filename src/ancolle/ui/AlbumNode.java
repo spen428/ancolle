@@ -165,11 +165,6 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 	// albumView.fullAlbumMap.remove(album);
     }
 
-    private void updateHiddenStatus() {
-	// TODO: More efficient to process single album?
-	albumView.ancolle.updateHiddenItems();
-    }
-
     private void toggleHidden() {
 	AlbumPreview album = getAlbum();
 	if (album == null) {
@@ -183,6 +178,7 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 	}
 	status = !status;
 	setHidden(status);
+	albumView.updateHiddenItems();
     }
 
     /**
@@ -194,7 +190,6 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
     public void setHidden(boolean hidden) {
 	this.hidden = hidden;
 	setOpacity(hidden ? HIDDEN_OPACITY : 1.0);
-	updateHiddenStatus();
     }
 
 }

@@ -280,4 +280,8 @@ public class ProductView extends TilePaneView {
 	return removed;
     }
 
+    public void updateHiddenItems() {
+	// TODO
+    }
+
 }

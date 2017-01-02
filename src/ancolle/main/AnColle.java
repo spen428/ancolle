@@ -146,7 +146,8 @@ public class AnColle extends Application {
 	menuItemShowHiddenItems.setSelected(settings.isShowHiddenItems());
 	menuItemShowHiddenItems.setOnAction(evt -> {
 	    settings.setShowHiddenItems(!settings.isShowHiddenItems());
-	    updateHiddenItems();
+	    productView.updateHiddenItems();
+	    albumView.updateHiddenItems();
 	});
 	menuView.getItems().add(menuItemShowHiddenItems);
 
@@ -204,10 +205,6 @@ public class AnColle extends Application {
 	primaryStage.setTitle("AnColle");
 	primaryStage.setScene(scene);
 	primaryStage.show();
-    }
-
-    public void updateHiddenItems() {
-	// TODO
     }
 
 }
