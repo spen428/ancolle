@@ -116,8 +116,8 @@ public class VgmdbApi {
 	    String typeString = (String) jo.get("type");
 	    String pictureUrl = (String) jo.get("picture_small");
 	    // Get albums
-	    ArrayList<AlbumPreview> albums = new ArrayList<>();
 	    JSONArray arr = (JSONArray) jo.get("albums");
+	    ArrayList<AlbumPreview> albums = new ArrayList<>(arr.size());
 	    for (int i = 0; i < arr.size(); i++) {
 		JSONObject obj = (JSONObject) arr.get(i);
 		String link = (String) obj.get("link");
@@ -139,6 +139,10 @@ public class VgmdbApi {
 	    if (type == ProductType.UNKNOWN) {
 		Logger.getLogger(VgmdbApi.class.getName()).log(Level.WARNING,
 			"Unknown ProductType string: {0}", typeString);
+	    } else if (type == ProductType.FRANCHISE) {
+		Logger.getLogger(VgmdbApi.class.getName()).log(Level.WARNING,
+			"This Product is a franchise and may need further "
+			+ "parsing: ({0}) {1}", new Object[]{id, title_en});
 	    }
 	    return new Product(id, title_en, title_ja, type, pictureUrl, albums);
 	}
@@ -147,7 +151,7 @@ public class VgmdbApi {
 
     /**
      * Attempt to parse a UTC date string into a {@link Date} object. Supported
-     * forms are yyyy-MM-dd and yyyy-MM.
+     * forms are yyyy-MM-dd, yyyy-MM, and yyyy.
      *
      * @param dateString the date string, e.g. "2000-01-02" or "2003-06"
      * @return the {@link Date} object, or null if the string failed to parse
@@ -251,7 +255,8 @@ public class VgmdbApi {
     }
 
     public static JSONObject search(String subpath, String searchString) {
-	String filePath = CACHE_DIR + File.separator + subpath + File.separator + "search.json";
+	String filePath = CACHE_DIR + File.separator + subpath + File.separator
+		+ "search.json";
 	File file = new File(filePath);
 	if (!file.exists()) {
 	    file.getParentFile().mkdirs();
