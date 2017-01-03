@@ -35,6 +35,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
@@ -84,7 +85,8 @@ public class ProductView extends TilePaneView {
      * method should only be called by the JavaFX thread
      *
      * @param product the product
-     * @param idx where to insert the product node, -1 for default
+     * @param idx where to insert the product node, -1 to automatically insert
+     * in sorting order
      * @return true if successfully added
      */
     public boolean addProduct(Product product, int idx) {
@@ -112,10 +114,11 @@ public class ProductView extends TilePaneView {
 
 	// Insert into view
 	if (idx != -1) {
+	    // Insert with provided idx value
 	    getChildren().add(idx, node);
 	} else {
-	    // Insert before "Add" button
-	    getChildren().add(getChildren().size() - 1, node);
+	    // Insert sorted
+	    insertProduct(node);
 	}
 
 	return true;
@@ -127,11 +130,19 @@ public class ProductView extends TilePaneView {
      *
      * @return the adder node
      */
-    private ProductNode createProductAdderNode() {
-	ProductNode node = createProductNode("+", "");
+    private Node createProductAdderNode() {
+	ItemNode node = new ItemNode() {
+	    @Override
+	    protected ContextMenu getContextMenu() {
+		return null;
+	    }
+	};
+
 	node.getChildren().remove(node.label2);
+	node.label1.setText("+");
 	node.label1.setAlignment(Pos.CENTER);
 	node.label1.setFont(new Font("Arial", 40));
+	node.setAlignment(Pos.CENTER);
 
 	node.setOnMouseClicked(evt -> {
 	    if (evt.getButton() == MouseButton.PRIMARY) {
@@ -174,8 +185,7 @@ public class ProductView extends TilePaneView {
 	    final Product product = VgmdbApi.getProductById(id);
 	    // Ensure that UI operations occur on the correct thread.
 	    Platform.runLater(() -> {
-		int idx = getChildren().indexOf(placeholder);
-		boolean added = addProduct(product, idx);
+		boolean added = addProduct(product);
 		if (!added) {
 		    LOG.log(Level.INFO, "Product with id #{0} was not "
 			    + "added. Possible duplicate?", product.id);
@@ -280,6 +290,23 @@ public class ProductView extends TilePaneView {
 
     public void updateHiddenItems() {
 	// TODO
+    }
+
+    /**
+     * Insert the given {@link ProductNode} into the view such that the sorting
+     * order of the child nodes is preserved.
+     *
+     * @param node the node to insert
+     */
+    private void insertProduct(ProductNode node) {
+	int insertIdx;
+	for (insertIdx = 0; insertIdx < getChildren().size(); insertIdx++) {
+	    Node child = getChildren().get(insertIdx);
+	    if (ItemNodeComparators.PRODUCT_NODE_COMPARATOR.compare(node, child) <= 0) {
+		break;
+	    }
+	}
+	getChildren().add(insertIdx, node);
     }
 
 }

@@ -21,7 +21,6 @@ import java.util.logging.Logger;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.Background;
 
 /**
  * @author lykat
@@ -65,12 +64,6 @@ public class ProductNode extends ItemNode<Product> {
 	setProduct(null);
 
 	// Mouse/key handlers
-	setOnMouseEntered(evt -> {
-	    setBackground(COLOR_HOVERING);
-	});
-	setOnMouseExited(evt -> {
-	    setBackground(Background.EMPTY);
-	});
 	setOnMouseClicked(evt -> {
 	    if (evt.getButton() == MouseButton.PRIMARY) {
 		productView.ancolle.view(getProduct());
