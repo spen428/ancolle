@@ -53,7 +53,7 @@ public class AnColle extends Application {
 	    new BackgroundFill(Color.AZURE, null, null));
     private static final Logger LOG = Logger.getLogger(AnColle.class.getName());
 
-    public final Settings settings;
+    private final Settings settings;
     private final ProductView productView;
     private final AlbumView albumView;
     private final VBox root;
@@ -62,6 +62,7 @@ public class AnColle extends Application {
     private final ScrollPane scrollPane;
     private final Tab mainTab;
     private final TabPane tabPane;
+    private final String MAIN_TAB_TITLE = "Explorer";
 
     public AnColle() {
 	super();
@@ -70,12 +71,12 @@ public class AnColle extends Application {
 	this.scrollPane = new ScrollPane();
 	this.productView = new ProductView(this);
 	this.albumView = new AlbumView(this);
-	this.mainTab = new Tab("Explorer", mainContent);
-	this.mainTab.setClosable(false);
+	this.mainTab = new Tab(MAIN_TAB_TITLE, mainContent);
 	this.tabPane = new TabPane();
 	this.settings = new Settings();
 	this.statusBar = new StatusBar();
 
+	this.mainTab.setClosable(false);
 	this.tabPane.getTabs().add(mainTab);
 	this.tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
 	this.settings.load();
@@ -102,7 +103,7 @@ public class AnColle extends Application {
      * Save program settings.
      */
     private void saveSettings() {
-	settings.save();
+	getSettings().save();
     }
 
     /**
@@ -111,7 +112,7 @@ public class AnColle extends Application {
      * @param id the {@link Product} id
      */
     public void addTrackedProduct(int id) {
-	settings.trackedProductIds.add(id);
+	getSettings().trackedProductIds.add(id);
 	productView.addProductById(id);
 	saveSettings();
     }
@@ -154,9 +155,9 @@ public class AnColle extends Application {
 	Menu menuView = new Menu("View");
 	menu.getMenus().add(menuView);
 	CheckMenuItem menuItemShowHiddenItems = new CheckMenuItem("Show hidden items");
-	menuItemShowHiddenItems.setSelected(settings.isShowHiddenItems());
+	menuItemShowHiddenItems.setSelected(getSettings().isShowHiddenItems());
 	menuItemShowHiddenItems.setOnAction(evt -> {
-	    settings.setShowHiddenItems(!settings.isShowHiddenItems());
+	    getSettings().setShowHiddenItems(!settings.isShowHiddenItems());
 	    productView.updateHiddenItems();
 	    albumView.updateHiddenItems();
 	});
@@ -217,7 +218,7 @@ public class AnColle extends Application {
 
 	// Load and display tracked products in the background
 	Platform.runLater(() -> {
-	    settings.trackedProductIds.forEach((id) -> {
+	    getSettings().trackedProductIds.forEach((id) -> {
 		productView.addProductById(id);
 	    });
 	});
@@ -229,6 +230,13 @@ public class AnColle extends Application {
 	    saveSettings();
 	});
 	primaryStage.show();
+    }
+
+    /**
+     * @return the settings
+     */
+    public Settings getSettings() {
+	return settings;
     }
 
 }

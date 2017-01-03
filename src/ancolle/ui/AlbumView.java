@@ -58,14 +58,14 @@ public class AlbumView extends TilePaneView {
     }
 
     private void addAlbums() {
-	boolean showHidden = ancolle.settings.isShowHiddenItems();
+	boolean showHidden = ancolle.getSettings().isShowHiddenItems();
 	List<AlbumPreview> albums = product.getAlbums();
 	albums.forEach((album) -> {
-	    if (!showHidden && ancolle.settings.hiddenAlbumIds.contains(album.id)) {
+	    if (!showHidden && ancolle.getSettings().hiddenAlbumIds.contains(album.id)) {
 		// Don't add hidden item
 	    } else {
 		AlbumNode node = createAlbumNode(album);
-		node.setCollected(ancolle.settings.collectedAlbumIds.contains(album.id));
+		node.setCollected(ancolle.getSettings().collectedAlbumIds.contains(album.id));
 		getChildren().add(node);
 	    }
 	});
@@ -91,7 +91,7 @@ public class AlbumView extends TilePaneView {
 	double maxWidth = MAX_TILE_WIDTH_PX + (2 * TILE_PADDING_PX);
 	AlbumNode node = new AlbumNode(maxWidth, this);
 	node.setAlbum(album);
-	node.setHidden(ancolle.settings.hiddenAlbumIds.contains(album.id));
+	node.setHidden(ancolle.getSettings().hiddenAlbumIds.contains(album.id));
 
 	node.label1.setText(album.title_en);
 
@@ -126,7 +126,7 @@ public class AlbumView extends TilePaneView {
     }
 
     public void updateHiddenItems() {
-	if (ancolle.settings.isShowHiddenItems()) {
+	if (ancolle.getSettings().isShowHiddenItems()) {
 	    getChildren().clear();
 	    addAlbums();
 	} else {

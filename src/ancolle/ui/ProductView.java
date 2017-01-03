@@ -268,7 +268,7 @@ public class ProductView extends TilePaneView {
 
 	// Be careful to use Integer object here, otherwise the remove by idx
 	// method will be called
-	ancolle.settings.trackedProductIds.remove((Integer) product.id);
+	ancolle.getSettings().trackedProductIds.remove((Integer) product.id);
 	this.products.remove(product);
 	// Find and remove the product node
 	boolean removed = getChildren()

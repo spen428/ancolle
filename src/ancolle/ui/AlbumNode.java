@@ -141,11 +141,11 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 	if (album == null) {
 	    return;
 	}
-	boolean contains = albumView.ancolle.settings.collectedAlbumIds.contains(album.id);
+	boolean contains = albumView.ancolle.getSettings().collectedAlbumIds.contains(album.id);
 	if (!contains) {
-	    albumView.ancolle.settings.collectedAlbumIds.add(album.id);
+	    albumView.ancolle.getSettings().collectedAlbumIds.add(album.id);
 	} else {
-	    albumView.ancolle.settings.collectedAlbumIds.remove(album.id);
+	    albumView.ancolle.getSettings().collectedAlbumIds.remove(album.id);
 	}
 	contains = !contains;
 	setCollected(contains);
@@ -173,11 +173,11 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 	if (album == null) {
 	    return;
 	}
-	boolean status = albumView.ancolle.settings.hiddenAlbumIds.contains(album.id);
+	boolean status = albumView.ancolle.getSettings().hiddenAlbumIds.contains(album.id);
 	if (!status) {
-	    albumView.ancolle.settings.hiddenAlbumIds.add(album.id);
+	    albumView.ancolle.getSettings().hiddenAlbumIds.add(album.id);
 	} else {
-	    albumView.ancolle.settings.hiddenAlbumIds.remove(album.id);
+	    albumView.ancolle.getSettings().hiddenAlbumIds.remove(album.id);
 	}
 	status = !status;
 	setHidden(status);
