@@ -71,7 +71,7 @@ public class VgmdbApi {
 	try {
 	    download(new URL(url), file);
 	} catch (MalformedURLException ex) {
-	    Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE, null, ex);
+	    LOG.log(Level.SEVERE, null, ex);
 	}
     }
 
@@ -92,7 +92,7 @@ public class VgmdbApi {
 	    fos.close();
 	    in.close();
 	} catch (IOException ex) {
-	    Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE, null, ex);
+	    LOG.log(Level.SEVERE, null, ex);
 	}
     }
 
@@ -108,7 +108,7 @@ public class VgmdbApi {
 	try (Reader r = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
 	    return (JSONObject) IO.JSON_PARSER.parse(r);
 	} catch (org.json.simple.parser.ParseException | IOException ex) {
-	    Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE, null, ex);
+	    LOG.log(Level.SEVERE, null, ex);
 	}
 	return null;
     }
@@ -142,12 +142,10 @@ public class VgmdbApi {
 	    }
 	    ProductType type = ProductType.getProductTypeFromString(typeString);
 	    if (type == ProductType.UNKNOWN) {
-		Logger.getLogger(VgmdbApi.class.getName()).log(Level.WARNING,
-			"Unknown ProductType string: {0}", typeString);
+		LOG.log(Level.WARNING, "Unknown ProductType string: {0}", typeString);
 	    } else if (type == ProductType.FRANCHISE) {
-		Logger.getLogger(VgmdbApi.class.getName()).log(Level.FINE,
-			"Fetching products associated with franchise ({0}) {1}",
-			new Object[]{id, title_en});
+		LOG.log(Level.FINE, "Fetching products associated with "
+			+ "franchise ({0}) {1}", new Object[]{id, title_en});
 		JSONArray titles = (JSONArray) jo.get("titles");
 		ArrayList<Product> products = new ArrayList<>(titles.size());
 		for (int i = 0; i < titles.size(); i++) {
@@ -190,8 +188,8 @@ public class VgmdbApi {
 	try {
 	    return SDF_YYYY.parse(dateString);
 	} catch (java.text.ParseException ex) {
-	    Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE,
-		    "Failed to parse date string: " + dateString, ex);
+	    LOG.log(Level.SEVERE, "Failed to parse date string: "
+		    + dateString, ex);
 	}
 
 	return null;
@@ -200,8 +198,7 @@ public class VgmdbApi {
     public static Album getAlbumById(int id) {
 	JSONObject obj = request("album", id);
 	if (obj == null) {
-	    Logger.getLogger(VgmdbApi.class.getName()).log(Level.INFO,
-		    "Failed to retrieve album with id {0}", id);
+	    LOG.log(Level.INFO, "Failed to retrieve album with id {0}", id);
 	    return null;
 	}
 
@@ -214,12 +211,11 @@ public class VgmdbApi {
 	try {
 	    album_id = Integer.valueOf(album_id_str);
 	} catch (NumberFormatException ex) {
-	    Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE,
-		    "Failed to parse string as integer {0}", album_id_str);
+	    LOG.log(Level.SEVERE, "Failed to parse string as integer {0}",
+		    album_id_str);
 	}
 	if (album_id == -1 || album_id != id) {
-	    Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE,
-		    "Album id mismatch {0} != {1}, using id {1}",
+	    LOG.log(Level.SEVERE, "Album id mismatch {0} != {1}, using id {1}",
 		    new int[]{album_id, id});
 	    album_id = id;
 	}
@@ -246,9 +242,8 @@ public class VgmdbApi {
 	    try {
 		discNumber = Integer.valueOf(discName.split("Disc ")[1]);
 	    } catch (NumberFormatException ex) {
-		Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE,
-			"Failed to parse disc number from disc name: {0}",
-			discName);
+		LOG.log(Level.SEVERE, "Failed to parse disc number from disc "
+			+ "name: {0}", discName);
 	    }
 	    JSONArray tracks = (JSONArray) disc.get("tracks");
 	    for (int j = 0; j < tracks.size(); j++) {
@@ -291,13 +286,13 @@ public class VgmdbApi {
 		    + encodedSearchString + "?format=json";
 	    download(url, file);
 	} catch (UnsupportedEncodingException ex) {
-	    Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE, null, ex);
+	    LOG.log(Level.SEVERE, null, ex);
 	}
 
 	try (Reader r = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
 	    return (JSONObject) IO.JSON_PARSER.parse(r);
 	} catch (IOException | org.json.simple.parser.ParseException ex) {
-	    Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE, null, ex);
+	    LOG.log(Level.SEVERE, null, ex);
 	}
 	return null;
     }
@@ -319,8 +314,7 @@ public class VgmdbApi {
 		try {
 		    id = Integer.valueOf(id_str);
 		} catch (NumberFormatException ex) {
-		    Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE,
-			    "Failed to parse string as integer {0}", id_str);
+		    LOG.log(Level.SEVERE, "Failed to parse string as integer {0}", id_str);
 		}
 
 		JSONObject titles = (JSONObject) product.get("names");
@@ -329,13 +323,15 @@ public class VgmdbApi {
 		String typeString = (String) product.get("type");
 		ProductType type = ProductType.getProductTypeFromString(typeString);
 		if (type == ProductType.UNKNOWN) {
-		    Logger.getLogger(VgmdbApi.class.getName()).log(Level.WARNING,
-			    "Unknown ProductType string: {0}", typeString);
+		    LOG.log(Level.WARNING, "Unknown ProductType string: {0}", typeString);
 		}
 		results.add(new ProductPreview(id, title_en, title_ja, type));
 	    }
 	}
 	return results;
+    }
+
+    private VgmdbApi() {
     }
 
 }

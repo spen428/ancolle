@@ -48,8 +48,7 @@ public class TilePaneView extends TilePane {
 		    Runnable task = jobQueue.take();
 		    task.run();
 		} catch (InterruptedException ex) {
-		    Logger.getLogger(ProductView.class.getName())
-			    .log(Level.SEVERE, null, ex);
+		    LOG.log(Level.SEVERE, null, ex);
 		    break;
 		}
 	    }

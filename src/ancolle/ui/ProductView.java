@@ -102,11 +102,9 @@ public class ProductView extends TilePaneView {
 
 	// Get product logo
 	submitBackgroundTask(() -> {
-	    Logger.getLogger(ProductView.class.getName()).log(Level.FINE,
-		    "Fetching product cover for product #", product.id);
+	    LOG.log(Level.FINE, "Fetching product cover for product #", product.id);
 	    final Image image = product.getPicture();
-	    Logger.getLogger(ProductView.class.getName()).log(Level.FINE,
-		    "Fetched product cover for product #", product.id);
+	    LOG.log(Level.FINE, "Fetched product cover for product #", product.id);
 	    Platform.runLater(() -> {
 		node.imageView.setImage(image);
 	    });
@@ -179,9 +177,8 @@ public class ProductView extends TilePaneView {
 		int idx = getChildren().indexOf(placeholder);
 		boolean added = addProduct(product, idx);
 		if (!added) {
-		    Logger.getLogger(ProductView.class.getName())
-			    .log(Level.INFO, "Product with id #{0} was not "
-				    + "added. Possible duplicate?", product.id);
+		    LOG.log(Level.INFO, "Product with id #{0} was not "
+			    + "added. Possible duplicate?", product.id);
 		}
 		getChildren().remove(placeholder);
 	    });
