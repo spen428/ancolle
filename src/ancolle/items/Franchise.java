@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 import javafx.scene.image.Image;
 
 /**
@@ -28,6 +29,8 @@ import javafx.scene.image.Image;
  * @author samuel
  */
 public class Franchise extends Product {
+
+    private static final Logger LOG = Logger.getLogger(Franchise.class.getName());
 
     private final List<Product> products;
 

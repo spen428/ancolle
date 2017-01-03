@@ -16,10 +16,14 @@
  */
 package ancolle.items;
 
+import java.util.logging.Logger;
+
 /**
  * @author samuel
  */
 public class Track implements Comparable<Track> {
+
+    private static final Logger LOG = Logger.getLogger(Track.class.getName());
 
     public final String trackLength;
     public final String name; // Canonical name

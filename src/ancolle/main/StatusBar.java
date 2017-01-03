@@ -16,6 +16,7 @@
  */
 package ancolle.main;
 
+import java.util.logging.Logger;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -27,6 +28,7 @@ import javafx.scene.layout.HBox;
 public class StatusBar extends HBox {
 
     private static final double HEIGHT_PX = 22;
+    private static final Logger LOG = Logger.getLogger(StatusBar.class.getName());
 
     public final Label statusLabel;
 

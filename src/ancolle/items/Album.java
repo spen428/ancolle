@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 import javafx.scene.image.Image;
 
 /**
@@ -30,6 +31,8 @@ import javafx.scene.image.Image;
  * @author samuel
  */
 public class Album extends AlbumPreview {
+
+    private static final Logger LOG = Logger.getLogger(Album.class.getName());
 
     public final String title_ja_latn; // Romanized name
     public final String pictureUrlSmall;

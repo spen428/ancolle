@@ -17,6 +17,7 @@
 package ancolle.items;
 
 import java.util.Date;
+import java.util.logging.Logger;
 
 /**
  * Album information as it appears when retrieving Product information
@@ -24,6 +25,8 @@ import java.util.Date;
  * @author samuel
  */
 public class AlbumPreview extends Item {
+
+    private static final Logger LOG = Logger.getLogger(AlbumPreview.class.getName());
 
     public final String type;
     public final Date date;

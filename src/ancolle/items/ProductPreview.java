@@ -16,10 +16,14 @@
  */
 package ancolle.items;
 
+import java.util.logging.Logger;
+
 /**
  * @author samuel
  */
 public class ProductPreview extends Item {
+
+    private static final Logger LOG = Logger.getLogger(ProductPreview.class.getName());
 
     public final ProductType type;
 

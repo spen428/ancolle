@@ -51,6 +51,7 @@ public class ProductView extends TilePaneView {
 
     private static final double MIN_TILE_WIDTH_PX = 50;
     private static final double MAX_TILE_WIDTH_PX = 250;
+    private static final Logger LOG = Logger.getLogger(ProductView.class.getName());
 
     private final Set<Product> products;
 

@@ -18,6 +18,7 @@ package ancolle.ui;
 
 import ancolle.items.Album;
 import java.text.SimpleDateFormat;
+import java.util.logging.Logger;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -42,6 +43,7 @@ public class AlbumDetailsView extends HBox {
 
     private static final Album BLANK_ALBUM = new Album(-1, null, null, null,
 	    null, null, null, null);
+    private static final Logger LOG = Logger.getLogger(AlbumDetailsView.class.getName());
 
     private Album album;
 

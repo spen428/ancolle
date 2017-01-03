@@ -33,6 +33,7 @@ public class TilePaneView extends TilePane {
 
     public static final double PANE_PADDING_PX = 25;
     public static final double TILE_PADDING_PX = 10;
+    private static final Logger LOG = Logger.getLogger(TilePaneView.class.getName());
 
     protected final AnColle ancolle;
     private final BlockingQueue<Runnable> jobQueue;

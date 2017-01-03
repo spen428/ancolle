@@ -51,6 +51,7 @@ public class AnColle extends Application {
 
     private static final Background AZURE_BACKGROUND = new Background(
 	    new BackgroundFill(Color.AZURE, null, null));
+    private static final Logger LOG = Logger.getLogger(AnColle.class.getName());
 
     public final Settings settings;
     private final ProductView productView;

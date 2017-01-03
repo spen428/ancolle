@@ -59,6 +59,7 @@ public class VgmdbApi {
     private static final SimpleDateFormat SDF_YYYY_MM = new SimpleDateFormat("yyyy-MM");
     private static final SimpleDateFormat SDF_YYYY = new SimpleDateFormat("yyyy");
     private static final int DOWNLOAD_BUFFER_SIZE_BYTES = 1024;
+    private static final Logger LOG = Logger.getLogger(VgmdbApi.class.getName());
 
     /**
      * Download the data found at the given URL and save it to the given file

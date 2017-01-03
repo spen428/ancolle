@@ -21,7 +21,7 @@ import java.util.Objects;
 /**
  * @author samuel
  */
-abstract class Item {
+public abstract class Item {
 
     public final int id;
     public final String title_en;
