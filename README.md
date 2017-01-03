@@ -8,6 +8,8 @@ interface with VGMdb.
 
 ## Screenshots
 
+![Product tracker](doc/tracker.png)
+
 ![Album tracker](doc/albumview.png)
 
 ## Build
