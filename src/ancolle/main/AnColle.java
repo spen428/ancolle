@@ -47,6 +47,8 @@ import javafx.stage.Stage;
  */
 public class AnColle extends Application {
 
+    public static final String VERSION = "0.2a";
+
     private static final Background AZURE_BACKGROUND = new Background(
 	    new BackgroundFill(Color.AZURE, null, null));
 
@@ -221,7 +223,7 @@ public class AnColle extends Application {
 
 	Scene scene = new Scene(root, 1280, 720);
 	primaryStage.setScene(scene);
-	primaryStage.setTitle("AnColle");
+	primaryStage.setTitle("AnColle " + VERSION);
 	primaryStage.setOnCloseRequest(evt -> {
 	    saveSettings();
 	});
