@@ -19,6 +19,9 @@ package ancolle.main;
 import ancolle.items.Product;
 import ancolle.ui.AlbumView;
 import ancolle.ui.ProductView;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Node;
@@ -132,6 +135,9 @@ public class AnColle extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+	Logger.getGlobal().setLevel(Level.ALL);
+	Logger.getGlobal().addHandler(new ConsoleHandler());
+
 	// MENU BAR //
 	MenuBar menu = new MenuBar();
 	root.getChildren().add(menu);
