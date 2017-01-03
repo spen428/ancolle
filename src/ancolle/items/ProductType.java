@@ -23,7 +23,8 @@ package ancolle.items;
  */
 public enum ProductType {
     FRANCHISE("Franchise"), GAME("Game"), VIDEO("Video"), ANIMATION("Animation"),
-    OTHER("Other"), RADIO_AND_DRAMA("Radio & Drama"), UNKNOWN("");
+    OTHER("Other"), RADIO_AND_DRAMA("Radio & Drama"), UNKNOWN(""),
+    PRINT_PUBLICATION("Print Publication");
 
     private static final ProductType[] values = ProductType.values();
 
