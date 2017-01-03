@@ -62,9 +62,23 @@ public class Settings {
      * @return true if successful, false if an array could not be found for the
      * given key
      */
-    private static boolean loadIntegerArray(JSONObject root, String key,
+    private static boolean loadIntegersFromJSONArray(JSONObject root, String key,
 	    Collection<Integer> collection) {
 	JSONArray arr = (JSONArray) root.get(key);
+	return loadIntegersFromJSONArray(arr, collection);
+    }
+
+    /**
+     * Load all integers from a JSON array into a collection. If successful, the
+     * collection will be cleared in the process.
+     *
+     * @param arr the {@link JSONArray}
+     * @param collection the {@link Collection} into which to load the values
+     * @return true if successful, false if an array could not be found for the
+     * given key
+     */
+    private static boolean loadIntegersFromJSONArray(JSONArray arr,
+	    Collection<Integer> collection) {
 	if (arr == null) {
 	    return false;
 	}
@@ -76,6 +90,22 @@ public class Settings {
 	    collection.add(id);
 	}
 	return true;
+    }
+
+    /**
+     * Create a new {@link JSONArray} and fill it with the values from the given
+     * {@link Collection}
+     *
+     * @param collection the collection
+     * @return the created array
+     */
+    @SuppressWarnings("unchecked")
+    private static JSONArray createJSONArray(Collection<?> collection) {
+	JSONArray arr = new JSONArray();
+	collection.forEach(item -> {
+	    arr.add(item);
+	});
+	return arr;
     }
 
     // Members
@@ -99,6 +129,7 @@ public class Settings {
      * @return false if the settings file does not exist or was empty, or
      * loading was otherwise unsuccessful, else true
      */
+    @SuppressWarnings("unchecked")
     public boolean load() {
 	File file = new File(SETTINGS_PATH);
 	if (!file.exists() || file.length() == 0) {
@@ -107,11 +138,10 @@ public class Settings {
 
 	try (Reader r = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
 	    JSONObject root = (JSONObject) IO.JSON_PARSER.parse(r);
-	    loadIntegerArray(root, TRACKED_PRODUCTS_KEY, trackedProductIds);
-	    loadIntegerArray(root, COLLECTED_ALBUMS_KEY, collectedAlbumIds);
-	    loadIntegerArray(root, HIDDEN_ALBUMS_KEY, hiddenAlbumIds);
-	    Object value = root.get(SHOW_HIDDEN_ITEMS_KEY);
-	    showHiddenItems = value == null ? false : (boolean) value;
+	    loadIntegersFromJSONArray(root, TRACKED_PRODUCTS_KEY, trackedProductIds);
+	    loadIntegersFromJSONArray(root, COLLECTED_ALBUMS_KEY, collectedAlbumIds);
+	    loadIntegersFromJSONArray(root, HIDDEN_ALBUMS_KEY, hiddenAlbumIds);
+	    showHiddenItems = (boolean) root.getOrDefault(SHOW_HIDDEN_ITEMS_KEY, false);
 	} catch (ParseException | IOException ex) {
 	    LOG.log(Level.SEVERE, null, ex);
 	    return false;
@@ -136,26 +166,9 @@ public class Settings {
 
 	try (FileWriter fw = new FileWriter(file)) {
 	    JSONObject root = new JSONObject();
-
-	    // TODO: duplicate code
-	    JSONArray trackedProductIdsArr = new JSONArray();
-	    trackedProductIds.forEach((Integer id) -> {
-		trackedProductIdsArr.add(id);
-	    });
-	    root.put(Settings.TRACKED_PRODUCTS_KEY, trackedProductIdsArr);
-
-	    JSONArray collectedAlbumIdsArr = new JSONArray();
-	    collectedAlbumIds.forEach((Integer id) -> {
-		collectedAlbumIdsArr.add(id);
-	    });
-	    root.put(Settings.COLLECTED_ALBUMS_KEY, collectedAlbumIdsArr);
-
-	    JSONArray hiddenAlbumIdsArr = new JSONArray();
-	    hiddenAlbumIds.forEach((Integer id) -> {
-		hiddenAlbumIdsArr.add(id);
-	    });
-	    root.put(Settings.HIDDEN_ALBUMS_KEY, hiddenAlbumIdsArr);
-
+	    root.put(Settings.TRACKED_PRODUCTS_KEY, createJSONArray(trackedProductIds));
+	    root.put(Settings.COLLECTED_ALBUMS_KEY, createJSONArray(collectedAlbumIds));
+	    root.put(Settings.HIDDEN_ALBUMS_KEY, createJSONArray(hiddenAlbumIds));
 	    root.put(Settings.SHOW_HIDDEN_ITEMS_KEY, showHiddenItems);
 
 	    fw.write(root.toJSONString());
