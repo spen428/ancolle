@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import javafx.scene.image.Image;
 
 /**
  * A franchise is a {@link Product} that itself comprises a number of products
@@ -33,7 +34,11 @@ public class Franchise extends Product {
     public Franchise(int id, String title_en, String title_ja,
 	    Collection<Product> products) {
 	super(id, title_en, title_ja, ProductType.FRANCHISE, null, null);
-	this.products = new ArrayList<>(products);
+	if (products != null) {
+	    this.products = new ArrayList<>(products);
+	} else {
+	    this.products = new ArrayList<>(0);
+	}
     }
 
     /**
@@ -43,6 +48,29 @@ public class Franchise extends Product {
      */
     public List<Product> getProducts() {
 	return Collections.unmodifiableList(products);
+    }
+
+    @Override
+    public Image getPicture() {
+	if (!products.isEmpty()) {
+	    // TODO: Collage of product pictures
+	    for (Product child : products) {
+		Image childPicture = child.getPicture();
+		if (childPicture != null) {
+		    return childPicture;
+		}
+	    }
+	}
+	return null;
+    }
+
+    @Override
+    public List<AlbumPreview> getAlbums() {
+	ArrayList<AlbumPreview> allAlbums = new ArrayList<>(100);
+	products.forEach((child) -> {
+	    allAlbums.addAll(child.getAlbums());
+	});
+	return Collections.unmodifiableList(allAlbums);
     }
 
 }

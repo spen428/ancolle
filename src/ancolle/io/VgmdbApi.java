@@ -18,6 +18,7 @@ package ancolle.io;
 
 import ancolle.items.Album;
 import ancolle.items.AlbumPreview;
+import ancolle.items.Franchise;
 import ancolle.items.Product;
 import ancolle.items.ProductPreview;
 import ancolle.items.ProductType;
@@ -140,9 +141,22 @@ public class VgmdbApi {
 		Logger.getLogger(VgmdbApi.class.getName()).log(Level.WARNING,
 			"Unknown ProductType string: {0}", typeString);
 	    } else if (type == ProductType.FRANCHISE) {
-		Logger.getLogger(VgmdbApi.class.getName()).log(Level.WARNING,
-			"This Product is a franchise and may need further "
-			+ "parsing: ({0}) {1}", new Object[]{id, title_en});
+		Logger.getLogger(VgmdbApi.class.getName()).log(Level.FINE,
+			"Fetching products associated with franchise ({0}) {1}",
+			new Object[]{id, title_en});
+		JSONArray titles = (JSONArray) jo.get("titles");
+		ArrayList<Product> products = new ArrayList<>(titles.size());
+		for (int i = 0; i < titles.size(); i++) {
+		    JSONObject title = (JSONObject) titles.get(i);
+		    String link = (String) title.get("link");
+		    String[] spl = link.split("/");
+		    int productId = Integer.valueOf(spl[spl.length - 1]);
+		    Product product = getProductById(productId);
+		    if (product != null) {
+			products.add(product);
+		    }
+		}
+		return new Franchise(id, title_en, title_ja, products);
 	    }
 	    return new Product(id, title_en, title_ja, type, pictureUrl, albums);
 	}

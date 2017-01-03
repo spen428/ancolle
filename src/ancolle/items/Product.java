@@ -39,7 +39,11 @@ public class Product extends ProductPreview {
     public Product(int id, String title_en, String title_ja, ProductType type,
 	    String pictureUrlSmall, Collection<AlbumPreview> albums) {
 	super(id, title_en, title_ja, type);
-	this.albums = new ArrayList<>(albums);
+	if (albums != null) {
+	    this.albums = new ArrayList<>(albums);
+	} else {
+	    this.albums = new ArrayList<>(0);
+	}
 	this.pictureUrlSmall = pictureUrlSmall;
 	this.picture = null;
     }
