@@ -17,3 +17,9 @@ interface with VGMdb.
 This project requires JDK 8 and JavaFX, and is built using the Ant build tool.
 From the project directory, running `ant` should build the project to an
 executable JAR which will be placed in the `dist/` directory.
+
+## Common Errors
+
+`Error: Could not find or load main class` occurs when your Java does not have
+JavaFX bundled with it (which is the case for OpenJDK8). Install the JavaFX
+package for your platform to fix this issue.
