@@ -27,7 +27,7 @@ import org.json.simple.parser.JSONParser;
 /**
  * Contains constants and static methods related to I/O
  *
- * @author samuel
+ * @author lykat
  */
 public class IO {
 

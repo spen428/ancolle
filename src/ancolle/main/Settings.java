@@ -38,7 +38,7 @@ import org.json.simple.parser.ParseException;
 /**
  * Stores program settings
  *
- * @author samuel
+ * @author lykat
  */
 public class Settings {
 

@@ -27,7 +27,7 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
 
 /**
- * @author samuel
+ * @author lykat
  */
 public class AlbumNode extends ItemNode<AlbumPreview> {
 

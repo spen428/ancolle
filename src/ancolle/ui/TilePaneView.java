@@ -27,7 +27,7 @@ import javafx.scene.layout.TilePane;
  * View based on {@link TilePane} on top of which {@link AlbumView} and
  * {@link ProductView} are built.
  *
- * @author samuel
+ * @author lykat
  */
 public class TilePaneView extends TilePane {
 

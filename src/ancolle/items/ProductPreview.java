@@ -19,7 +19,7 @@ package ancolle.items;
 import java.util.logging.Logger;
 
 /**
- * @author samuel
+ * @author lykat
  */
 public class ProductPreview extends Item {
 

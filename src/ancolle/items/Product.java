@@ -27,7 +27,7 @@ import javafx.scene.image.Image;
 /**
  * Full product details
  *
- * @author samuel
+ * @author lykat
  */
 public class Product extends ProductPreview {
 

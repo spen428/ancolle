@@ -29,7 +29,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 /**
- * @author samuel
+ * @author lykat
  * @param <T> the type of {@link Item} that this node represents
  */
 public abstract class ItemNode<T> extends VBox {

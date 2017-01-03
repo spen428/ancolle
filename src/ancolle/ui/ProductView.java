@@ -45,7 +45,7 @@ import javafx.scene.text.Font;
  * View tracked products as tiled {@link ProductNode} objects on a
  * {@link TilePaneView}
  *
- * @author samuel
+ * @author lykat
  */
 public class ProductView extends TilePaneView {
 

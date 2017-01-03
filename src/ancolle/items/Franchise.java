@@ -26,7 +26,7 @@ import javafx.scene.image.Image;
 /**
  * A franchise is a {@link Product} that itself comprises a number of products
  *
- * @author samuel
+ * @author lykat
  */
 public class Franchise extends Product {
 

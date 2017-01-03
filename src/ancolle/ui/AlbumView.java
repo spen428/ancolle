@@ -34,7 +34,7 @@ import javafx.scene.image.Image;
 /**
  * View albums belonging to a Product
  *
- * @author samuel
+ * @author lykat
  */
 public class AlbumView extends TilePaneView {
 

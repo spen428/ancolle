@@ -28,7 +28,7 @@ import javafx.scene.image.Image;
 /**
  * Full album details
  *
- * @author samuel
+ * @author lykat
  */
 public class Album extends AlbumPreview {
 

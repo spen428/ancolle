@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 /**
  * Album information as it appears when retrieving Product information
  *
- * @author samuel
+ * @author lykat
  */
 public class AlbumPreview extends Item {
 

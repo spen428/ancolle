@@ -23,7 +23,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 
 /**
- * @author samuel
+ * @author lykat
  */
 public class StatusBar extends HBox {
 

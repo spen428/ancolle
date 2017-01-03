@@ -32,7 +32,7 @@ import javafx.scene.text.Font;
 /**
  * View an album
  *
- * @author samuel
+ * @author lykat
  */
 public class AlbumDetailsView extends HBox {
 

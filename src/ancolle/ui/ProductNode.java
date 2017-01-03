@@ -24,7 +24,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Background;
 
 /**
- * @author samuel
+ * @author lykat
  */
 public class ProductNode extends ItemNode<Product> {
 

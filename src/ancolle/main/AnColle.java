@@ -43,7 +43,7 @@ import javafx.stage.Stage;
 /**
  * The JavaFX application class
  *
- * @author samuel
+ * @author lykat
  */
 public class AnColle extends Application {
 

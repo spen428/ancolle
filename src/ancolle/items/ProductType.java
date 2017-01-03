@@ -19,7 +19,7 @@ package ancolle.items;
 /**
  * Product types
  *
- * @author samuel
+ * @author lykat
  */
 public enum ProductType {
     FRANCHISE("Franchise"), GAME("Game"), VIDEO("Video"), ANIMATION("Animation"),

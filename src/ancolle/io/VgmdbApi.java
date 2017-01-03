@@ -48,7 +48,7 @@ import org.json.simple.JSONObject;
  * Static methods for interfacing with VGMdb, the Video Game (and Anime) Music
  * database.
  *
- * @author samuel
+ * @author lykat
  */
 public class VgmdbApi {
 

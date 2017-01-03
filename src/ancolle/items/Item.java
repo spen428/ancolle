@@ -19,7 +19,7 @@ package ancolle.items;
 import java.util.Objects;
 
 /**
- * @author samuel
+ * @author lykat
  */
 public abstract class Item {
 
