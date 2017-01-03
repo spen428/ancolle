@@ -41,6 +41,7 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.text.Font;
+import javafx.stage.Modality;
 
 /**
  * View tracked products as tiled {@link ProductNode} objects on a
@@ -131,7 +132,7 @@ public class ProductView extends TilePaneView {
      * @return the adder node
      */
     private Node createProductAdderNode() {
-	ItemNode node = new ItemNode() {
+	ItemNode<Object> node = new ItemNode<Object>() {
 	    @Override
 	    protected ContextMenu getContextMenu() {
 		return null;
@@ -197,25 +198,31 @@ public class ProductView extends TilePaneView {
 
     public void doAddProductDialog() {
 	TextInputDialog inputDialog = new TextInputDialog();
+	inputDialog.initOwner(ancolle.getMainWindow());
+	inputDialog.initModality(Modality.WINDOW_MODAL);
 	inputDialog.setTitle("Track a new product");
 	inputDialog.setContentText("Enter a product name:");
-	ProductPreview chosenProduct = null;
 	centreDialog(inputDialog);
+
+	ProductPreview chosenProduct = null;
 	Optional<String> result = inputDialog.showAndWait();
 	if (result.isPresent()) {
 	    String text = result.get();
 	    List<ProductPreview> searchResults = VgmdbApi.searchProducts(text);
 	    if (searchResults.isEmpty()) {
 		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+		alert.initOwner(ancolle.getMainWindow());
+		alert.initModality(Modality.WINDOW_MODAL);
 		alert.setTitle("No search results");
 		alert.setContentText("No products could be found that "
 			+ "matched the search terms: \"" + text + "\"");
 		centreDialog(alert);
+
 		alert.showAndWait();
 	    } else {
 		// Build list of choices
 		int defaultChoice = 0;
-		List<String> choices = new ArrayList<>();
+		List<String> choices = new ArrayList<>(searchResults.size());
 		for (int idx = 0; idx < searchResults.size(); idx++) {
 		    ProductPreview p = searchResults.get(idx);
 		    String str = String.format("#%d (%s) %s | %s", p.id,
@@ -229,9 +236,16 @@ public class ProductView extends TilePaneView {
 		}
 
 		// Show choice dialog
-		ChoiceDialog<String> resultsChooser = new ChoiceDialog(choices
-			.get(defaultChoice), choices);
+		ChoiceDialog<String> resultsChooser = new ChoiceDialog<>();
+		resultsChooser.getItems().addAll(choices);
+		resultsChooser.setSelectedItem(choices.get(defaultChoice));
+		resultsChooser.initOwner(ancolle.getMainWindow());
+		resultsChooser.initModality(Modality.WINDOW_MODAL);
+		resultsChooser.setTitle("Select a product");
+		resultsChooser.setContentText("Select the product from the list"
+			+ " that you wish to add to the product tracker.");
 		centreDialog(resultsChooser);
+
 		Optional<String> choice = resultsChooser.showAndWait();
 		if (choice.isPresent()) {
 		    String c = choice.get();
@@ -255,7 +269,7 @@ public class ProductView extends TilePaneView {
      *
      * @param dialog the dialog to centre
      */
-    private void centreDialog(Dialog dialog) {
+    private void centreDialog(Dialog<?> dialog) {
 	Scene scene = getScene();
 	double x = scene.getX() + scene.getWidth() / 2;
 	double y = scene.getY() + scene.getHeight() / 2;

@@ -39,6 +39,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 /**
  * The JavaFX application class
@@ -49,9 +50,11 @@ public class AnColle extends Application {
 
     public static final String VERSION = "0.2a";
 
+    private static final Logger LOG = Logger.getLogger(AnColle.class.getName());
+
     private static final Background AZURE_BACKGROUND = new Background(
 	    new BackgroundFill(Color.AZURE, null, null));
-    private static final Logger LOG = Logger.getLogger(AnColle.class.getName());
+    private static final String MAIN_TAB_TITLE = "Explorer";
 
     private final Settings settings;
     private final ProductView productView;
@@ -62,7 +65,8 @@ public class AnColle extends Application {
     private final ScrollPane scrollPane;
     private final Tab mainTab;
     private final TabPane tabPane;
-    private final String MAIN_TAB_TITLE = "Explorer";
+
+    private Window mainWindow = null;
 
     public AnColle() {
 	super();
@@ -224,6 +228,7 @@ public class AnColle extends Application {
 	});
 
 	Scene scene = new Scene(root, 1280, 720);
+	this.mainWindow = primaryStage;
 	primaryStage.setScene(scene);
 	primaryStage.setTitle("AnColle " + VERSION);
 	primaryStage.setOnCloseRequest(evt -> {
@@ -237,6 +242,10 @@ public class AnColle extends Application {
      */
     public Settings getSettings() {
 	return settings;
+    }
+
+    public Window getMainWindow() {
+	return mainWindow;
     }
 
 }
