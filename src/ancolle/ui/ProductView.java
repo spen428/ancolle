@@ -132,6 +132,12 @@ public class ProductView extends TilePaneView {
      * @return the adder node
      */
     private Node createProductAdderNode() {
+	/*
+	 * Not using a ProductNode because this would interfere with the sorting
+	 * of real product nodes during the insertProduct() method. The
+	 * ProductNode comparator always places other node types after any
+	 * ProductNode types, so this node will appear at the end.
+	 */
 	ItemNode<Object> node = new ItemNode<Object>() {
 	    @Override
 	    protected ContextMenu getContextMenu() {
@@ -141,8 +147,8 @@ public class ProductView extends TilePaneView {
 
 	node.getChildren().remove(node.label2);
 	node.label1.setText("+");
-	node.label1.setAlignment(Pos.CENTER);
 	node.label1.setFont(new Font("Arial", 40));
+	node.label1.setAlignment(Pos.CENTER);
 	node.setAlignment(Pos.CENTER);
 
 	node.setOnMouseClicked(evt -> {
