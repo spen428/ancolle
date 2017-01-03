@@ -52,14 +52,22 @@ public class Franchise extends Product {
 
     @Override
     public Image getPicture() {
+	// TODO: Collage of product pictures?
 	if (!products.isEmpty()) {
-	    // TODO: Collage of product pictures
+	    // Get the picture associated with child product with the most albums.
+	    int mostAlbums = 0;
+	    Image bestPicture = null;
 	    for (Product child : products) {
 		Image childPicture = child.getPicture();
 		if (childPicture != null) {
-		    return childPicture;
+		    int numAlbums = child.getAlbums().size();
+		    if (numAlbums > mostAlbums) {
+			mostAlbums = numAlbums;
+			bestPicture = childPicture;
+		    }
 		}
 	    }
+	    return bestPicture;
 	}
 	return null;
     }
