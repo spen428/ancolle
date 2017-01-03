@@ -57,6 +57,11 @@ public class ProductNode extends ItemNode<Product> {
     public ProductNode(double minWidth, double maxWidth, ProductView productView) {
 	super();
 	this.productView = productView;
+
+	setMinWidth(minWidth);
+	setMaxWidth(maxWidth);
+	setMaxHeight(maxWidth / 4);
+
 	setProduct(null);
 
 	// Mouse/key handlers
