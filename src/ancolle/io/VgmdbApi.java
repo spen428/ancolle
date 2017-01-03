@@ -24,14 +24,17 @@ import ancolle.items.ProductPreview;
 import ancolle.items.ProductType;
 import ancolle.items.Track;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -101,9 +104,9 @@ public class VgmdbApi {
 	    download(url, file);
 	}
 
-	try (FileReader fr = new FileReader(file)) {
-	    return (JSONObject) IO.JSON_PARSER.parse(fr);
-	} catch (IOException | org.json.simple.parser.ParseException ex) {
+	try (Reader r = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
+	    return (JSONObject) IO.JSON_PARSER.parse(r);
+	} catch (org.json.simple.parser.ParseException | IOException ex) {
 	    Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE, null, ex);
 	}
 	return null;
@@ -290,8 +293,8 @@ public class VgmdbApi {
 	    Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE, null, ex);
 	}
 
-	try {
-	    return (JSONObject) IO.JSON_PARSER.parse(new FileReader(file));
+	try (Reader r = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
+	    return (JSONObject) IO.JSON_PARSER.parse(r);
 	} catch (IOException | org.json.simple.parser.ParseException ex) {
 	    Logger.getLogger(VgmdbApi.class.getName()).log(Level.SEVERE, null, ex);
 	}

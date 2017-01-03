@@ -18,9 +18,12 @@ package ancolle.main;
 
 import ancolle.io.IO;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -102,8 +105,8 @@ public class Settings {
 	    return false;
 	}
 
-	try (FileReader fr = new FileReader(file)) {
-	    JSONObject root = (JSONObject) IO.JSON_PARSER.parse(fr);
+	try (Reader r = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
+	    JSONObject root = (JSONObject) IO.JSON_PARSER.parse(r);
 	    loadIntegerArray(root, TRACKED_PRODUCTS_KEY, trackedProductIds);
 	    loadIntegerArray(root, COLLECTED_ALBUMS_KEY, collectedAlbumIds);
 	    loadIntegerArray(root, HIDDEN_ALBUMS_KEY, hiddenAlbumIds);
