@@ -32,12 +32,31 @@ import javafx.scene.image.Image;
  */
 public class Album extends AlbumPreview {
 
+    /**
+     * The logger for this class.
+     */
     private static final Logger LOG = Logger.getLogger(Album.class.getName());
 
-    public final String title_ja_latn; // Romanized name
+    /**
+     * Romanised version of the Japanese album name
+     */
+    public final String title_ja_latn;
+
+    /**
+     * URL of this album's cover
+     */
     public final String pictureUrlSmall;
+
+    /**
+     * {@link Image} containing this album's cover. It is set to {@code null} by
+     * default and only loaded and assigned when requested with a call to
+     * {@link Album#getPicture()}.
+     */
     private Image picture;
-    private final List<Track> tracks;
+
+    private boolean pictureLoaded = false;
+
+    private final List<Track> trackList;
 
     public Album(int id, String title_en, String title_ja, String title_ja_latn,
 	    String type, Date date, String pictureUrlSmall,
@@ -46,10 +65,10 @@ public class Album extends AlbumPreview {
 	this.title_ja_latn = title_ja_latn;
 	this.pictureUrlSmall = pictureUrlSmall;
 	this.picture = null; // Load image only when needed
-	this.tracks = new ArrayList<>();
+	this.trackList = new ArrayList<>();
 	if (tracks != null) {
 	    tracks.forEach((track) -> {
-		this.tracks.add(track);
+		this.trackList.add(track);
 	    });
 	}
     }
@@ -62,7 +81,8 @@ public class Album extends AlbumPreview {
      * does not exist.
      */
     public Image getPicture() {
-	if (picture == null) {
+	if (!pictureLoaded) {
+	    pictureLoaded = true;
 	    if (pictureUrlSmall == null) {
 		// No URL, can't retrive anything
 		return null;
@@ -79,8 +99,8 @@ public class Album extends AlbumPreview {
      * @return the track list
      */
     public List<Track> getTracks() {
-	Collections.sort(tracks);
-	return Collections.unmodifiableList(tracks);
+	Collections.sort(trackList);
+	return Collections.unmodifiableList(trackList);
     }
 
 }
