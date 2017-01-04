@@ -34,9 +34,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
@@ -213,8 +216,19 @@ public class ProductView extends TilePaneView {
 	ProductPreview chosenProduct = null;
 	Optional<String> result = inputDialog.showAndWait();
 	if (result.isPresent()) {
+	    // Display a "loading" dialog while the search completes
+	    Alert loadingDialog = createUnclosableAlert();
+	    loadingDialog.initOwner(ancolle.getMainWindow());
+	    loadingDialog.initModality(Modality.WINDOW_MODAL);
+	    loadingDialog.setTitle("Searching...");
+	    loadingDialog.setHeaderText("Search in progress...");
+	    loadingDialog.show();
+
 	    String text = result.get();
 	    List<ProductPreview> searchResults = VgmdbApi.searchProducts(text);
+	    // Finished loading now, so close the dialog and continue
+	    loadingDialog.close();
+
 	    if (searchResults.isEmpty()) {
 		Alert alert = new Alert(Alert.AlertType.INFORMATION);
 		alert.initOwner(ancolle.getMainWindow());
@@ -327,6 +341,33 @@ public class ProductView extends TilePaneView {
 	    }
 	}
 	getChildren().add(insertIdx, node);
+    }
+
+    /**
+     * Create an {@link Alert} type information dialog that has no buttons and
+     * does not respond to close requests. NOTE: This will still respond to the
+     * Alt + F4 key combination.
+     *
+     * @return the alert
+     */
+    private Alert createUnclosableAlert() {
+	// TODO: Prevent Alt + F4 close event - consuming the
+	// WINDOW_CLOSING_EVENT doesn't seem to work...
+	Alert alert = new Alert(Alert.AlertType.INFORMATION);
+	DialogPane dialogPane = alert.getDialogPane();
+	/*
+	 * The INFORMATION dialog contains three children by default: a
+	 * GridPane, a Label, and a ButtonBar. The ButtonBar will be removed so
+	 * the user cannot click anything to close the dialog, and the Label
+	 * will be removed for aesthetic reasons, as the content text is not set.
+	 */
+	dialogPane.getChildren().removeIf(child -> (child instanceof ButtonBar
+		|| child instanceof Label));
+	// Set the style to UNDECORATED to remove the close button at the top.
+	// alert.initStyle(StageStyle.UNDECORATED);
+	// TODO: Setting the style to undecorated seems to prevent the dialog
+	// from appearing altogether...
+	return alert;
     }
 
 }
