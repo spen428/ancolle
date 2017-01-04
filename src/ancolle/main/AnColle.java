@@ -18,6 +18,7 @@ package ancolle.main;
 
 import ancolle.items.Product;
 import ancolle.ui.AlbumView;
+import ancolle.ui.ProductNode;
 import ancolle.ui.ProductView;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
@@ -111,7 +112,9 @@ public class AnColle extends Application {
     }
 
     /**
-     * Add a {@link Product} to the tracked products page
+     * Add a {@link Product} to the tracked products page. The newly created
+     * {@link ProductNode} will be automatically highlighted and scrolled into
+     * view.
      *
      * @param id the {@link Product} id
      */
