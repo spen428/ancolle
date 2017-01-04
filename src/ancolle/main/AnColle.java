@@ -55,34 +55,37 @@ public class AnColle extends Application {
 
     private static final Background AZURE_BACKGROUND = new Background(
 	    new BackgroundFill(Color.AZURE, null, null));
-    private static final String MAIN_TAB_TITLE = "Explorer";
+    private static final String PRODUCT_TRACKER_TAB_TITLE = "Product Tracker";
 
     private final Settings settings;
     private final ProductView productView;
     private final AlbumView albumView;
     private final VBox root;
-    private final VBox mainContent;
     private final StatusBar statusBar;
-    private final ScrollPane scrollPane;
-    private final Tab mainTab;
+    private final ScrollPane productTrackerScrollPane;
+    private final ScrollPane albumViewScrollPane;
+    private final Tab productTrackerTab;
     private final TabPane tabPane;
 
     private Window mainWindow = null;
+    private final Tab albumViewTab;
 
     public AnColle() {
 	super();
 	this.root = new VBox();
-	this.mainContent = new VBox();
-	this.scrollPane = new ScrollPane();
+	this.productTrackerScrollPane = new ScrollPane();
+	this.albumViewScrollPane = new ScrollPane();
 	this.productView = new ProductView(this);
 	this.albumView = new AlbumView(this);
-	this.mainTab = new Tab(MAIN_TAB_TITLE, mainContent);
+	this.productTrackerTab = new Tab(PRODUCT_TRACKER_TAB_TITLE,
+		productTrackerScrollPane);
+	this.albumViewTab = new Tab("", albumViewScrollPane);
 	this.tabPane = new TabPane();
 	this.settings = new Settings();
 	this.statusBar = new StatusBar();
 
-	this.mainTab.setClosable(false);
-	this.tabPane.getTabs().add(mainTab);
+	this.productTrackerTab.setClosable(false);
+	this.tabPane.getTabs().addAll(productTrackerTab);
 	this.tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
 	this.settings.load();
     }
@@ -128,8 +131,7 @@ public class AnColle extends Application {
      * Set the main content view to the {@link ProductView} page
      */
     public void viewProducts() {
-	scrollPane.setContent(productView);
-	albumView.cancelQueuedTasks();
+	setSelectedTab(productTrackerTab);
     }
 
     /**
@@ -139,9 +141,13 @@ public class AnColle extends Application {
      * @param product the product
      */
     public void view(Product product) {
-	scrollPane.setContent(albumView);
-	productView.cancelQueuedTasks();
+	albumView.cancelQueuedTasks();
 	albumView.setProduct(product);
+	if (!tabPane.getTabs().contains(albumViewTab)) {
+	    tabPane.getTabs().add(1, albumViewTab);
+	}
+	albumViewTab.setText(product.title_en);
+	setSelectedTab(albumViewTab);
     }
 
     @Override
@@ -191,23 +197,31 @@ public class AnColle extends Application {
 
 	productView.setBackground(AZURE_BACKGROUND);
 
-	scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-	scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-	scrollPane.setFitToWidth(true);
-	scrollPane.setFitToHeight(true);
-	VBox.setVgrow(scrollPane, Priority.ALWAYS);
+	productTrackerScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+	productTrackerScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+	productTrackerScrollPane.setFitToWidth(true);
+	productTrackerScrollPane.setFitToHeight(true);
+	VBox.setVgrow(productTrackerScrollPane, Priority.ALWAYS);
+	productTrackerScrollPane.setBackground(AZURE_BACKGROUND);
+	productTrackerScrollPane.setContent(productView);
+
+	productTrackerTab.setContent(productTrackerScrollPane);
+
+	albumViewScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+	albumViewScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+	albumViewScrollPane.setFitToWidth(true);
+	albumViewScrollPane.setFitToHeight(true);
+	VBox.setVgrow(albumViewScrollPane, Priority.ALWAYS);
+	albumViewScrollPane.setContent(albumView);
+
+	albumViewTab.setContent(albumViewScrollPane);
+	albumViewTab.setOnClosed(evt -> {
+	    albumView.cancelQueuedTasks();
+	});
 
 	root.setOnKeyPressed(evt -> {
-	    if (tabPane.getSelectionModel().getSelectedItem() == mainTab) {
+	    if (tabPane.getSelectionModel().getSelectedItem() == productTrackerTab) {
 		switch (evt.getCode()) {
-		    case ESCAPE:
-			viewProducts();
-			break;
-		    case S:
-			if (evt.isControlDown()) {
-			    saveSettings();
-			}
-			break;
 		    case A:
 			productView.doAddProductDialog();
 			break;
@@ -216,12 +230,6 @@ public class AnColle extends Application {
 		}
 	    }
 	});
-	mainContent.getChildren().add(scrollPane);
-
-	mainContent.setBackground(AZURE_BACKGROUND);
-	VBox.setVgrow(mainContent, Priority.ALWAYS);
-	mainTab.setContent(mainContent);
-	viewProducts();
 
 	// Load and display tracked products in the background
 	Platform.runLater(() -> {
@@ -257,12 +265,12 @@ public class AnColle extends Application {
      * @param node the node
      */
     public void scrollIntoView(Node node) {
-	double w = scrollPane.getContent().getBoundsInLocal().getWidth();
-	double h = scrollPane.getContent().getBoundsInLocal().getHeight();
+	double w = productTrackerScrollPane.getContent().getBoundsInLocal().getWidth();
+	double h = productTrackerScrollPane.getContent().getBoundsInLocal().getHeight();
 	double x = node.getBoundsInParent().getMaxX();
 	double y = node.getBoundsInParent().getMaxY();
-	scrollPane.setVvalue(y / h);
-	scrollPane.setHvalue(x / w);
+	productTrackerScrollPane.setVvalue(y / h);
+	productTrackerScrollPane.setHvalue(x / w);
     }
 
 }
