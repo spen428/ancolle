@@ -24,7 +24,15 @@ import java.util.Objects;
 public abstract class Item {
 
     public final int id;
+
+    /**
+     * The English title of this item
+     */
     public final String title_en;
+
+    /**
+     * The Japanese title of this item
+     */
     public final String title_ja;
 
     public Item(int id, String title_en, String title_ja) {

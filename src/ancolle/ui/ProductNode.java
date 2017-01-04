@@ -44,6 +44,9 @@ public class ProductNode extends ItemNode<Product> {
 
     private static final ContextMenu PRODUCT_NODE_CONTEXT_MENU;
 
+    /**
+     * The logger for this class.
+     */
     private static final Logger LOG = Logger.getLogger(ProductNode.class.getName());
 
     static {

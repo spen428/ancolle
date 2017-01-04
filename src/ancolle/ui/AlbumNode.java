@@ -45,6 +45,10 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
     public static final double DEFAULT_MAX_HEIGHT = DEFAULT_MAX_WIDTH;
 
     private static final ContextMenu ALBUM_NODE_CONTEXT_MENU;
+
+    /**
+     * The logger for this class.
+     */
     private static final Logger LOG = Logger.getLogger(AlbumNode.class.getName());
 
     static {

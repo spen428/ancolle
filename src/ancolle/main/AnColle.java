@@ -52,6 +52,9 @@ public class AnColle extends Application {
 
     public static final String VERSION = "0.2a";
 
+    /**
+     * The logger for this class.
+     */
     private static final Logger LOG = Logger.getLogger(AnColle.class.getName());
 
     private static final Background AZURE_BACKGROUND = new Background(

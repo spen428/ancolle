@@ -52,6 +52,9 @@ import org.json.simple.JSONObject;
  */
 public class VgmdbApi {
 
+    /**
+     * The directory in which cached files for this program are stored.
+     */
     public static final String CACHE_DIR = IO.BASE_DIR + File.separator + "cache";
 
     private static final String API_URL = "http://vgmdb.info";
@@ -59,6 +62,10 @@ public class VgmdbApi {
     private static final SimpleDateFormat SDF_YYYY_MM = new SimpleDateFormat("yyyy-MM");
     private static final SimpleDateFormat SDF_YYYY = new SimpleDateFormat("yyyy");
     private static final int DOWNLOAD_BUFFER_SIZE_BYTES = 1024;
+
+    /**
+     * The logger for this class.
+     */
     private static final Logger LOG = Logger.getLogger(VgmdbApi.class.getName());
 
     /**

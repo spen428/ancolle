@@ -58,6 +58,9 @@ public class ProductView extends TilePaneView {
     public static final double MAX_TILE_WIDTH = 250;
     public static final String CLASS_PRODUCT_VIEW = "product-view";
 
+    /**
+     * The logger for this class.
+     */
     private static final Logger LOG = Logger.getLogger(ProductView.class.getName());
 
     private final Set<Product> products;

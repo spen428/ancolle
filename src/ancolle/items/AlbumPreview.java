@@ -26,9 +26,16 @@ import java.util.logging.Logger;
  */
 public class AlbumPreview extends Item {
 
+    /**
+     * The logger for this class.
+     */
     private static final Logger LOG = Logger.getLogger(AlbumPreview.class.getName());
 
     public final String type;
+
+    /**
+     * The release date of this album
+     */
     public final Date date;
 
     public AlbumPreview(int id, String title_en, String title_ja, String type,

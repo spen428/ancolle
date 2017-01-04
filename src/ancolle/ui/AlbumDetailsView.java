@@ -44,6 +44,9 @@ public class AlbumDetailsView extends HBox {
 
     public static final String CLASS_ALBUM_DETAILS_VIEW = "album-details-view";
 
+    /**
+     * The logger for this class.
+     */
     private static final Logger LOG = Logger.getLogger(AlbumDetailsView.class.getName());
 
     private static final int PANE_PADDING_PX = 25;

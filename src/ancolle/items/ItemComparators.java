@@ -36,6 +36,9 @@ public class ItemComparators {
      */
     public static final Comparator<AlbumPreview> ALBUM_PREVIEW_COMPARATOR;
 
+    /**
+     * The logger for this class
+     */
     private static final Logger LOG = Logger.getLogger(ItemComparators.class.getName());
 
     static {

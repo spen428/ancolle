@@ -30,6 +30,9 @@ import javafx.scene.image.Image;
  */
 public class Franchise extends Product {
 
+    /**
+     * The logger for this class.
+     */
     private static final Logger LOG = Logger.getLogger(Franchise.class.getName());
 
     private final List<Product> products;

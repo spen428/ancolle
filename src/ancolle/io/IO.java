@@ -31,9 +31,29 @@ import org.json.simple.parser.JSONParser;
  */
 public class IO {
 
+    /**
+     * Instance of {@link JSONParser}. Since there is no concurrent access to
+     * this constant, it makes sense not to reinstantiate the parser every time.
+     */
     public static final JSONParser JSON_PARSER = new JSONParser();
+
+    /**
+     * The result of calling {@link System#getProperty()} with the parameter
+     * "user.home". On Windows this should return the expansion of
+     * {@code %USERPROFILE%}, on UNIX systems it should return the expansion of
+     * {@code ~}.
+     */
     public static final String USER_HOME = System.getProperty("user.home");
+
+    /**
+     * The root of the directory used for storage of this program's settings and
+     * cached files.
+     */
     public static final String BASE_DIR = USER_HOME + File.separator + "ancolle";
+
+    /**
+     * The logger for this class.
+     */
     private static final Logger LOG = Logger.getLogger(IO.class.getName());
 
     /**
@@ -59,7 +79,10 @@ public class IO {
 	// Download image if it cannot be found in the cache
 	if (!file.exists()) {
 	    LOG.log(Level.FINE, "Downloading image");
-	    file.getParentFile().mkdirs();
+	    File parent = file.getParentFile();
+	    if (parent != null) {
+		parent.mkdirs();
+	    }
 	    VgmdbApi.download(url, file);
 	} else {
 	    LOG.log(Level.FINE, "Loading image file from cache");

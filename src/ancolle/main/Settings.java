@@ -50,6 +50,9 @@ public class Settings {
     public static final String HIDDEN_ALBUMS_KEY = "hiddenAlbums";
     public static final String SHOW_HIDDEN_ITEMS_KEY = "showHiddenItems";
 
+    /**
+     * The logger for this class.
+     */
     private static final Logger LOG = Logger.getLogger(Settings.class.getName());
 
     /**

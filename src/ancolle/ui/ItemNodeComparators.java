@@ -34,6 +34,10 @@ public class ItemNodeComparators {
     public static final Comparator<Node> ALBUM_NODE_COMPARATOR;
 
     private static final Comparator<ItemNode<?>> ITEM_NODE_COMPARATOR;
+
+    /**
+     * The logger for this class.
+     */
     private static final Logger LOG = Logger.getLogger(ItemNodeComparators.class.getName());
 
     static {

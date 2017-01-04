@@ -27,6 +27,9 @@ import javafx.scene.layout.HBox;
  */
 public class StatusBar extends HBox {
 
+    /**
+     * The logger for this class.
+     */
     private static final Logger LOG = Logger.getLogger(StatusBar.class.getName());
 
     private static final double HEIGHT_PX = 22;

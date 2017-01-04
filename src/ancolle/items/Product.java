@@ -31,6 +31,9 @@ import javafx.scene.image.Image;
  */
 public class Product extends ProductPreview {
 
+    /**
+     * The logger for this class.
+     */
     private static final Logger LOG = Logger.getLogger(Product.class.getName());
 
     private Image picture;

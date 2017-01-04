@@ -23,6 +23,9 @@ import java.util.logging.Logger;
  */
 public class Track implements Comparable<Track> {
 
+    /**
+     * The logger for this class.
+     */
     private static final Logger LOG = Logger.getLogger(Track.class.getName());
 
     public final String trackLength;

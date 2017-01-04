@@ -33,6 +33,10 @@ public class TilePaneView extends TilePane {
 
     public static final double PANE_PADDING = 25;
     public static final double TILE_PADDING = 10;
+
+    /**
+     * The logger for this class.
+     */
     private static final Logger LOG = Logger.getLogger(TilePaneView.class.getName());
 
     protected final AnColle ancolle;

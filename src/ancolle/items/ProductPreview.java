@@ -23,6 +23,9 @@ import java.util.logging.Logger;
  */
 public class ProductPreview extends Item {
 
+    /**
+     * The logger for this class.
+     */
     private static final Logger LOG = Logger.getLogger(ProductPreview.class.getName());
 
     public final ProductType type;
