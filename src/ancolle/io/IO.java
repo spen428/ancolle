@@ -80,8 +80,13 @@ public class IO {
 	if (!file.exists()) {
 	    LOG.log(Level.FINE, "Downloading image");
 	    File parent = file.getParentFile();
-	    if (parent != null) {
-		parent.mkdirs();
+	    if (parent != null && !parent.exists()) {
+		boolean success = parent.mkdirs();
+		if (!success) {
+		    LOG.log(Level.SEVERE, "Failed to create directory {0}.",
+			    parent.toString());
+		    return null;
+		}
 	    }
 	    VgmdbApi.download(url, file);
 	} else {
