@@ -30,11 +30,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
@@ -50,8 +47,6 @@ public class AnColle extends VBox {
      */
     private static final Logger LOG = Logger.getLogger(AnColle.class.getName());
 
-    private static final Background AZURE_BACKGROUND = new Background(
-	    new BackgroundFill(Color.AZURE, null, null));
     private static final String PRODUCT_TRACKER_TAB_TITLE = "Product Tracker";
 
     private final Settings settings;
@@ -135,14 +130,12 @@ public class AnColle extends VBox {
 	getChildren().add(statusBar);
 
 	productViewTab.setId("product-view-tab");
-	productView.setBackground(AZURE_BACKGROUND);
 
 	productViewScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 	productViewScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 	productViewScrollPane.setFitToWidth(true);
 	productViewScrollPane.setFitToHeight(true);
 	VBox.setVgrow(productViewScrollPane, Priority.ALWAYS);
-	productViewScrollPane.setBackground(AZURE_BACKGROUND);
 	productViewScrollPane.setContent(productView);
 
 	productViewTab.setContent(productViewScrollPane);

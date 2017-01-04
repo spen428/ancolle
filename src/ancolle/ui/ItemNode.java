@@ -16,26 +16,20 @@
  */
 package ancolle.ui;
 
-import javafx.geometry.Insets;
+import javafx.css.PseudoClass;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 
 /**
  * @author lykat
  * @param <T> the type of {@link ancolle.items.Item} that this node represents
  */
 public abstract class ItemNode<T> extends VBox {
-
-    public static final double ITEM_NODE_PADDING_PX = 10;
-    public static final Background COLOR_HOVERING = new Background(new BackgroundFill(Color.AQUAMARINE, null, null));
 
     public final ImageView imageView;
     public final Label label1;
@@ -46,10 +40,19 @@ public abstract class ItemNode<T> extends VBox {
      */
     private T item;
 
+    private boolean hidden = false;
+
+    private final PseudoClass pseudoClassHover;
+
     public ItemNode() {
 	getStyleClass().add("item-node");
-	setPadding(new Insets(ITEM_NODE_PADDING_PX));
 	setAlignment(Pos.BOTTOM_CENTER);
+	pseudoClassHover = new PseudoClass() {
+	    @Override
+	    public String getPseudoClassName() {
+		return "hover";
+	    }
+	};
 
 	imageView = new ImageView();
 	imageView.setSmooth(true);
@@ -72,14 +75,14 @@ public abstract class ItemNode<T> extends VBox {
 
 	// Mouse hover highlighting
 	setOnMouseEntered(evt -> {
-	    setBackground(COLOR_HOVERING);
+	    pseudoClassStateChanged(getPseudoClassHover(), true);
 	    ContextMenu cm = getContextMenu();
 	    if (cm != null) {
 		cm.hide();
 	    }
 	});
 	setOnMouseExited(evt -> {
-	    setBackground(Background.EMPTY);
+	    pseudoClassStateChanged(getPseudoClassHover(), false);
 	});
     }
 
@@ -110,6 +113,31 @@ public abstract class ItemNode<T> extends VBox {
      */
     protected void setItem(T item) {
 	this.item = item;
+    }
+
+    /**
+     * @return the pseudoClassHover
+     */
+    public PseudoClass getPseudoClassHover() {
+	return pseudoClassHover;
+    }
+
+    /**
+     * Set the `hidden` status of this {@link ItemNode}.
+     *
+     * @param hidden the value to set
+     */
+    public void setHidden(boolean hidden) {
+	this.hidden = hidden;
+	if (hidden) {
+	    getStyleClass().add("hidden");
+	} else {
+	    getStyleClass().remove("hidden");
+	}
+    }
+
+    public boolean isHidden() {
+	return hidden;
     }
 
 }

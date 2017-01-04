@@ -19,22 +19,15 @@ package ancolle.ui;
 import ancolle.items.Product;
 import static ancolle.ui.TilePaneView.TILE_PADDING;
 import java.util.logging.Logger;
-import javafx.geometry.Insets;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.paint.Color;
 
 /**
  * @author lykat
  */
 public class ProductNode extends ItemNode<Product> {
 
-    public static final Background NEWLY_ADDED_BACKGROUND = new Background(
-	    new BackgroundFill(Color.LEMONCHIFFON, CornerRadii.EMPTY, Insets.EMPTY));
     public static final double DEFAULT_MIN_WIDTH = ProductView.MIN_TILE_WIDTH
 	    + (2 * TILE_PADDING);
     public static final double DEFAULT_MAX_WIDTH = ProductView.MAX_TILE_WIDTH
@@ -85,6 +78,7 @@ public class ProductNode extends ItemNode<Product> {
 	// Mouse/key handlers
 	setOnMouseClicked(evt -> {
 	    if (evt.getButton() == MouseButton.PRIMARY) {
+		getStyleClass().remove("new");
 		productView.ancolle.view(getProduct());
 	    } else if (evt.getButton() == MouseButton.SECONDARY) {
 		showContextMenu(evt);

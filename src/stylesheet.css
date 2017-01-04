@@ -1,1 +1,43 @@
+.product-view {
+    -fx-background-color: #F0FFFF;
+}
 
+.album-view {
+    -fx-background-color: #F0FFFF;
+}
+
+.item-node:hover {
+    -fx-background-color: #d9e5e5;
+}
+
+.item-node .hidden {
+    -fx-opacity: 0.4;
+}
+
+.item-node {
+    -fx-padding: 10;
+}
+
+.franchise {
+    -fx-font-weight: bold;
+}
+
+.album-node {
+    -fx-background-color: none;
+}
+
+.collected {
+    -fx-background-color: #228B22;
+}
+
+.new {
+    -fx-background-color: #FFFACD;
+}
+
+.album-details-view .label {
+    -fx-background-color: none;
+}
+
+.album-details-view .label:hover {
+    -fx-background-color: #d9e5e5;
+}

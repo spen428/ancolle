@@ -19,6 +19,7 @@ package ancolle.ui;
 import ancolle.items.Album;
 import java.text.SimpleDateFormat;
 import java.util.logging.Logger;
+import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
@@ -91,6 +92,7 @@ public final class AlbumDetailsView extends HBox {
     private final Label labelReleaseDate;
 
     private final VBox trackList;
+    private final PseudoClass pseudoClassHover;
 
     /**
      * Instantiate a new {@link AlbumDetailsView} to display details about the
@@ -99,6 +101,12 @@ public final class AlbumDetailsView extends HBox {
      * @param album the album whose details to display
      */
     public AlbumDetailsView(Album album) {
+	pseudoClassHover = new PseudoClass() {
+	    @Override
+	    public String getPseudoClassName() {
+		return "hover";
+	    }
+	};
 	getStyleClass().add(CLASS_ALBUM_DETAILS_VIEW);
 	setPadding(new Insets(PANE_PADDING_PX));
 	setAlignment(Pos.BASELINE_CENTER);
@@ -174,11 +182,11 @@ public final class AlbumDetailsView extends HBox {
 	label.setPadding(new Insets(LABEL_PADDING_PX));
 	label.setFont(new Font("Meiryo", 16));
 	label.setOnMouseEntered(evt -> {
-	    label.setStyle("-fx-background-color: #9ec1ff;");
+	    label.pseudoClassStateChanged(pseudoClassHover, true);
 	    COPY_CONTEXT_MENU.hide();
 	});
 	label.setOnMouseExited(evt -> {
-	    label.setStyle("-fx-background-color: none;");
+	    label.pseudoClassStateChanged(pseudoClassHover, false);
 	});
 	label.setOnMouseClicked(evt -> {
 	    if (evt.getButton() == MouseButton.SECONDARY) {

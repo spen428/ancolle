@@ -23,23 +23,15 @@ import java.util.logging.Logger;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.paint.Color;
 
 /**
  * @author lykat
  */
 public class AlbumNode extends ItemNode<AlbumPreview> {
 
-    public static final Background COLOR_NOT_COLLECTED = new Background(
-	    new BackgroundFill(null, null, null));
-    public static final Background COLOR_COLLECTED = new Background(
-	    new BackgroundFill(Color.FORESTGREEN, null, null));
     public static final String CLASS_ALBUM_NODE = "album-node";
     public static final String CLASS_ALBUM_DETAILS_TAB = "album-details-tab";
 
-    public static final double HIDDEN_OPACITY = 0.4;
     public static final double DEFAULT_MAX_WIDTH = AlbumView.MAX_TILE_WIDTH
 	    + (2 * TILE_PADDING);
     public static final double DEFAULT_MAX_HEIGHT = DEFAULT_MAX_WIDTH;
@@ -74,7 +66,6 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
     private final AlbumView albumView;
 
     private boolean collected = false;
-    private boolean hidden = false;
 
     public AlbumNode(AlbumView albumView) {
 	super();
@@ -83,9 +74,6 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 	setMaxWidth(DEFAULT_MAX_WIDTH);
 	setMaxHeight(DEFAULT_MAX_HEIGHT);
 
-	setOnMouseExited(evt -> {
-	    updateBackground();
-	});
 	setOnMouseClicked(evt -> {
 	    switch (evt.getButton()) {
 		case PRIMARY:
@@ -110,27 +98,18 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 	});
     }
 
-    public boolean isHidden() {
-	return hidden;
-    }
-
     /**
-     * Update the background colour of this {@link AlbumNode}, setting it to be
-     * indicative of its `collected` status.
-     */
-    public void updateBackground() {
-	setBackground(collected ? COLOR_COLLECTED : COLOR_NOT_COLLECTED);
-    }
-
-    /**
-     * Set the `collected` status of this {@link AlbumNode}. This will
-     * automatically call {@link AlbumNode#updateBackground()}
+     * Set the `collected` status of this {@link AlbumNode}.
      *
      * @param collected the value to set
      */
     public void setCollected(boolean collected) {
 	this.collected = collected;
-	updateBackground();
+	if (collected) {
+	    getStyleClass().add("collected");
+	} else {
+	    getStyleClass().remove("collected");
+	}
     }
 
     /**
@@ -193,17 +172,6 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 	status = !status;
 	setHidden(status);
 	albumView.updateHiddenItems();
-    }
-
-    /**
-     * Set the `hidden` status of this {@link AlbumNode}. This will
-     * automatically update the parent {@link AlbumView}
-     *
-     * @param hidden the value to set
-     */
-    public void setHidden(boolean hidden) {
-	this.hidden = hidden;
-	setOpacity(hidden ? HIDDEN_OPACITY : 1.0);
     }
 
 }

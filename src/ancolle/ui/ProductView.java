@@ -83,8 +83,8 @@ public final class ProductView extends TilePaneView {
      * thread
      *
      * @param product the product
-     * @param highlight whether to highlight this new product node using the
-     * colour {@link ProductNode#NEWLY_ADDED_BACKGROUND}
+     * @param highlight whether to highlight this new product node by adding the
+     * ".new" class to the node
      * @return true if successfully added
      */
     public boolean addProduct(Product product, boolean highlight) {
@@ -99,8 +99,8 @@ public final class ProductView extends TilePaneView {
      * @param product the product
      * @param idx where to insert the product node, -1 to automatically insert
      * in sorting order
-     * @param highlight whether to highlight this new product node using the
-     * colour {@link ProductNode#NEWLY_ADDED_BACKGROUND}
+     * @param highlight whether to highlight this new product node by adding the
+     * ".new" class to the node
      * @return true if successfully added
      */
     public boolean addProduct(Product product, int idx, boolean highlight) {
@@ -113,7 +113,8 @@ public final class ProductView extends TilePaneView {
 
 	// Styling
 	if (product.type == ProductType.FRANCHISE) {
-	    node.label1.setStyle("-fx-font-weight: bold;");
+	    // TODO: Move to ProductNode class
+	    node.getStyleClass().add("franchise");
 	}
 
 	// Get product logo
@@ -137,9 +138,9 @@ public final class ProductView extends TilePaneView {
 
 	// Highlight as new
 	if (highlight) {
-	    node.setBackground(ProductNode.NEWLY_ADDED_BACKGROUND);
+	    node.getStyleClass().add("new");
 	    ancolle.scrollIntoView(node);
-//	    node.requestFocus();
+	    node.requestFocus();
 	}
 	return true;
     }
