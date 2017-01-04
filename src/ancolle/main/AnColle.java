@@ -20,6 +20,7 @@ import ancolle.items.Product;
 import ancolle.ui.AlbumView;
 import ancolle.ui.ProductNode;
 import ancolle.ui.ProductView;
+import ancolle.ui.StatusBar;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,14 +58,24 @@ public class AnColle extends Application {
 	    new BackgroundFill(Color.AZURE, null, null));
     private static final String PRODUCT_TRACKER_TAB_TITLE = "Product Tracker";
 
+    public static final String ID_MENU_ITEM_SHOW_HIDDEN_ITEMS = "menu-item-show-hidden-items";
+    public static final String ID_MENU_FILE = "menu-file";
+    public static final String ID_MENU_VIEW = "menu-view";
+    public static final String ID_MENU_HELP = "menu-help";
+    public static final String ID_TAB_ALBUM_VIEW = "album-view-tab";
+    public static final String ID_MENU_EDIT = "menu-edit";
+    public static final String ID_MENU_TOOLS = "menu-tools";
+    public static final String ID_ROOT = "root";
+    public static final String ID_TAB_PRODUCT_VIEW = "product-view-tab";
+
     private final Settings settings;
     private final ProductView productView;
     private final AlbumView albumView;
     private final VBox root;
     private final StatusBar statusBar;
-    private final ScrollPane productTrackerScrollPane;
+    private final ScrollPane productViewScrollPane;
     private final ScrollPane albumViewScrollPane;
-    private final Tab productTrackerTab;
+    private final Tab productViewTab;
     private final TabPane tabPane;
 
     private Window mainWindow = null;
@@ -73,19 +84,19 @@ public class AnColle extends Application {
     public AnColle() {
 	super();
 	this.root = new VBox();
-	this.productTrackerScrollPane = new ScrollPane();
+	this.productViewScrollPane = new ScrollPane();
 	this.albumViewScrollPane = new ScrollPane();
 	this.productView = new ProductView(this);
 	this.albumView = new AlbumView(this);
-	this.productTrackerTab = new Tab(PRODUCT_TRACKER_TAB_TITLE,
-		productTrackerScrollPane);
+	this.productViewTab = new Tab(PRODUCT_TRACKER_TAB_TITLE,
+		productViewScrollPane);
 	this.albumViewTab = new Tab("", albumViewScrollPane);
 	this.tabPane = new TabPane();
 	this.settings = new Settings();
 	this.statusBar = new StatusBar();
 
-	this.productTrackerTab.setClosable(false);
-	this.tabPane.getTabs().addAll(productTrackerTab);
+	this.productViewTab.setClosable(false);
+	this.tabPane.getTabs().addAll(productViewTab);
 	this.tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
 	this.settings.load();
     }
@@ -131,7 +142,7 @@ public class AnColle extends Application {
      * Set the main content view to the {@link ProductView} page
      */
     public void viewProducts() {
-	setSelectedTab(productTrackerTab);
+	setSelectedTab(productViewTab);
     }
 
     /**
@@ -157,19 +168,25 @@ public class AnColle extends Application {
 	Logger.getGlobal().setLevel(Level.ALL);
 	Logger.getGlobal().addHandler(new ConsoleHandler());
 
+	root.setId(ID_ROOT);
+
 	// MENU BAR //
 	MenuBar menu = new MenuBar();
 	root.getChildren().add(menu);
 
 	Menu menuFile = new Menu("File");
+	menuFile.setId(ID_MENU_FILE);
 	menu.getMenus().add(menuFile);
 
 	Menu menuEdit = new Menu("Edit");
+	menuEdit.setId(ID_MENU_EDIT);
 	menu.getMenus().add(menuEdit);
 
 	Menu menuView = new Menu("View");
+	menuView.setId(ID_MENU_VIEW);
 	menu.getMenus().add(menuView);
 	CheckMenuItem menuItemShowHiddenItems = new CheckMenuItem("Show hidden items");
+	menuItemShowHiddenItems.setId(ID_MENU_ITEM_SHOW_HIDDEN_ITEMS);
 	menuItemShowHiddenItems.setSelected(getSettings().isShowHiddenItems());
 	menuItemShowHiddenItems.setOnAction(evt -> {
 	    getSettings().setShowHiddenItems(!settings.isShowHiddenItems());
@@ -179,9 +196,11 @@ public class AnColle extends Application {
 	menuView.getItems().add(menuItemShowHiddenItems);
 
 	Menu menuTools = new Menu("Tools");
+	menuTools.setId(ID_MENU_TOOLS);
 	menu.getMenus().add(menuTools);
 
 	Menu menuHelp = new Menu("Help");
+	menuHelp.setId(ID_MENU_HELP);
 	menu.getMenus().add(menuHelp);
 
 	VBox.setVgrow(tabPane, Priority.ALWAYS);
@@ -197,17 +216,18 @@ public class AnColle extends Application {
 
 	root.getChildren().add(statusBar);
 
+	productViewTab.setId(ID_TAB_PRODUCT_VIEW);
 	productView.setBackground(AZURE_BACKGROUND);
 
-	productTrackerScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-	productTrackerScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-	productTrackerScrollPane.setFitToWidth(true);
-	productTrackerScrollPane.setFitToHeight(true);
-	VBox.setVgrow(productTrackerScrollPane, Priority.ALWAYS);
-	productTrackerScrollPane.setBackground(AZURE_BACKGROUND);
-	productTrackerScrollPane.setContent(productView);
+	productViewScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+	productViewScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+	productViewScrollPane.setFitToWidth(true);
+	productViewScrollPane.setFitToHeight(true);
+	VBox.setVgrow(productViewScrollPane, Priority.ALWAYS);
+	productViewScrollPane.setBackground(AZURE_BACKGROUND);
+	productViewScrollPane.setContent(productView);
 
-	productTrackerTab.setContent(productTrackerScrollPane);
+	productViewTab.setContent(productViewScrollPane);
 
 	albumViewScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 	albumViewScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -216,6 +236,7 @@ public class AnColle extends Application {
 	VBox.setVgrow(albumViewScrollPane, Priority.ALWAYS);
 	albumViewScrollPane.setContent(albumView);
 
+	albumViewTab.setId(ID_TAB_ALBUM_VIEW);
 	albumViewTab.setContent(albumViewScrollPane);
 	albumViewTab.setOnClosed(evt -> {
 	    albumView.cancelQueuedTasks();
@@ -223,7 +244,7 @@ public class AnColle extends Application {
 	});
 
 	root.setOnKeyPressed(evt -> {
-	    if (tabPane.getSelectionModel().getSelectedItem() == productTrackerTab) {
+	    if (tabPane.getSelectionModel().getSelectedItem() == productViewTab) {
 		switch (evt.getCode()) {
 		    case A:
 			productView.doAddProductDialog();
@@ -241,8 +262,11 @@ public class AnColle extends Application {
 	    });
 	});
 
-	Scene scene = new Scene(root, 1280, 720);
 	this.mainWindow = primaryStage;
+
+	Scene scene = new Scene(root, 1280, 720);
+	scene.getStylesheets().add("stylesheet.css");
+
 	primaryStage.setScene(scene);
 	primaryStage.setTitle("AnColle " + VERSION);
 	primaryStage.setOnCloseRequest(evt -> {
@@ -268,12 +292,12 @@ public class AnColle extends Application {
      * @param node the node
      */
     public void scrollIntoView(Node node) {
-	double w = productTrackerScrollPane.getContent().getBoundsInLocal().getWidth();
-	double h = productTrackerScrollPane.getContent().getBoundsInLocal().getHeight();
+	double w = productViewScrollPane.getContent().getBoundsInLocal().getWidth();
+	double h = productViewScrollPane.getContent().getBoundsInLocal().getHeight();
 	double x = node.getBoundsInParent().getMaxX();
 	double y = node.getBoundsInParent().getMaxY();
-	productTrackerScrollPane.setVvalue(y / h);
-	productTrackerScrollPane.setHvalue(x / w);
+	productViewScrollPane.setVvalue(y / h);
+	productViewScrollPane.setHvalue(x / w);
     }
 
 }

@@ -41,6 +41,7 @@ public class AlbumView extends TilePaneView {
     private static final Logger LOG = Logger.getLogger(AlbumView.class.getName());
 
     public static final double MAX_TILE_WIDTH = 100;
+    public static final String CLASS_ALBUM_VIEW = "album-view";
 
     private Product product;
 
@@ -53,6 +54,7 @@ public class AlbumView extends TilePaneView {
     public AlbumView(AnColle ancolle, Product product) {
 	super(ancolle);
 	this.fullAlbumMap = new ConcurrentHashMap<>(20);
+	getStyleClass().add(CLASS_ALBUM_VIEW);
 	setPadding(new Insets(PANE_PADDING));
 	setAlignment(Pos.BASELINE_CENTER);
 	setProduct(product);

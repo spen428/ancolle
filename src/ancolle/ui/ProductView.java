@@ -56,6 +56,7 @@ public class ProductView extends TilePaneView {
 
     public static final double MIN_TILE_WIDTH = 50;
     public static final double MAX_TILE_WIDTH = 250;
+    public static final String CLASS_PRODUCT_VIEW = "product-view";
 
     private static final Logger LOG = Logger.getLogger(ProductView.class.getName());
 
@@ -63,6 +64,7 @@ public class ProductView extends TilePaneView {
 
     public ProductView(AnColle ancolle) {
 	super(ancolle);
+	getStyleClass().add(CLASS_PRODUCT_VIEW);
 	this.products = new HashSet<>();
 
 	// Button for adding new products to track

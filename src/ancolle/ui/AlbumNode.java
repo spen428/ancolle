@@ -36,6 +36,8 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 	    new BackgroundFill(null, null, null));
     public static final Background COLOR_COLLECTED = new Background(
 	    new BackgroundFill(Color.FORESTGREEN, null, null));
+    public static final String CLASS_ALBUM_NODE = "album-node";
+    public static final String CLASS_ALBUM_DETAILS_TAB = "album-details-tab";
 
     public static final double HIDDEN_OPACITY = 0.4;
     public static final double DEFAULT_MAX_WIDTH = AlbumView.MAX_TILE_WIDTH
@@ -73,7 +75,7 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
     public AlbumNode(AlbumView albumView) {
 	super();
 	this.albumView = albumView;
-
+	getStyleClass().add(CLASS_ALBUM_NODE);
 	setMaxWidth(DEFAULT_MAX_WIDTH);
 	setMaxHeight(DEFAULT_MAX_HEIGHT);
 
@@ -91,6 +93,7 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 		    if (fullAlbum != null) {
 			AlbumDetailsView adv = new AlbumDetailsView(fullAlbum);
 			Tab tab = albumView.ancolle.newTab(fullAlbum.title_ja, adv);
+			tab.getStyleClass().add(CLASS_ALBUM_DETAILS_TAB);
 			// albumView.ancolle.setSelectedTab(tab);
 		    }
 		    break;

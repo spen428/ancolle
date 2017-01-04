@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package ancolle.main;
+package ancolle.ui;
 
 import java.util.logging.Logger;
 import javafx.geometry.Insets;
@@ -27,13 +27,18 @@ import javafx.scene.layout.HBox;
  */
 public class StatusBar extends HBox {
 
-    private static final double HEIGHT_PX = 22;
     private static final Logger LOG = Logger.getLogger(StatusBar.class.getName());
+
+    private static final double HEIGHT_PX = 22;
+
+    public static final String CLASS_STATUS_BAR_LABEL = "status-label";
+    public static final String CLASS_STATUS_BAR = "status-bar";
 
     public final Label statusLabel;
 
     public StatusBar() {
 	super();
+	getStyleClass().add(CLASS_STATUS_BAR);
 	setMinHeight(HEIGHT_PX);
 	setMaxHeight(HEIGHT_PX);
 	setAlignment(Pos.CENTER_LEFT);
@@ -41,6 +46,7 @@ public class StatusBar extends HBox {
 	statusLabel = new Label("Ready.");
 	statusLabel.setPadding(new Insets(2, 20, 2, 20));
 	statusLabel.setAlignment(Pos.CENTER);
+	statusLabel.getStyleClass().add(CLASS_STATUS_BAR_LABEL);
 	getChildren().add(statusLabel);
     }
 

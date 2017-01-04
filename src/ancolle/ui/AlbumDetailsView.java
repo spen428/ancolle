@@ -42,6 +42,8 @@ import javafx.scene.text.Font;
  */
 public class AlbumDetailsView extends HBox {
 
+    public static final String CLASS_ALBUM_DETAILS_VIEW = "album-details-view";
+
     private static final Logger LOG = Logger.getLogger(AlbumDetailsView.class.getName());
 
     private static final int PANE_PADDING_PX = 25;
@@ -88,6 +90,7 @@ public class AlbumDetailsView extends HBox {
     private final VBox trackList;
 
     public AlbumDetailsView(Album album) {
+	getStyleClass().add(CLASS_ALBUM_DETAILS_VIEW);
 	setPadding(new Insets(PANE_PADDING_PX));
 	setAlignment(Pos.BASELINE_CENTER);
 
