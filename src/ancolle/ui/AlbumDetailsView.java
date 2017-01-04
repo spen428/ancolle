@@ -96,6 +96,7 @@ public class AlbumDetailsView extends HBox {
 
 	// VBox that holds the album cover
 	final VBox albumCoverContainer = new VBox();
+	albumCoverContainer.getStyleClass().add("album-cover-container");
 	VBox.setVgrow(albumCoverContainer, Priority.ALWAYS);
 	albumCoverContainer.setPadding(new Insets(COVER_PADDING_PX));
 	albumCoverContainer.setMaxWidth(COVER_WIDTH_PX + (2 * COVER_PADDING_PX));
@@ -104,6 +105,7 @@ public class AlbumDetailsView extends HBox {
 	getChildren().add(albumCoverContainer);
 
 	// The album cover
+	albumCover.getStyleClass().add("album-cover");
 	albumCover.setSmooth(true);
 	albumCover.setPreserveRatio(true);
 	albumCover.setFitWidth(COVER_WIDTH_PX);
@@ -111,6 +113,7 @@ public class AlbumDetailsView extends HBox {
 
 	// Scrollpane that holds the Details VBox
 	final ScrollPane detailsScrollPane = new ScrollPane();
+	detailsScrollPane.getStyleClass().add("details-scrollpane");
 	detailsScrollPane.setFitToWidth(true);
 	detailsScrollPane.setContent(detailsVbox);
 	detailsScrollPane.setFitToWidth(true);
@@ -119,15 +122,21 @@ public class AlbumDetailsView extends HBox {
 	HBox.setHgrow(detailsScrollPane, Priority.ALWAYS);
 	VBox.setVgrow(detailsScrollPane, Priority.ALWAYS);
 	detailsVbox.setFillWidth(true);
+	detailsVbox.getStyleClass().add("details");
 
 	// Details
 	labelTitleEn = addNewDetailsLabel();
+	labelTitleEn.getStyleClass().add("title-en");
 	labelTitleJa = addNewDetailsLabel();
+	labelTitleJa.getStyleClass().add("title-ja");
 	labelTitleJaLatn = addNewDetailsLabel();
+	labelTitleJaLatn.getStyleClass().add("title-ja-latn");
 	labelReleaseDate = addNewDetailsLabel();
+	labelReleaseDate.getStyleClass().add("release-date");
 
 	// Track List
 	trackList = new VBox();
+	trackList.getStyleClass().add("track-list");
 	detailsVbox.getChildren().add(trackList);
 
 	setAlbum(album);
@@ -207,6 +216,7 @@ public class AlbumDetailsView extends HBox {
 	trackList.getChildren().add(trackListHeader);
 	album.getTracks().stream().map((track) -> {
 	    Label trackLabel = createNewDetailsLabel();
+	    trackLabel.getStyleClass().add("track");
 	    String trackLengthString = "";
 	    if (!track.trackLength.equals("Unknown")) {
 		trackLengthString = "[" + track.trackLength + "]";

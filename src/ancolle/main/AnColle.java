@@ -58,16 +58,6 @@ public class AnColle extends Application {
 	    new BackgroundFill(Color.AZURE, null, null));
     private static final String PRODUCT_TRACKER_TAB_TITLE = "Product Tracker";
 
-    public static final String ID_MENU_ITEM_SHOW_HIDDEN_ITEMS = "menu-item-show-hidden-items";
-    public static final String ID_MENU_FILE = "menu-file";
-    public static final String ID_MENU_VIEW = "menu-view";
-    public static final String ID_MENU_HELP = "menu-help";
-    public static final String ID_TAB_ALBUM_VIEW = "album-view-tab";
-    public static final String ID_MENU_EDIT = "menu-edit";
-    public static final String ID_MENU_TOOLS = "menu-tools";
-    public static final String ID_ROOT = "root";
-    public static final String ID_TAB_PRODUCT_VIEW = "product-view-tab";
-
     private final Settings settings;
     private final ProductView productView;
     private final AlbumView albumView;
@@ -168,25 +158,25 @@ public class AnColle extends Application {
 	Logger.getGlobal().setLevel(Level.ALL);
 	Logger.getGlobal().addHandler(new ConsoleHandler());
 
-	root.setId(ID_ROOT);
+	root.setId("root");
 
 	// MENU BAR //
 	MenuBar menu = new MenuBar();
 	root.getChildren().add(menu);
 
 	Menu menuFile = new Menu("File");
-	menuFile.setId(ID_MENU_FILE);
+	menuFile.setId("menu-file");
 	menu.getMenus().add(menuFile);
 
 	Menu menuEdit = new Menu("Edit");
-	menuEdit.setId(ID_MENU_EDIT);
+	menuEdit.setId("menu-edit");
 	menu.getMenus().add(menuEdit);
 
 	Menu menuView = new Menu("View");
-	menuView.setId(ID_MENU_VIEW);
+	menuView.setId("menu-view");
 	menu.getMenus().add(menuView);
 	CheckMenuItem menuItemShowHiddenItems = new CheckMenuItem("Show hidden items");
-	menuItemShowHiddenItems.setId(ID_MENU_ITEM_SHOW_HIDDEN_ITEMS);
+	menuItemShowHiddenItems.setId("menu-item-show-hidden-items");
 	menuItemShowHiddenItems.setSelected(getSettings().isShowHiddenItems());
 	menuItemShowHiddenItems.setOnAction(evt -> {
 	    getSettings().setShowHiddenItems(!settings.isShowHiddenItems());
@@ -196,11 +186,11 @@ public class AnColle extends Application {
 	menuView.getItems().add(menuItemShowHiddenItems);
 
 	Menu menuTools = new Menu("Tools");
-	menuTools.setId(ID_MENU_TOOLS);
+	menuTools.setId("menu-tools");
 	menu.getMenus().add(menuTools);
 
 	Menu menuHelp = new Menu("Help");
-	menuHelp.setId(ID_MENU_HELP);
+	menuHelp.setId("menu-help");
 	menu.getMenus().add(menuHelp);
 
 	VBox.setVgrow(tabPane, Priority.ALWAYS);
@@ -216,7 +206,7 @@ public class AnColle extends Application {
 
 	root.getChildren().add(statusBar);
 
-	productViewTab.setId(ID_TAB_PRODUCT_VIEW);
+	productViewTab.setId("product-view-tab");
 	productView.setBackground(AZURE_BACKGROUND);
 
 	productViewScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -236,7 +226,7 @@ public class AnColle extends Application {
 	VBox.setVgrow(albumViewScrollPane, Priority.ALWAYS);
 	albumViewScrollPane.setContent(albumView);
 
-	albumViewTab.setId(ID_TAB_ALBUM_VIEW);
+	albumViewTab.setId("album-view-tab");
 	albumViewTab.setContent(albumViewScrollPane);
 	albumViewTab.setOnClosed(evt -> {
 	    albumView.cancelQueuedTasks();

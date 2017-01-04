@@ -47,6 +47,7 @@ public abstract class ItemNode<T> extends VBox {
     private T item;
 
     public ItemNode() {
+	getStyleClass().add("item-node");
 	setPadding(new Insets(ITEM_NODE_PADDING_PX));
 	setAlignment(Pos.BOTTOM_CENTER);
 
@@ -58,11 +59,13 @@ public abstract class ItemNode<T> extends VBox {
 	getChildren().add(imageView);
 
 	label1 = new Label();
+	label1.getStyleClass().add("label1");
 	label1.maxWidthProperty().bind(widthProperty());
 	label1.setAlignment(Pos.BOTTOM_CENTER);
 	getChildren().add(label1);
 
 	label2 = new Label();
+	label2.getStyleClass().add("label2");
 	label2.maxWidthProperty().bind(widthProperty());
 	label2.setAlignment(Pos.BOTTOM_CENTER);
 	getChildren().add(label2);
