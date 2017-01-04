@@ -42,6 +42,17 @@ public class Product extends ProductPreview {
 
     private final List<AlbumPreview> albums;
 
+    /**
+     * Instantiate a new {@link Product}
+     *
+     * @param id the product id
+     * @param title_en the English title
+     * @param title_ja the Japanese title
+     * @param type the {@link ProductType}
+     * @param pictureUrlSmall URL of the product image
+     * @param albums collection of {@link AlbumPreview} associated with this
+     * product
+     */
     public Product(int id, String title_en, String title_ja, ProductType type,
 	    String pictureUrlSmall, Collection<AlbumPreview> albums) {
 	super(id, title_en, title_ja, type);

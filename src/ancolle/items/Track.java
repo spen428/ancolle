@@ -33,12 +33,19 @@ public class Track implements Comparable<Track> {
     public final int trackNumber;
     public final int discNumber;
 
+    /**
+     * Instantiate a new {@link Track}
+     *
+     * @param name the track name
+     * @param length a String representation of the track length, e.g. "1:23"
+     * @param trackNumber the track number
+     * @param discNumber the disc number
+     */
     public Track(String name, String length, int trackNumber, int discNumber) {
 	this.name = name;
 	this.trackLength = length;
 	this.trackNumber = trackNumber;
 	this.discNumber = discNumber;
-
     }
 
     @Override

@@ -50,6 +50,10 @@ import javafx.stage.Window;
  */
 public class AnColle extends Application {
 
+    /**
+     * Program version string. This does not change between builds, only between
+     * releases.
+     */
     public static final String VERSION = "0.2a";
 
     /**
@@ -87,11 +91,6 @@ public class AnColle extends Application {
 	this.tabPane = new TabPane();
 	this.settings = new Settings();
 	this.statusBar = new StatusBar();
-
-	this.productViewTab.setClosable(false);
-	this.tabPane.getTabs().addAll(productViewTab);
-	this.tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
-	this.settings.load();
     }
 
     /**
@@ -109,6 +108,7 @@ public class AnColle extends Application {
 
     public void setSelectedTab(Tab tab) {
 	tabPane.getSelectionModel().select(tab);
+	tab.getContent().requestFocus();
     }
 
     /**
@@ -160,6 +160,11 @@ public class AnColle extends Application {
     public void start(Stage primaryStage) {
 	Logger.getGlobal().setLevel(Level.ALL);
 	Logger.getGlobal().addHandler(new ConsoleHandler());
+
+	productViewTab.setClosable(false);
+	tabPane.getTabs().addAll(productViewTab);
+	tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
+	settings.load();
 
 	root.setId("root");
 
@@ -275,6 +280,12 @@ public class AnColle extends Application {
 	return settings;
     }
 
+    /**
+     * Return the "main window" of this application, i.e. the primary stage that
+     * was passed to the {@link Application#start} method.
+     *
+     * @return the main window of this application
+     */
     public Window getMainWindow() {
 	return mainWindow;
     }

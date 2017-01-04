@@ -30,6 +30,14 @@ public class ProductPreview extends Item {
 
     public final ProductType type;
 
+    /**
+     * Instantiate a new {@link ProductPreview}
+     *
+     * @param id the product id
+     * @param title_en the English title
+     * @param title_ja the Japanese title
+     * @param type the {@link ProductType}
+     */
     public ProductPreview(int id, String title_en, String title_ja,
 	    ProductType type) {
 	super(id, title_en, title_ja);

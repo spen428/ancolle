@@ -92,6 +92,12 @@ public final class AlbumDetailsView extends HBox {
 
     private final VBox trackList;
 
+    /**
+     * Instantiate a new {@link AlbumDetailsView} to display details about the
+     * given {@link Album}
+     *
+     * @param album the album whose details to display
+     */
     public AlbumDetailsView(Album album) {
 	getStyleClass().add(CLASS_ALBUM_DETAILS_VIEW);
 	setPadding(new Insets(PANE_PADDING_PX));

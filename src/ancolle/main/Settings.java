@@ -44,13 +44,16 @@ import org.json.simple.parser.ParseException;
  */
 public class Settings {
 
+    /**
+     * The path to the program's main settings file.
+     */
     public static final String SETTINGS_PATH = IO.BASE_DIR + File.separator + "settings.json";
 
     // Keys (for JSON load/saving)
-    public static final String TRACKED_PRODUCTS_KEY = "trackedProducts";
-    public static final String COLLECTED_ALBUMS_KEY = "collectedAlbums";
-    public static final String HIDDEN_ALBUMS_KEY = "hiddenAlbums";
-    public static final String SHOW_HIDDEN_ITEMS_KEY = "showHiddenItems";
+    private static final String TRACKED_PRODUCTS_KEY = "trackedProducts";
+    private static final String COLLECTED_ALBUMS_KEY = "collectedAlbums";
+    private static final String HIDDEN_ALBUMS_KEY = "hiddenAlbums";
+    private static final String SHOW_HIDDEN_ITEMS_KEY = "showHiddenItems";
 
     /**
      * The logger for this class.

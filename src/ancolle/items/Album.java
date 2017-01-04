@@ -58,6 +58,18 @@ public class Album extends AlbumPreview {
 
     private final List<Track> trackList;
 
+    /**
+     * Instantiate a new {@link Album]
+     *
+     * @param id the album id
+     * @param title_en the English title
+     * @param title_ja the Japanese title
+     * @param type the album type
+     * @param date the release date
+     * @param title_ja_latn the romanised Japanese title
+     * @param pictureUrlSmall URL of the album cover
+     * @param tracks a collection of {@link Track}s for this album
+     */
     public Album(int id, String title_en, String title_ja, String title_ja_latn,
 	    String type, Date date, String pictureUrlSmall,
 	    Collection<Track> tracks) {

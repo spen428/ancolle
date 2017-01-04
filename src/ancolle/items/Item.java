@@ -24,17 +24,16 @@ import java.util.Objects;
 public abstract class Item {
 
     public final int id;
-
-    /**
-     * The English title of this item
-     */
     public final String title_en;
-
-    /**
-     * The Japanese title of this item
-     */
     public final String title_ja;
 
+    /**
+     * Instantiate a new {@link Item}
+     *
+     * @param id the item id as it appears in the database
+     * @param title_en the English title
+     * @param title_ja the Japanese title
+     */
     public Item(int id, String title_en, String title_ja) {
 	this.id = id;
 	this.title_en = title_en;

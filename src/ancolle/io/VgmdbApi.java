@@ -100,8 +100,21 @@ public class VgmdbApi {
 	}
     }
 
-    public static JSONObject request(String subpath, int id) {
-	String filePath = CACHE_DIR + File.separator + subpath + File.separator + id + ".json";
+    /**
+     * Perform a request on the database at the given URL sub-path. This will
+     * request data from {@link VgmdbApi#API_URL}/{@code subpath}/{@code id} and
+     * return the results in the JSON format.
+     *
+     * <p>
+     * The sub-path determines what data is looked up, for example to look up an
+     * album the sub-path should be "album" and the id should be the album id.
+     *
+     * @param subPath the sub-path
+     * @param id the id of the item requested
+     * @return a {@link JSONObject} representing the result of the query
+     */
+    public static JSONObject request(String subPath, int id) {
+	String filePath = CACHE_DIR + File.separator + subPath + File.separator + id + ".json";
 	File file = new File(filePath);
 	if (!file.exists()) {
 	    File parent = file.getParentFile();
@@ -113,7 +126,7 @@ public class VgmdbApi {
 		    return null;
 		}
 	    }
-	    String url = API_URL + "/" + subpath + "/" + id + "?format=json";
+	    String url = API_URL + "/" + subPath + "/" + id + "?format=json";
 	    download(url, file);
 	}
 
@@ -125,6 +138,13 @@ public class VgmdbApi {
 	return null;
     }
 
+    /**
+     * Search the database for full details of the product with the given id
+     *
+     * @param id the product id
+     * @return an instance of {@link Product} representing the product, or null
+     * if the query failed
+     */
     public static Product getProductById(int id) {
 	JSONObject jo = request("product", id);
 	if (jo != null) {
@@ -207,6 +227,13 @@ public class VgmdbApi {
 	return null;
     }
 
+    /**
+     * Search the database for full details of the album with the given id
+     *
+     * @param id the album id
+     * @return an instance of {@link Album} representing the album, or null if
+     * the query failed
+     */
     public static Album getAlbumById(int id) {
 	JSONObject obj = request("album", id);
 	if (obj == null) {
@@ -279,8 +306,17 @@ public class VgmdbApi {
 		date, picture_small, trackList);
     }
 
-    public static JSONObject search(String subpath, String searchString) {
-	String filePath = CACHE_DIR + File.separator + subpath + File.separator
+    /**
+     * Perform a search query on the database at the given URL sub-path. See
+     * also {@link VgmdbApi#request} for more information about the sub-path.
+     *
+     * @param subPath the sub-path
+     * @param searchString the search query
+     * @return a {@link JSONObject} representing the result of the query
+     * @see VgmdbApi#request
+     */
+    private static JSONObject search(String subPath, String searchString) {
+	String filePath = CACHE_DIR + File.separator + subPath + File.separator
 		+ "search.json";
 	File file = new File(filePath);
 	if (!file.exists()) {
@@ -306,7 +342,7 @@ public class VgmdbApi {
 	    encodedSearchString = URLEncoder.encode(searchString, "UTF-8");
 	    // The URLEncoder above does not encode spaces as expected, fix below
 	    encodedSearchString = encodedSearchString.replace("+", "%20");
-	    String url = API_URL + "/search/" + subpath + "/"
+	    String url = API_URL + "/search/" + subPath + "/"
 		    + encodedSearchString + "?format=json";
 	    download(url, file);
 	} catch (UnsupportedEncodingException ex) {
@@ -321,6 +357,13 @@ public class VgmdbApi {
 	return null;
     }
 
+    /**
+     * Search the database for products matching the given search terms
+     *
+     * @param text the search query
+     * @return a list of {@link ProductPreview} representing the products that
+     * matched the query
+     */
     public static List<ProductPreview> searchProducts(String text) {
 	JSONObject rootObj = search("products", text);
 	if (rootObj == null) {

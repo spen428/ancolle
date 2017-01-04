@@ -17,7 +17,7 @@
 package ancolle.items;
 
 /**
- * Product types
+ * Product types as found in the database
  *
  * @author lykat
  */

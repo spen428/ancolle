@@ -37,6 +37,18 @@ public class Franchise extends Product {
 
     private final List<Product> products;
 
+    /**
+     * Instantiate a new instance of {@link Franchise}, a sub-class of
+     * {@link Product}. The inherited fields {@link Product#pictureUrlSmall} and
+     * {@link Product#albums} will be set to {@code null} and the field
+     * {@link Product#type} will be set to {@link ProductType#FRANCHISE}.
+     *
+     * @param id the product id
+     * @param title_en the English title
+     * @param title_ja the Japanese title
+     * @param products a collection of {@link Product}s that come under this
+     * {@link Franchise}
+     */
     public Franchise(int id, String title_en, String title_ja,
 	    Collection<Product> products) {
 	super(id, title_en, title_ja, ProductType.FRANCHISE, null, null);

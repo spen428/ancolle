@@ -38,6 +38,15 @@ public class AlbumPreview extends Item {
      */
     public final Date date;
 
+    /**
+     * Instantiate a new {@link AlbumPreview}
+     *
+     * @param id the album id
+     * @param title_en the English title
+     * @param title_ja the Japanese title
+     * @param type the album type
+     * @param date the release date
+     */
     public AlbumPreview(int id, String title_en, String title_ja, String type,
 	    Date date) {
 	super(id, title_en, title_ja);
