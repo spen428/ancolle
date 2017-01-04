@@ -19,10 +19,12 @@ package ancolle.main;
 import ancolle.io.IO;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -164,19 +166,28 @@ public class Settings {
 	LOG.log(Level.INFO, "Saving settings to {0}", SETTINGS_PATH);
 	File file = new File(SETTINGS_PATH);
 	if (!file.exists()) {
-	    file.getParentFile().mkdirs();
+	    File parent = file.getParentFile();
+	    if (parent != null && !parent.exists()) {
+		boolean success = parent.mkdirs();
+		if (!success) {
+		    LOG.log(Level.SEVERE, "Failed to create directory {0}.",
+			    parent.toString());
+		    return false;
+		}
+	    }
 	}
 
-	try (FileWriter fw = new FileWriter(file)) {
+	try (Writer w = new OutputStreamWriter(new FileOutputStream(file),
+		StandardCharsets.UTF_8)) {
 	    JSONObject root = new JSONObject();
 	    root.put(Settings.TRACKED_PRODUCTS_KEY, createJSONArray(trackedProductIds));
 	    root.put(Settings.COLLECTED_ALBUMS_KEY, createJSONArray(collectedAlbumIds));
 	    root.put(Settings.HIDDEN_ALBUMS_KEY, createJSONArray(hiddenAlbumIds));
 	    root.put(Settings.SHOW_HIDDEN_ITEMS_KEY, showHiddenItems);
 
-	    fw.write(root.toJSONString());
-	    fw.flush();
-	    fw.close();
+	    w.write(root.toJSONString());
+	    w.flush();
+	    w.close();
 	} catch (IOException ex) {
 	    LOG.log(Level.SEVERE, null, ex);
 	    return false;
