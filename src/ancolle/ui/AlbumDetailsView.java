@@ -21,9 +21,15 @@ import java.text.SimpleDateFormat;
 import java.util.logging.Logger;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -36,14 +42,38 @@ import javafx.scene.text.Font;
  */
 public class AlbumDetailsView extends HBox {
 
+    private static final Logger LOG = Logger.getLogger(AlbumDetailsView.class.getName());
+
     private static final int PANE_PADDING_PX = 25;
     private static final double COVER_WIDTH_PX = 350;
     private static final double COVER_PADDING_PX = 10;
     private static final double LABEL_PADDING_PX = 5;
-
     private static final Album BLANK_ALBUM = new Album(-1, null, null, null,
 	    null, null, null, null);
-    private static final Logger LOG = Logger.getLogger(AlbumDetailsView.class.getName());
+
+    /**
+     * A context menu with just a "Copy" option, for copying the text values of
+     * labels in this {@link AlbumView}.
+     */
+    private static final ContextMenu COPY_CONTEXT_MENU;
+
+    static {
+	COPY_CONTEXT_MENU = new ContextMenu();
+	MenuItem menuItemCopy = new MenuItem("Copy to clipboard");
+	menuItemCopy.setOnAction(evt -> {
+	    Label anchor = (Label) COPY_CONTEXT_MENU.getOwnerNode();
+	    if (anchor != null) {
+		// Copy label text to the system clipboard
+		String labelText = anchor.getText();
+		Clipboard clipboard = Clipboard.getSystemClipboard();
+		ClipboardContent content = new ClipboardContent();
+		content.putString(labelText);
+		clipboard.setContent(content);
+	    }
+	});
+	COPY_CONTEXT_MENU.getItems().add(menuItemCopy);
+	COPY_CONTEXT_MENU.setAutoHide(true);
+    }
 
     private Album album;
 
@@ -124,9 +154,15 @@ public class AlbumDetailsView extends HBox {
 	label.setFont(new Font("Meiryo", 16));
 	label.setOnMouseEntered(evt -> {
 	    label.setStyle("-fx-background-color: #9ec1ff;");
+	    COPY_CONTEXT_MENU.hide();
 	});
 	label.setOnMouseExited(evt -> {
 	    label.setStyle("-fx-background-color: none;");
+	});
+	label.setOnMouseClicked(evt -> {
+	    if (evt.getButton() == MouseButton.SECONDARY) {
+		COPY_CONTEXT_MENU.show(label, Side.TOP, evt.getX(), evt.getY());
+	    }
 	});
 	return label;
     }
@@ -183,6 +219,10 @@ public class AlbumDetailsView extends HBox {
 
     public Album getAlbum() {
 	return this.album;
+    }
+
+    private ContextMenu getContextMenu() {
+	return COPY_CONTEXT_MENU;
     }
 
 }

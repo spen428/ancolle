@@ -38,8 +38,9 @@ import javafx.scene.image.Image;
  */
 public class AlbumView extends TilePaneView {
 
-    private static final double MAX_TILE_WIDTH_PX = 100;
     private static final Logger LOG = Logger.getLogger(AlbumView.class.getName());
+
+    private static final double MAX_TILE_WIDTH_PX = 100;
 
     private Product product;
 
