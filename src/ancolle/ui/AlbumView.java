@@ -40,7 +40,7 @@ public class AlbumView extends TilePaneView {
 
     private static final Logger LOG = Logger.getLogger(AlbumView.class.getName());
 
-    private static final double MAX_TILE_WIDTH_PX = 100;
+    public static final double MAX_TILE_WIDTH = 100;
 
     private Product product;
 
@@ -53,7 +53,7 @@ public class AlbumView extends TilePaneView {
     public AlbumView(AnColle ancolle, Product product) {
 	super(ancolle);
 	this.fullAlbumMap = new ConcurrentHashMap<>(20);
-	setPadding(new Insets(PANE_PADDING_PX));
+	setPadding(new Insets(PANE_PADDING));
 	setAlignment(Pos.BASELINE_CENTER);
 	setProduct(product);
     }
@@ -89,8 +89,7 @@ public class AlbumView extends TilePaneView {
     }
 
     private AlbumNode createAlbumNode(AlbumPreview album) {
-	double maxWidth = MAX_TILE_WIDTH_PX + (2 * TILE_PADDING_PX);
-	AlbumNode node = new AlbumNode(maxWidth, this);
+	AlbumNode node = new AlbumNode(this);
 	node.setAlbum(album);
 	node.setHidden(ancolle.getSettings().hiddenAlbumIds.contains(album.id));
 

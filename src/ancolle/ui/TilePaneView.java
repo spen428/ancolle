@@ -31,8 +31,8 @@ import javafx.scene.layout.TilePane;
  */
 public class TilePaneView extends TilePane {
 
-    public static final double PANE_PADDING_PX = 25;
-    public static final double TILE_PADDING_PX = 10;
+    public static final double PANE_PADDING = 25;
+    public static final double TILE_PADDING = 10;
     private static final Logger LOG = Logger.getLogger(TilePaneView.class.getName());
 
     protected final AnColle ancolle;

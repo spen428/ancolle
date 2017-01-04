@@ -26,6 +26,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
+import static ancolle.ui.TilePaneView.TILE_PADDING;
 
 /**
  * @author lykat
@@ -34,8 +35,14 @@ public class ProductNode extends ItemNode<Product> {
 
     public static final Background NEWLY_ADDED_BACKGROUND = new Background(
 	    new BackgroundFill(Color.LEMONCHIFFON, CornerRadii.EMPTY, Insets.EMPTY));
+    public static final double DEFAULT_MIN_WIDTH = ProductView.MIN_TILE_WIDTH
+	    + (2 * TILE_PADDING);
+    public static final double DEFAULT_MAX_WIDTH = ProductView.MAX_TILE_WIDTH
+	    + (2 * TILE_PADDING);
+    public static final double DEFAULT_MAX_HEIGHT = DEFAULT_MAX_WIDTH / 4;
 
     private static final ContextMenu PRODUCT_NODE_CONTEXT_MENU;
+
     private static final Logger LOG = Logger.getLogger(ProductNode.class.getName());
 
     static {
@@ -61,13 +68,13 @@ public class ProductNode extends ItemNode<Product> {
 
     private final ProductView productView;
 
-    public ProductNode(double minWidth, double maxWidth, ProductView productView) {
+    public ProductNode(ProductView productView) {
 	super();
 	this.productView = productView;
 
-	setMinWidth(minWidth);
-	setMaxWidth(maxWidth);
-	setMaxHeight(maxWidth / 4);
+	setMinWidth(DEFAULT_MIN_WIDTH);
+	setMaxWidth(DEFAULT_MAX_WIDTH);
+	setMaxHeight(DEFAULT_MAX_HEIGHT);
 
 	setProduct(null);
 

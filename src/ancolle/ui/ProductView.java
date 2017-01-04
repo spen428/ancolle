@@ -54,8 +54,9 @@ import javafx.stage.Modality;
  */
 public class ProductView extends TilePaneView {
 
-    private static final double MIN_TILE_WIDTH_PX = 50;
-    private static final double MAX_TILE_WIDTH_PX = 250;
+    public static final double MIN_TILE_WIDTH = 50;
+    public static final double MAX_TILE_WIDTH = 250;
+
     private static final Logger LOG = Logger.getLogger(ProductView.class.getName());
 
     private final Set<Product> products;
@@ -67,7 +68,7 @@ public class ProductView extends TilePaneView {
 	// Button for adding new products to track
 	getChildren().add(createProductAdderNode());
 
-	setPadding(new Insets(PANE_PADDING_PX));
+	setPadding(new Insets(PANE_PADDING));
 	setAlignment(Pos.BASELINE_CENTER);
     }
 
@@ -181,9 +182,7 @@ public class ProductView extends TilePaneView {
      * @return the node
      */
     private ProductNode createProductNode(String label1text, String label2text) {
-	double minWidth = MIN_TILE_WIDTH_PX + (2 * TILE_PADDING_PX);
-	double maxWidth = MAX_TILE_WIDTH_PX + (2 * TILE_PADDING_PX);
-	ProductNode node = new ProductNode(minWidth, maxWidth, this);
+	ProductNode node = new ProductNode(this);
 	node.label1.setText(label1text);
 	node.label2.setText(label2text);
 	return node;

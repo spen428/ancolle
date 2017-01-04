@@ -18,6 +18,7 @@ package ancolle.ui;
 
 import ancolle.items.Album;
 import ancolle.items.AlbumPreview;
+import static ancolle.ui.TilePaneView.TILE_PADDING;
 import java.util.logging.Logger;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -31,9 +32,15 @@ import javafx.scene.paint.Color;
  */
 public class AlbumNode extends ItemNode<AlbumPreview> {
 
-    public static final Background COLOR_NOT_COLLECTED = new Background(new BackgroundFill(null, null, null));
-    public static final Background COLOR_COLLECTED = new Background(new BackgroundFill(Color.FORESTGREEN, null, null));
+    public static final Background COLOR_NOT_COLLECTED = new Background(
+	    new BackgroundFill(null, null, null));
+    public static final Background COLOR_COLLECTED = new Background(
+	    new BackgroundFill(Color.FORESTGREEN, null, null));
+
     public static final double HIDDEN_OPACITY = 0.4;
+    public static final double DEFAULT_MAX_WIDTH = AlbumView.MAX_TILE_WIDTH
+	    + (2 * TILE_PADDING);
+    public static final double DEFAULT_MAX_HEIGHT = DEFAULT_MAX_WIDTH;
 
     private static final ContextMenu ALBUM_NODE_CONTEXT_MENU;
     private static final Logger LOG = Logger.getLogger(AlbumNode.class.getName());
@@ -63,12 +70,12 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
     private boolean collected = false;
     private boolean hidden = false;
 
-    public AlbumNode(double maxWidth, AlbumView albumView) {
+    public AlbumNode(AlbumView albumView) {
 	super();
 	this.albumView = albumView;
 
-	setMaxWidth(maxWidth);
-	setMaxHeight(maxWidth);
+	setMaxWidth(DEFAULT_MAX_WIDTH);
+	setMaxHeight(DEFAULT_MAX_HEIGHT);
 
 	setOnMouseExited(evt -> {
 	    updateBackground();
