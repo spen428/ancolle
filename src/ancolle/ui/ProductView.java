@@ -20,7 +20,6 @@ import ancolle.io.VgmdbApi;
 import ancolle.items.Product;
 import ancolle.items.ProductPreview;
 import ancolle.items.ProductType;
-import ancolle.main.AnColle;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

@@ -16,7 +16,6 @@
  */
 package ancolle.ui;
 
-import ancolle.main.AnColle;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;

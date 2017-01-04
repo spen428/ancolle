@@ -14,15 +14,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package ancolle.main;
+package ancolle.ui;
 
 import ancolle.items.Product;
-import ancolle.ui.AlbumView;
-import ancolle.ui.ProductNode;
-import ancolle.ui.ProductView;
-import ancolle.ui.StatusBar;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
+import ancolle.main.Settings;
 import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -44,17 +39,11 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 
 /**
- * The JavaFX application class
+ * The root {@link Node} of the main {@link Scene} of the {@link Application}
  *
  * @author lykat
  */
-public class AnColle extends Application {
-
-    /**
-     * Program version string. This does not change between builds, only between
-     * releases.
-     */
-    public static final String VERSION = "0.2a";
+public class AnColle extends VBox {
 
     /**
      * The logger for this class.
@@ -68,7 +57,6 @@ public class AnColle extends Application {
     private final Settings settings;
     private final ProductView productView;
     private final AlbumView albumView;
-    private final VBox root;
     private final StatusBar statusBar;
     private final ScrollPane productViewScrollPane;
     private final ScrollPane albumViewScrollPane;
@@ -78,9 +66,10 @@ public class AnColle extends Application {
     private Window mainWindow = null;
     private final Tab albumViewTab;
 
-    public AnColle() {
+    public AnColle(Stage stage) {
 	super();
-	this.root = new VBox();
+	this.mainWindow = stage;
+
 	this.productViewScrollPane = new ScrollPane();
 	this.albumViewScrollPane = new ScrollPane();
 	this.productView = new ProductView(this);
@@ -91,6 +80,109 @@ public class AnColle extends Application {
 	this.tabPane = new TabPane();
 	this.settings = new Settings();
 	this.statusBar = new StatusBar();
+
+	productViewTab.setClosable(false);
+	tabPane.getTabs().addAll(productViewTab);
+	tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
+	settings.load();
+
+	setId("root");
+
+	// MENU BAR //
+	MenuBar menu = new MenuBar();
+	getChildren().add(menu);
+
+	Menu menuFile = new Menu("File");
+	menuFile.setId("menu-file");
+	menu.getMenus().add(menuFile);
+
+	Menu menuEdit = new Menu("Edit");
+	menuEdit.setId("menu-edit");
+	menu.getMenus().add(menuEdit);
+
+	Menu menuView = new Menu("View");
+	menuView.setId("menu-view");
+	menu.getMenus().add(menuView);
+	CheckMenuItem menuItemShowHiddenItems = new CheckMenuItem("Show hidden items");
+	menuItemShowHiddenItems.setId("menu-item-show-hidden-items");
+	menuItemShowHiddenItems.setSelected(getSettings().isShowHiddenItems());
+	menuItemShowHiddenItems.setOnAction(evt -> {
+	    getSettings().setShowHiddenItems(!settings.isShowHiddenItems());
+	    productView.updateHiddenItems();
+	    albumView.updateHiddenItems();
+	});
+	menuView.getItems().add(menuItemShowHiddenItems);
+
+	Menu menuTools = new Menu("Tools");
+	menuTools.setId("menu-tools");
+	menu.getMenus().add(menuTools);
+
+	Menu menuHelp = new Menu("Help");
+	menuHelp.setId("menu-help");
+	menu.getMenus().add(menuHelp);
+
+	VBox.setVgrow(tabPane, Priority.ALWAYS);
+	getChildren().add(tabPane);
+	tabPane.setOnKeyPressed(evt -> {
+	    if (evt.getCode() == KeyCode.W && evt.isControlDown()) {
+		int idx = tabPane.getSelectionModel().getSelectedIndex();
+		if (idx != 0) {
+		    tabPane.getTabs().remove(idx);
+		}
+	    }
+	});
+
+	getChildren().add(statusBar);
+
+	productViewTab.setId("product-view-tab");
+	productView.setBackground(AZURE_BACKGROUND);
+
+	productViewScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+	productViewScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+	productViewScrollPane.setFitToWidth(true);
+	productViewScrollPane.setFitToHeight(true);
+	VBox.setVgrow(productViewScrollPane, Priority.ALWAYS);
+	productViewScrollPane.setBackground(AZURE_BACKGROUND);
+	productViewScrollPane.setContent(productView);
+
+	productViewTab.setContent(productViewScrollPane);
+
+	albumViewScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+	albumViewScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+	albumViewScrollPane.setFitToWidth(true);
+	albumViewScrollPane.setFitToHeight(true);
+	VBox.setVgrow(albumViewScrollPane, Priority.ALWAYS);
+	albumViewScrollPane.setContent(albumView);
+
+	albumViewTab.setId("album-view-tab");
+	albumViewTab.setContent(albumViewScrollPane);
+	albumViewTab.setOnClosed(evt -> {
+	    albumView.cancelQueuedTasks();
+	    albumView.setProduct(null);
+	});
+
+	setOnKeyPressed(evt -> {
+	    if (tabPane.getSelectionModel().getSelectedItem() == productViewTab) {
+		switch (evt.getCode()) {
+		    case A:
+			productView.doAddProductDialog();
+			break;
+		    default:
+			break;
+		}
+	    }
+	});
+
+	// Load and display tracked products in the background
+	Platform.runLater(() -> {
+	    getSettings().trackedProductIds.forEach((id) -> {
+		productView.addProductById(id);
+	    });
+	});
+
+	mainWindow.setOnCloseRequest(evt -> {
+	    saveSettings();
+	});
     }
 
     /**
@@ -154,123 +246,6 @@ public class AnColle extends Application {
 	}
 	albumViewTab.setText(product.title_en);
 	setSelectedTab(albumViewTab);
-    }
-
-    @Override
-    public void start(Stage primaryStage) {
-	Logger.getGlobal().setLevel(Level.ALL);
-	Logger.getGlobal().addHandler(new ConsoleHandler());
-
-	productViewTab.setClosable(false);
-	tabPane.getTabs().addAll(productViewTab);
-	tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
-	settings.load();
-
-	root.setId("root");
-
-	// MENU BAR //
-	MenuBar menu = new MenuBar();
-	root.getChildren().add(menu);
-
-	Menu menuFile = new Menu("File");
-	menuFile.setId("menu-file");
-	menu.getMenus().add(menuFile);
-
-	Menu menuEdit = new Menu("Edit");
-	menuEdit.setId("menu-edit");
-	menu.getMenus().add(menuEdit);
-
-	Menu menuView = new Menu("View");
-	menuView.setId("menu-view");
-	menu.getMenus().add(menuView);
-	CheckMenuItem menuItemShowHiddenItems = new CheckMenuItem("Show hidden items");
-	menuItemShowHiddenItems.setId("menu-item-show-hidden-items");
-	menuItemShowHiddenItems.setSelected(getSettings().isShowHiddenItems());
-	menuItemShowHiddenItems.setOnAction(evt -> {
-	    getSettings().setShowHiddenItems(!settings.isShowHiddenItems());
-	    productView.updateHiddenItems();
-	    albumView.updateHiddenItems();
-	});
-	menuView.getItems().add(menuItemShowHiddenItems);
-
-	Menu menuTools = new Menu("Tools");
-	menuTools.setId("menu-tools");
-	menu.getMenus().add(menuTools);
-
-	Menu menuHelp = new Menu("Help");
-	menuHelp.setId("menu-help");
-	menu.getMenus().add(menuHelp);
-
-	VBox.setVgrow(tabPane, Priority.ALWAYS);
-	root.getChildren().add(tabPane);
-	tabPane.setOnKeyPressed(evt -> {
-	    if (evt.getCode() == KeyCode.W && evt.isControlDown()) {
-		int idx = tabPane.getSelectionModel().getSelectedIndex();
-		if (idx != 0) {
-		    tabPane.getTabs().remove(idx);
-		}
-	    }
-	});
-
-	root.getChildren().add(statusBar);
-
-	productViewTab.setId("product-view-tab");
-	productView.setBackground(AZURE_BACKGROUND);
-
-	productViewScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-	productViewScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-	productViewScrollPane.setFitToWidth(true);
-	productViewScrollPane.setFitToHeight(true);
-	VBox.setVgrow(productViewScrollPane, Priority.ALWAYS);
-	productViewScrollPane.setBackground(AZURE_BACKGROUND);
-	productViewScrollPane.setContent(productView);
-
-	productViewTab.setContent(productViewScrollPane);
-
-	albumViewScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-	albumViewScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-	albumViewScrollPane.setFitToWidth(true);
-	albumViewScrollPane.setFitToHeight(true);
-	VBox.setVgrow(albumViewScrollPane, Priority.ALWAYS);
-	albumViewScrollPane.setContent(albumView);
-
-	albumViewTab.setId("album-view-tab");
-	albumViewTab.setContent(albumViewScrollPane);
-	albumViewTab.setOnClosed(evt -> {
-	    albumView.cancelQueuedTasks();
-	    albumView.setProduct(null);
-	});
-
-	root.setOnKeyPressed(evt -> {
-	    if (tabPane.getSelectionModel().getSelectedItem() == productViewTab) {
-		switch (evt.getCode()) {
-		    case A:
-			productView.doAddProductDialog();
-			break;
-		    default:
-			break;
-		}
-	    }
-	});
-
-	// Load and display tracked products in the background
-	Platform.runLater(() -> {
-	    getSettings().trackedProductIds.forEach((id) -> {
-		productView.addProductById(id);
-	    });
-	});
-
-	this.mainWindow = primaryStage;
-
-	Scene scene = new Scene(root, 1280, 720);
-	scene.getStylesheets().add("stylesheet.css");
-
-	primaryStage.setScene(scene);
-	primaryStage.setTitle("AnColle " + VERSION);
-	primaryStage.setOnCloseRequest(evt -> {
-	    saveSettings();
-	});
-	primaryStage.show();
     }
 
     /**

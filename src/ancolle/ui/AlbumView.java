@@ -20,7 +20,6 @@ import ancolle.io.VgmdbApi;
 import ancolle.items.Album;
 import ancolle.items.AlbumPreview;
 import ancolle.items.Product;
-import ancolle.main.AnColle;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
