@@ -141,8 +141,10 @@ public class AnColle extends Application {
      * @param product the product
      */
     public void view(Product product) {
-	albumView.cancelQueuedTasks();
-	albumView.setProduct(product);
+	if (albumView.getProduct() != product) {
+	    albumView.cancelQueuedTasks();
+	    albumView.setProduct(product);
+	}
 	if (!tabPane.getTabs().contains(albumViewTab)) {
 	    tabPane.getTabs().add(1, albumViewTab);
 	}
@@ -217,6 +219,7 @@ public class AnColle extends Application {
 	albumViewTab.setContent(albumViewScrollPane);
 	albumViewTab.setOnClosed(evt -> {
 	    albumView.cancelQueuedTasks();
+	    albumView.setProduct(null);
 	});
 
 	root.setOnKeyPressed(evt -> {
