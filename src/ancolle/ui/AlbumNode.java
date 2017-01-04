@@ -68,6 +68,7 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 	this.albumView = albumView;
 
 	setMaxWidth(maxWidth);
+	setMaxHeight(maxWidth);
 
 	setOnMouseExited(evt -> {
 	    updateBackground();
