@@ -38,7 +38,7 @@ public class IO {
     public static final JSONParser JSON_PARSER = new JSONParser();
 
     /**
-     * The result of calling {@link System#getProperty()} with the parameter
+     * The result of calling {@link System#getProperty} with the parameter
      * "user.home". On Windows this should return the expansion of
      * {@code %USERPROFILE%}, on UNIX systems it should return the expansion of
      * {@code ~}.

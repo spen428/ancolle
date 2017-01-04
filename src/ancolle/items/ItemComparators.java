@@ -27,12 +27,12 @@ import java.util.logging.Logger;
 public class ItemComparators {
 
     /**
-     * Compares by: title_en < title_jp < type.typeString
+     * Compares by: title_en, then title_jp, then type.typeString
      */
     public static final Comparator<ProductPreview> PRODUCT_PREVIEW_COMPARATOR;
 
     /**
-     * Compares by: date < title_en < title_jp < type
+     * Compares by: date, then title_en, then title_jp, then type
      */
     public static final Comparator<AlbumPreview> ALBUM_PREVIEW_COMPARATOR;
 

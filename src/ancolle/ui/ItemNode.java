@@ -30,7 +30,7 @@ import javafx.scene.paint.Color;
 
 /**
  * @author lykat
- * @param <T> the type of {@link Item} that this node represents
+ * @param <T> the type of {@link ancolle.items.Item} that this node represents
  */
 public abstract class ItemNode<T> extends VBox {
 

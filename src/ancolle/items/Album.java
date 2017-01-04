@@ -59,7 +59,7 @@ public class Album extends AlbumPreview {
     private final List<Track> trackList;
 
     /**
-     * Instantiate a new {@link Album]
+     * Instantiate a new {@link Album}
      *
      * @param id the album id
      * @param title_en the English title
