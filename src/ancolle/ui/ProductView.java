@@ -77,10 +77,12 @@ public class ProductView extends TilePaneView {
      * thread
      *
      * @param product the product
+     * @param highlight whether to highlight this new product node using the
+     * colour {@link ProductNode#NEWLY_ADDED_BACKGROUND}
      * @return true if successfully added
      */
-    public boolean addProduct(Product product) {
-	return addProduct(product, -1);
+    public boolean addProduct(Product product, boolean highlight) {
+	return addProduct(product, -1, highlight);
     }
 
     /**
@@ -91,9 +93,11 @@ public class ProductView extends TilePaneView {
      * @param product the product
      * @param idx where to insert the product node, -1 to automatically insert
      * in sorting order
+     * @param highlight whether to highlight this new product node using the
+     * colour {@link ProductNode#NEWLY_ADDED_BACKGROUND}
      * @return true if successfully added
      */
-    public boolean addProduct(Product product, int idx) {
+    public boolean addProduct(Product product, int idx, boolean highlight) {
 	if (this.products.contains(product)) {
 	    return false;
 	}
@@ -125,6 +129,12 @@ public class ProductView extends TilePaneView {
 	    insertProduct(node);
 	}
 
+	// Highlight as new
+	if (highlight) {
+	    node.setBackground(ProductNode.NEWLY_ADDED_BACKGROUND);
+	    ancolle.scrollIntoView(node);
+//	    node.requestFocus();
+	}
 	return true;
     }
 
@@ -188,6 +198,19 @@ public class ProductView extends TilePaneView {
      * @param id the product id
      */
     public void addProductById(int id) {
+	addProductById(id, false);
+    }
+
+    /**
+     * Add a product to the view by id, looking it up by using the
+     * {@link VgmdbApi}. A placeholder will be displayed while the details are
+     * loading, which will be automatically replaced with the full details on
+     * completion.
+     *
+     * @param id the product id
+     * @param highlight whether to highlight the newly added {@link ProductNode}
+     */
+    public void addProductById(int id, boolean highlight) {
 	final Node placeholder = createProductNode("Product #" + id, "Loading...");
 	// Insert before "Add"  button
 	getChildren().add(getChildren().size() - 1, placeholder);
@@ -195,7 +218,7 @@ public class ProductView extends TilePaneView {
 	    final Product product = VgmdbApi.getProductById(id);
 	    // Ensure that UI operations occur on the correct thread.
 	    Platform.runLater(() -> {
-		boolean added = addProduct(product);
+		boolean added = addProduct(product, highlight);
 		if (!added) {
 		    LOG.log(Level.INFO, "Product with id #{0} was not "
 			    + "added. Possible duplicate?", product.id);

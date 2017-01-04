@@ -18,14 +18,22 @@ package ancolle.ui;
 
 import ancolle.items.Product;
 import java.util.logging.Logger;
+import javafx.geometry.Insets;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
 
 /**
  * @author lykat
  */
 public class ProductNode extends ItemNode<Product> {
+
+    public static final Background NEWLY_ADDED_BACKGROUND = new Background(
+	    new BackgroundFill(Color.LEMONCHIFFON, CornerRadii.EMPTY, Insets.EMPTY));
 
     private static final ContextMenu PRODUCT_NODE_CONTEXT_MENU;
     private static final Logger LOG = Logger.getLogger(ProductNode.class.getName());

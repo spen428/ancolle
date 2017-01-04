@@ -117,7 +117,7 @@ public class AnColle extends Application {
      */
     public void addTrackedProduct(int id) {
 	getSettings().trackedProductIds.add(id);
-	productView.addProductById(id);
+	productView.addProductById(id, true);
 	saveSettings();
     }
 
@@ -246,6 +246,20 @@ public class AnColle extends Application {
 
     public Window getMainWindow() {
 	return mainWindow;
+    }
+
+    /**
+     * Scroll the given {@link Node} into view.
+     *
+     * @param node the node
+     */
+    public void scrollIntoView(Node node) {
+	double w = scrollPane.getContent().getBoundsInLocal().getWidth();
+	double h = scrollPane.getContent().getBoundsInLocal().getHeight();
+	double x = node.getBoundsInParent().getMaxX();
+	double y = node.getBoundsInParent().getMaxY();
+	scrollPane.setVvalue(y / h);
+	scrollPane.setHvalue(x / w);
     }
 
 }
