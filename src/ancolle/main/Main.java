@@ -40,7 +40,7 @@ public class Main extends Application {
      * Program version string. This does not change between builds, only between
      * releases.
      */
-    public static final String VERSION = "0.2a";
+    public static final String VERSION = "0.3a";
 
     /**
      * The logger for this class
