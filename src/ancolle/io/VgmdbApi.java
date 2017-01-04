@@ -58,9 +58,6 @@ public class VgmdbApi {
     public static final String CACHE_DIR = IO.BASE_DIR + File.separator + "cache";
 
     private static final String API_URL = "http://vgmdb.info";
-    private static final SimpleDateFormat SDF_YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
-    private static final SimpleDateFormat SDF_YYYY_MM = new SimpleDateFormat("yyyy-MM");
-    private static final SimpleDateFormat SDF_YYYY = new SimpleDateFormat("yyyy");
     private static final int DOWNLOAD_BUFFER_SIZE_BYTES = 1024;
 
     /**
@@ -107,7 +104,15 @@ public class VgmdbApi {
 	String filePath = CACHE_DIR + File.separator + subpath + File.separator + id + ".json";
 	File file = new File(filePath);
 	if (!file.exists()) {
-	    file.getParentFile().mkdirs();
+	    File parent = file.getParentFile();
+	    if (parent != null && !parent.exists()) {
+		boolean success = parent.mkdirs();
+		if (!success) {
+		    LOG.log(Level.SEVERE, "Failed to create directory {0}.",
+			    parent.toString());
+		    return null;
+		}
+	    }
 	    String url = API_URL + "/" + subpath + "/" + id + "?format=json";
 	    download(url, file);
 	}
@@ -134,7 +139,7 @@ public class VgmdbApi {
 		JSONObject obj = (JSONObject) arr.get(i);
 		String link = (String) obj.get("link");
 		String[] spl = link.split("/");
-		int album_id = Integer.valueOf(spl[spl.length - 1]);
+		int album_id = Integer.parseInt(spl[spl.length - 1]);
 		JSONObject titles = (JSONObject) obj.get("titles");
 		String album_title_en = (String) titles.get("en");
 		String album_title_ja = (String) titles.get("ja");
@@ -159,7 +164,7 @@ public class VgmdbApi {
 		    JSONObject title = (JSONObject) titles.get(i);
 		    String link = (String) title.get("link");
 		    String[] spl = link.split("/");
-		    int productId = Integer.valueOf(spl[spl.length - 1]);
+		    int productId = Integer.parseInt(spl[spl.length - 1]);
 		    Product product = getProductById(productId);
 		    if (product != null) {
 			products.add(product);
@@ -181,19 +186,19 @@ public class VgmdbApi {
      */
     private static Date parseDate(String dateString) {
 	try {
-	    return SDF_YYYY_MM_DD.parse(dateString);
+	    return new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
 	} catch (java.text.ParseException ex) {
 	}
 
-	// Try parsing just the year and month yyyy-MM
+	// Try parsing just the year and month
 	try {
-	    return SDF_YYYY_MM.parse(dateString);
+	    return new SimpleDateFormat("yyyy-MM").parse(dateString);
 	} catch (java.text.ParseException ex) {
 	}
 
-	// Try parsing just the year yyyy
+	// Try parsing just the year
 	try {
-	    return SDF_YYYY.parse(dateString);
+	    return new SimpleDateFormat("yyyy").parse(dateString);
 	} catch (java.text.ParseException ex) {
 	    LOG.log(Level.SEVERE, "Failed to parse date string: "
 		    + dateString, ex);
@@ -216,7 +221,7 @@ public class VgmdbApi {
 	String album_id_str = spl[spl.length - 1];
 	int album_id = -1;
 	try {
-	    album_id = Integer.valueOf(album_id_str);
+	    album_id = Integer.parseInt(album_id_str);
 	} catch (NumberFormatException ex) {
 	    LOG.log(Level.SEVERE, "Failed to parse string as integer {0}",
 		    album_id_str);
@@ -247,7 +252,7 @@ public class VgmdbApi {
 	    String discName = (String) disc.get("name");
 	    int discNumber = 0;
 	    try {
-		discNumber = Integer.valueOf(discName.split("Disc ")[1]);
+		discNumber = Integer.parseInt(discName.split("Disc ")[1]);
 	    } catch (NumberFormatException ex) {
 		LOG.log(Level.SEVERE, "Failed to parse disc number from disc "
 			+ "name: {0}", discName);
@@ -279,9 +284,21 @@ public class VgmdbApi {
 		+ "search.json";
 	File file = new File(filePath);
 	if (!file.exists()) {
-	    file.getParentFile().mkdirs();
+	    File parent = file.getParentFile();
+	    if (parent != null && !parent.exists()) {
+		boolean success = parent.mkdirs();
+		if (!success) {
+		    LOG.log(Level.SEVERE, "Failed to create directory {0}.",
+			    parent.toString());
+		    return null;
+		}
+	    }
 	} else {
-	    file.delete();
+	    boolean success = file.delete();
+	    if (!success) {
+		LOG.log(Level.WARNING, "Failed to delete file {0}",
+			file.toString());
+	    }
 	}
 
 	String encodedSearchString;
@@ -319,7 +336,7 @@ public class VgmdbApi {
 		String id_str = spl[spl.length - 1];
 		int id = -1;
 		try {
-		    id = Integer.valueOf(id_str);
+		    id = Integer.parseInt(id_str);
 		} catch (NumberFormatException ex) {
 		    LOG.log(Level.SEVERE, "Failed to parse string as integer {0}", id_str);
 		}
