@@ -237,8 +237,4 @@ public class AlbumDetailsView extends HBox {
 	return this.album;
     }
 
-    private ContextMenu getContextMenu() {
-	return COPY_CONTEXT_MENU;
-    }
-
 }

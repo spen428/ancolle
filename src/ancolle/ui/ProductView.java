@@ -71,10 +71,11 @@ public class ProductView extends TilePaneView {
 	this.products = new HashSet<>();
 
 	// Button for adding new products to track
-	getChildren().add(createProductAdderNode());
+	getChildren().add(new ProductAdderNode(this));
 
 	setPadding(new Insets(PANE_PADDING));
 	setAlignment(Pos.BASELINE_CENTER);
+	startWorkerThread();
     }
 
     /**
@@ -142,41 +143,6 @@ public class ProductView extends TilePaneView {
 //	    node.requestFocus();
 	}
 	return true;
-    }
-
-    /**
-     * Create an "adder" node, which when clicked will bring up a dialog to add
-     * a new product to the tracker.
-     *
-     * @return the adder node
-     */
-    private Node createProductAdderNode() {
-	/*
-	 * Not using a ProductNode because this would interfere with the sorting
-	 * of real product nodes during the insertProduct() method. The
-	 * ProductNode comparator always places other node types after any
-	 * ProductNode types, so this node will appear at the end.
-	 */
-	ItemNode<Object> node = new ItemNode<Object>() {
-	    @Override
-	    protected ContextMenu getContextMenu() {
-		return null;
-	    }
-	};
-
-	node.getChildren().remove(node.label2);
-	node.label1.setText("+");
-	node.label1.setFont(new Font("Arial", 40));
-	node.label1.setAlignment(Pos.CENTER);
-	node.setAlignment(Pos.CENTER);
-
-	node.setOnMouseClicked(evt -> {
-	    if (evt.getButton() == MouseButton.PRIMARY) {
-		doAddProductDialog();
-	    }
-	});
-
-	return node;
     }
 
     /**
@@ -395,6 +361,37 @@ public class ProductView extends TilePaneView {
 	// TODO: Setting the style to undecorated seems to prevent the dialog
 	// from appearing altogether...
 	return alert;
+    }
+
+    /**
+     * An "adder" node, which when clicked will bring up a dialog to add a new
+     * product to the tracker.
+     *
+     * Not using a ProductNode because this would interfere with the sorting of
+     * real product nodes during the insertProduct() method. The ProductNode
+     * comparator always places other node types after any ProductNode types, so
+     * this node will appear at the end.
+     */
+    private static class ProductAdderNode extends ItemNode<Object> {
+
+	private ProductAdderNode(ProductView productView) {
+	    getChildren().remove(label2);
+	    label1.setText("+");
+	    label1.setFont(new Font("Arial", 40));
+	    label1.setAlignment(Pos.CENTER);
+	    setAlignment(Pos.CENTER);
+
+	    setOnMouseClicked(evt -> {
+		if (evt.getButton() == MouseButton.PRIMARY) {
+		    productView.doAddProductDialog();
+		}
+	    });
+	}
+
+	@Override
+	protected ContextMenu getContextMenu() {
+	    return null;
+	}
     }
 
 }

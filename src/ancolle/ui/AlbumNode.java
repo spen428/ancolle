@@ -114,10 +114,6 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 	return hidden;
     }
 
-    private AlbumView getAlbumView() {
-	return albumView;
-    }
-
     /**
      * Update the background colour of this {@link AlbumNode}, setting it to be
      * indicative of its `collected` status.

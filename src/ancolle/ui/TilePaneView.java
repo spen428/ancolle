@@ -58,7 +58,14 @@ public class TilePaneView extends TilePane {
 	    }
 	});
 	this.workerThread.setDaemon(true);
-	this.workerThread.start();
+    }
+
+    public boolean startWorkerThread() {
+	if (!this.workerThread.isAlive()) {
+	    this.workerThread.start();
+	    return true;
+	}
+	return false;
     }
 
     /**

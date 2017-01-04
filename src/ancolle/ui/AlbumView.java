@@ -61,6 +61,7 @@ public class AlbumView extends TilePaneView {
 	setPadding(new Insets(PANE_PADDING));
 	setAlignment(Pos.BASELINE_CENTER);
 	setProduct(product);
+	startWorkerThread();
     }
 
     private void addAlbums() {
