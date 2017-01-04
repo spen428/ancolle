@@ -52,7 +52,7 @@ import javafx.stage.Modality;
  *
  * @author lykat
  */
-public class ProductView extends TilePaneView {
+public final class ProductView extends TilePaneView {
 
     public static final double MIN_TILE_WIDTH = 50;
     public static final double MAX_TILE_WIDTH = 250;
@@ -68,7 +68,7 @@ public class ProductView extends TilePaneView {
     public ProductView(AnColle ancolle) {
 	super(ancolle);
 	getStyleClass().add(CLASS_PRODUCT_VIEW);
-	this.products = new HashSet<>();
+	this.products = new HashSet<>(32);
 
 	// Button for adding new products to track
 	getChildren().add(new ProductAdderNode(this));

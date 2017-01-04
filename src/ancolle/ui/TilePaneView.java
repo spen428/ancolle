@@ -60,7 +60,12 @@ public class TilePaneView extends TilePane {
 	this.workerThread.setDaemon(true);
     }
 
-    public boolean startWorkerThread() {
+    /**
+     * Start the worker thread for this {@link TilePaneView}
+     *
+     * @return false if already started
+     */
+    public final boolean startWorkerThread() {
 	if (!this.workerThread.isAlive()) {
 	    this.workerThread.start();
 	    return true;

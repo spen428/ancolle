@@ -40,7 +40,7 @@ import javafx.scene.text.Font;
  *
  * @author lykat
  */
-public class AlbumDetailsView extends HBox {
+public final class AlbumDetailsView extends HBox {
 
     public static final String CLASS_ALBUM_DETAILS_VIEW = "album-details-view";
 

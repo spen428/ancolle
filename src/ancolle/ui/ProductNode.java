@@ -96,7 +96,7 @@ public class ProductNode extends ItemNode<Product> {
 	return getItem();
     }
 
-    public void setProduct(Product product) {
+    public final void setProduct(Product product) {
 	this.setItem(product);
     }
 

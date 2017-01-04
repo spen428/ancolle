@@ -65,11 +65,13 @@ public class Album extends AlbumPreview {
 	this.title_ja_latn = title_ja_latn;
 	this.pictureUrlSmall = pictureUrlSmall;
 	this.picture = null; // Load image only when needed
-	this.trackList = new ArrayList<>();
 	if (tracks != null) {
+	    this.trackList = new ArrayList<>(tracks.size());
 	    tracks.forEach((track) -> {
 		this.trackList.add(track);
 	    });
+	} else {
+	    this.trackList = new ArrayList<>(0);
 	}
     }
 

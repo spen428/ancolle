@@ -322,35 +322,43 @@ public class VgmdbApi {
     }
 
     public static List<ProductPreview> searchProducts(String text) {
-	ArrayList<ProductPreview> results = new ArrayList<>();
-	JSONObject jo = search("products", text);
-	if (jo != null) {
-	    JSONObject resultsObj = (JSONObject) jo.get("results");
-	    JSONArray prods = (JSONArray) resultsObj.get("products");
-	    for (int i = 0; i < prods.size(); i++) {
-		JSONObject product = (JSONObject) prods.get(i);
+	JSONObject rootObj = search("products", text);
+	if (rootObj == null) {
+	    return new ArrayList<>(0);
+	}
 
-		String link = (String) product.get("link");
-		// The link above contains the album id, parse it
-		String[] spl = link.split("/");
-		String id_str = spl[spl.length - 1];
-		int id = -1;
-		try {
-		    id = Integer.parseInt(id_str);
-		} catch (NumberFormatException ex) {
-		    LOG.log(Level.SEVERE, "Failed to parse string as integer {0}", id_str);
-		}
+	JSONObject resultsObj = (JSONObject) rootObj.get("results");
+	JSONArray prodsObjs = (JSONArray) resultsObj.get("products");
+	if (prodsObjs == null) {
+	    return new ArrayList<>(0);
+	}
 
-		JSONObject titles = (JSONObject) product.get("names");
-		String title_en = (String) titles.get("en");
-		String title_ja = (String) titles.get("ja");
-		String typeString = (String) product.get("type");
-		ProductType type = ProductType.getProductTypeFromString(typeString);
-		if (type == ProductType.UNKNOWN) {
-		    LOG.log(Level.WARNING, "Unknown ProductType string: {0}", typeString);
-		}
-		results.add(new ProductPreview(id, title_en, title_ja, type));
+	ArrayList<ProductPreview> results = new ArrayList<>(prodsObjs.size());
+	for (int i = 0; i < prodsObjs.size(); i++) {
+	    JSONObject product = (JSONObject) prodsObjs.get(i);
+
+	    String link = (String) product.get("link");
+	    // The link above contains the album id, parse it
+	    String[] spl = link.split("/");
+	    String id_str = spl[spl.length - 1];
+	    int id = -1;
+	    try {
+		id = Integer.parseInt(id_str);
+	    } catch (NumberFormatException ex) {
+		LOG.log(Level.SEVERE, "Failed to parse string as integer {0}",
+			id_str);
 	    }
+
+	    JSONObject titles = (JSONObject) product.get("names");
+	    String title_en = (String) titles.get("en");
+	    String title_ja = (String) titles.get("ja");
+	    String typeString = (String) product.get("type");
+	    ProductType type = ProductType.getProductTypeFromString(typeString);
+	    if (type == ProductType.UNKNOWN) {
+		LOG.log(Level.WARNING, "Unknown ProductType string: {0}",
+			typeString);
+	    }
+	    results.add(new ProductPreview(id, title_en, title_ja, type));
 	}
 	return results;
     }

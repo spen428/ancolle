@@ -36,7 +36,7 @@ import javafx.scene.image.Image;
  *
  * @author lykat
  */
-public class AlbumView extends TilePaneView {
+public final class AlbumView extends TilePaneView {
 
     /**
      * The logger for this class.
