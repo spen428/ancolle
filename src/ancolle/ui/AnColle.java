@@ -18,7 +18,6 @@ package ancolle.ui;
 
 import ancolle.items.Product;
 import ancolle.main.Settings;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -178,29 +177,19 @@ public class AnColle extends VBox {
     }
 
     /**
-     * Create a new tab and add it to the tab pane. If a tab with the same title
-     * and content already exists, a new tab will not be created and a reference
-     * to the existing tab will instead be returned. The existing tab will also
-     * be highlighted visually on screen.
+     * Create a new tab and add it to the tab pane.
      *
      * @param title the tab title
      * @param content the tab content
      * @return the newly created tab
      */
     public Tab newTab(String title, Node content) {
-	for (Tab tab : tabPane.getTabs()) {
-	    if (tab.getText().equals(title) && tab.getContent().equals(content)) {
-		LOG.log(Level.INFO, "Not adding duplicate tab");
-		flashTab(tab);
-		return tab;
-	    }
-	}
-
 	Tab tab = new Tab(title, content);
 	tab.setOnClosed(evt -> {
 	    selectTabToRight();
 	});
 	tabPane.getTabs().add(tab);
+	flashTab(tab);
 	return tab;
     }
 
@@ -213,7 +202,7 @@ public class AnColle extends VBox {
     }
 
     private void flashTab(Tab tab) {
-
+	// TODO: Requires a subclass, CSS pseudoclas and Timeline to animate
     }
 
     public void setSelectedTab(Tab tab) {
