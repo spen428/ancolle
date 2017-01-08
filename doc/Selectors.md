@@ -25,8 +25,8 @@ and are structured hierarchically according to the organisation of the GUI.
                         - AlbumNode extends ItemNode `.album-node`
             - [Tab ...] `.album-details-tab`
                 - AlbumDetailsView `.album-details-view`
-                    - VBox `.album-cover-container`
-                        - ImageView `.album-cover`
+                    - ImageViewContainer extends VBox `.image-view-container`
+                        - ImageView `.image-view`
                     - ScrollPane `.details-scrollpane`
                         - VBox `.details`
                             - Label `.title-en`
@@ -40,7 +40,8 @@ and are structured hierarchically according to the organisation of the GUI.
             - Label `.status-label`
 
 - ItemNode `.item-node`
-    - ImageView `.image-view`
+    - ImageViewContainer extends VBox `.image-view-container`
+        - ImageView `.image-view`
     - Label `.label1`
     - Label `.label2`
 

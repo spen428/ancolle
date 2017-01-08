@@ -1,9 +1,5 @@
-.product-view {
-    -fx-background-color: #F0FFFF;
-}
-
-.album-view {
-    -fx-background-color: #F0FFFF;
+.image-view-container {
+    -fx-alignment: center;
 }
 
 .item-node:hover {
@@ -16,7 +12,7 @@
 
 .item-node {
     -fx-background-color: none;
-    -fx-margin: 20px;
+    -fx-background-insets: 10px;
     -fx-padding: 10px;
     -fx-background-radius: 10px;
     -fx-alignment: center;
@@ -34,13 +30,31 @@
     -fx-smooth: true;
 }
 
+.tile-pane-view {
+    -fx-background-color: #F0FFFF;
+    -fx-padding: 25px;
+    -fx-alignment: baseline-center;
+}
+
+.album-view {
+}
+
 .album-node {
-    -fx-max-width: 120px;
-    -fx-max-height: 150px;
+    -fx-min-width: 170px;
+    -fx-min-height: 190px;
+    -fx-max-width: 170px;
+    -fx-max-height: 190px;
     -fx-background-insets: 2px;
 }
 
-.album-node > .image-view {
+.album-node > .image-view-container {
+    -fx-padding: 10px;
+    -fx-max-width: 130px;
+    -fx-max-height: 130px;
+}
+
+.product-view {
+    -fx-pref-tile-width: 270px;
 }
 
 .product-node {
@@ -72,9 +86,11 @@
     -fx-background-color: #e6cf00;
 }
 
-.album-cover-container {
+.album-details-view > .image-view-container {
     -fx-padding: 30px;
-} 
+    -fx-max-width: 250px;
+    -fx-max-height: 250px;
+}
 
 .details > .label, .details > .track-list > .label {
     -fx-fit-to-width: true;
@@ -89,11 +105,6 @@
 .scroll-pane {
     -fx-fit-to-width: true;
     -fx-fill-height: true;
-}
-
-.tile-pane-view {
-    -fx-padding: 25px;
-    -fx-alignment: baseline-center;
 }
 
 .status-bar {

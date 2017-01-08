@@ -57,6 +57,11 @@ public class IO {
     private static final Logger LOG = Logger.getLogger(IO.class.getName());
 
     /**
+     * Disable image loading, for debugging
+     */
+    private static final boolean DISABLE_IMAGES = false;
+
+    /**
      * Get an image, downloading it from the given URL and storing it in the
      * cache. If the image is already present in the cache, load it from disk.
      *
@@ -69,6 +74,10 @@ public class IO {
      */
     public static Image retrievePicture(String url, String itemDirName,
 	    String fileName) {
+	if (DISABLE_IMAGES) {
+	    return null;
+	}
+
 	Image picture = null;
 	// Build the path to the cached image file
 	String[] spl = url.split("\\.");

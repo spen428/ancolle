@@ -25,7 +25,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseButton;
@@ -76,7 +75,7 @@ public final class AlbumDetailsView extends HBox {
 
     private Album album;
 
-    private final ImageView albumCover = new ImageView();
+    private final ImageViewContainer albumCoverContainer = new ImageViewContainer();
     private final VBox detailsVbox = new VBox();
 
     private final Label labelTitleEn;
@@ -103,15 +102,7 @@ public final class AlbumDetailsView extends HBox {
 	getStyleClass().add(CLASS_ALBUM_DETAILS_VIEW);
 
 	// VBox that holds the album cover
-	final VBox albumCoverContainer = new VBox();
-	albumCoverContainer.getStyleClass().add("album-cover-container");
-	VBox.setVgrow(albumCoverContainer, Priority.ALWAYS);
-	albumCoverContainer.getChildren().add(albumCover);
 	getChildren().add(albumCoverContainer);
-
-	// The album cover
-	albumCover.getStyleClass().add("album-cover");
-	albumCover.setPreserveRatio(true);
 
 	// Scrollpane that holds the Details VBox
 	final ScrollPane detailsScrollPane = new ScrollPane();
@@ -189,7 +180,7 @@ public final class AlbumDetailsView extends HBox {
 	}
 	this.album = album;
 
-	albumCover.setImage(album.getPicture());
+	albumCoverContainer.setImage(album.getPicture());
 
 	// Titles
 	labelTitleEn.setText("English Title: " + album.title_en);

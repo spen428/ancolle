@@ -114,7 +114,7 @@ public final class ProductView extends TilePaneView {
 	    final Image image = product.getPicture();
 	    LOG.log(Level.FINE, "Fetched product cover for product #", product.id);
 	    Platform.runLater(() -> {
-		node.imageView.setImage(image);
+		node.imageViewContainer.setImage(image);
 	    });
 	});
 

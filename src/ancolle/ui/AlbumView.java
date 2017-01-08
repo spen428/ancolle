@@ -114,7 +114,7 @@ public final class AlbumView extends TilePaneView {
 		final Image image = fullAlbum.getPicture();
 		LOG.log(Level.FINE, "Fetched album cover for album #", album.id);
 		Platform.runLater(() -> {
-		    node.imageView.setImage(image);
+		    node.imageViewContainer.setImage(image);
 		});
 	    } else {
 		LOG.log(Level.FINE, "Failed to fetch full album details for album #", album.id);

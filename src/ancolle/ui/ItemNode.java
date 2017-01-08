@@ -20,7 +20,6 @@ import javafx.css.PseudoClass;
 import javafx.geometry.Side;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
@@ -30,7 +29,7 @@ import javafx.scene.layout.VBox;
  */
 public abstract class ItemNode<T> extends VBox {
 
-    public final ImageView imageView;
+    public final ImageViewContainer imageViewContainer;
     public final Label label1;
     public final Label label2;
 
@@ -52,9 +51,8 @@ public abstract class ItemNode<T> extends VBox {
 	    }
 	};
 
-	imageView = new ImageView();
-	imageView.setPreserveRatio(true);
-	getChildren().add(imageView);
+	imageViewContainer = new ImageViewContainer();
+	getChildren().add(imageViewContainer);
 
 	label1 = new Label();
 	label1.getStyleClass().add("label1");
