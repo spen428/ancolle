@@ -130,18 +130,24 @@ public final class AlbumView extends TilePaneView {
 		LOG.log(Level.FINE, "Failed to fetch full album details for "
 			+ "album #", album.id);
 	    }
-	}));
+	}, 1, this, "album_" + album.id + "_picture"));
 	return node;
     }
 
     public void updateHiddenItems() {
 	if (ancolle.getSettings().isShowHiddenItems()) {
-	    getChildren().clear();
-	    albumChildren.clear();
-	    addAlbums();
+	    refreshItems();
 	} else {
 	    getChildren().removeIf(child -> ((AlbumNode) child).isHidden());
 	}
+    }
+
+    @Override
+    public void refreshItems() {
+	cancelQueuedTasks();
+	getChildren().clear();
+	albumChildren.clear();
+	addAlbums();
     }
 
 }

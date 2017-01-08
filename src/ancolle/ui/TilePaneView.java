@@ -45,7 +45,12 @@ public abstract class TilePaneView extends TilePane {
     }
 
     public void cancelQueuedTasks() {
-	ancolle.getTaskManager().cancelTasks();
+	ancolle.getTaskManager().cancelTasksFrom(this);
     }
+
+    /**
+     * Clear and reload all item nodes.
+     */
+    public abstract void refreshItems();
 
 }

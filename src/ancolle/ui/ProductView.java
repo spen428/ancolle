@@ -115,7 +115,7 @@ public final class ProductView extends TilePaneView {
 	    Platform.runLater(() -> {
 		node.imageViewContainer.setImage(image);
 	    });
-	}));
+	}, 1, this, "product_" + product.id + "_picture"));
 
 	// Insert into view
 	if (idx != -1) {
@@ -186,7 +186,7 @@ public final class ProductView extends TilePaneView {
 		    getChildren().remove(placeholder);
 		});
 	    }
-	}));
+	}, 0, this, "product_" + id));
     }
 
     public void doAddProductDialog() {
@@ -352,6 +352,11 @@ public final class ProductView extends TilePaneView {
 	// TODO: Setting the style to undecorated seems to prevent the dialog
 	// from appearing altogether...
 	return alert;
+    }
+
+    @Override
+    public void refreshItems() {
+	// TODO
     }
 
     /**

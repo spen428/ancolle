@@ -66,30 +66,38 @@ public class AnColleTaskManager {
     }
 
     /**
+     * Cancel all tasks whose {@link AnColleTask#source} field matches the given
+     * object reference. This will not match {@code null} pointers.
+     *
+     * @param source the object reference
+     */
+    public void cancelTasksFrom(Object source) {
+	taskPriorityQueue.removeIf(task -> {
+	    if (source != null && task instanceof AnColleTask) {
+		AnColleTask at = (AnColleTask) task;
+		return at.source != null && at.source.equals(source);
+	    }
+	    return false;
+	});
+    }
+
+    /**
      * Decrements the task counter when an {@link AnColleTask} finishes
      * execution.
      */
-    private class AnColleTaskCallbackWrapper implements Runnable,
-	    Comparable<AnColleTaskCallbackWrapper> {
-
-	protected final AnColleTask task;
+    private class AnColleTaskCallbackWrapper extends AnColleTask {
 
 	AnColleTaskCallbackWrapper(AnColleTask task) {
-	    this.task = task;
+	    super(task);
 	}
 
 	@Override
 	public void run() {
-	    task.run();
+	    super.run();
 	    Platform.runLater(() -> {
 		final int count = taskCount.decrementAndGet();
 		LOG.log(Level.FINER, "{0} tasks running", count);
 	    });
-	}
-
-	@Override
-	public int compareTo(AnColleTaskCallbackWrapper o) {
-	    return task.compareTo(o.task);
 	}
 
     }
