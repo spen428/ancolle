@@ -138,10 +138,15 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 	if (album == null) {
 	    return;
 	}
+
+	if (wished) {
+	    setWished(false);
+	    albumView.ancolle.getSettings().wishedAlbumIds.remove(album.id);
+	}
+
 	boolean contains = albumView.ancolle.getSettings().collectedAlbumIds.contains(album.id);
 	if (!contains) {
 	    albumView.ancolle.getSettings().collectedAlbumIds.add(album.id);
-	    albumView.ancolle.getSettings().wishedAlbumIds.remove(album.id);
 	} else {
 	    albumView.ancolle.getSettings().collectedAlbumIds.remove(album.id);
 	}
@@ -170,15 +175,17 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 	});
     }
 
-    private void cycleStatus() {
-	throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
     private void toggledWished() {
 	AlbumPreview album = getAlbum();
 	if (album == null) {
 	    return;
 	}
+
+	if (collected) {
+	    setCollected(false);
+	    albumView.ancolle.getSettings().collectedAlbumIds.remove(album.id);
+	}
+
 	boolean status = albumView.ancolle.getSettings().wishedAlbumIds
 		.contains(album.id);
 	if (!status) {
