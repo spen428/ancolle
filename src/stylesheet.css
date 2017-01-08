@@ -1,3 +1,7 @@
+.tab.flashing {
+    -fx-background-color: #fffacd;
+}
+
 .image-view-container {
     -fx-alignment: center;
     -fx-padding: 10px;

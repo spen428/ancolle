@@ -74,9 +74,12 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 		    Album fullAlbum = albumView.fullAlbumMap.get(getAlbum());
 		    if (fullAlbum != null) {
 			AlbumDetailsView adv = new AlbumDetailsView(fullAlbum);
-			Tab tab = albumView.ancolle.newTab(fullAlbum.title_ja, adv);
-			tab.getStyleClass().add("album-details-tab");
-			// albumView.ancolle.setSelectedTab(tab);
+			Tab tab = albumView.ancolle.newTab(fullAlbum.title_ja,
+				adv, "adv_" + fullAlbum.id);
+			if (tab != null) {
+			    tab.getStyleClass().add("album-details-tab");
+			    // albumView.ancolle.setSelectedTab(tab);
+			}
 		    }
 		    break;
 		case SECONDARY:

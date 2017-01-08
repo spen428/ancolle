@@ -18,6 +18,9 @@ package ancolle.ui;
 
 import ancolle.items.Product;
 import ancolle.main.Settings;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -61,6 +64,7 @@ public class AnColle extends VBox {
 
     private Window mainWindow = null;
     private final Tab albumViewTab;
+    private final Set<Tab> flashingTabs = new HashSet<>(4);
 
     public AnColle(Stage stage) {
 	super();
@@ -143,7 +147,7 @@ public class AnColle extends VBox {
 	VBox.setVgrow(albumViewScrollPane, Priority.ALWAYS);
 	albumViewScrollPane.setContent(albumView);
 
-	this.albumViewTab = createTab("", albumViewScrollPane);
+	this.albumViewTab = createTab("", albumViewScrollPane, null);
 	albumViewTab.setId("album-view-tab");
 	albumViewTab.setContent(albumViewScrollPane);
 	albumViewTab.setOnCloseRequest(evt -> handleTabOnCloseRequest(evt));
@@ -177,25 +181,54 @@ public class AnColle extends VBox {
     }
 
     /**
-     * Create a new tab and add it to the tab pane.
+     * Create a new tab and add it to the tab pane. If a tab with the same title
+     * and content already exists, a new tab will not be created and a null
+     * pointer will instead be returned. The existing tab will also have its
+     * "flashing" pseudo-class set (see {@link MyTab}).
      *
      * @param title the tab title
      * @param content the tab content
-     * @return the newly created tab
+     * @param userData tab user data used for tab de-duplication. set to
+     * {@code null} to disable de-duplication of this tab
+     * @return the newly created tab, or null if a duplicate was detected
      */
-    public MyTab newTab(String title, Node content) {
-	MyTab tab = createTab(title, content);
+    public Tab newTab(String title, Node content, Object userData) {
+	/* Dupe check */
+	if (userData != null) {
+	    for (Tab tab : tabPane.getTabs()) {
+		if (tab.getUserData() != null && tab.getUserData().equals(userData)) {
+		    LOG.log(Level.INFO, "Not adding duplicate tab with userdata: {0}",
+			    userData.toString());
+		    flashTab(tab);
+		    return null;
+		}
+	    }
+	}
+
+	Tab tab = createTab(title, content, userData);
 	tabPane.getTabs().add(tab);
-	flashTab(tab);
 	return tab;
     }
 
-    private MyTab createTab(String title, Node content) {
-	MyTab tab = new MyTab(title, content);
+    /**
+     * Create a {@link Tab} with the given title, content, and userData values
+     *
+     * @param title the tab title
+     * @param content the tab content
+     * @param userData the tab userData field
+     * @return the newly created tab
+     */
+    private Tab createTab(String title, Node content, Object userData) {
+	Tab tab = new Tab(title, content);
+	tab.setUserData(userData);
 	tab.setOnCloseRequest(evt -> handleTabOnCloseRequest(evt));
 	return tab;
     }
 
+    /**
+     * Get the tab to the right of the currently selected tab and select it. If
+     * no tab is to the right, this method will have no effect.
+     */
     private void selectTabToRight() {
 	int selected = tabPane.getSelectionModel().getSelectedIndex();
 	if (tabPane.getTabs().size() > 1
@@ -204,8 +237,42 @@ public class AnColle extends VBox {
 	}
     }
 
-    private void flashTab(MyTab tab) {
-	// TODO: Requires a subclass, CSS pseudoclas and Timeline to animate
+    /**
+     * Trigger a flashing animation on this {@link Tab}. This will have no
+     * effect if the tab is already flashing.
+     *
+     * @param tab the tab
+     */
+    private void flashTab(Tab tab) {
+	// TODO: Best-worst hacky animation ever
+	Platform.runLater(() -> {
+	    if (!flashingTabs.contains(tab)) {
+		flashingTabs.add(tab);
+		Thread animationThread = new Thread(() -> {
+		    try {
+			LOG.log(Level.FINE, "Start flashing tab");
+			tab.getStyleClass().add("flashing");
+			Thread.sleep(150);
+			Platform.runLater(() -> {
+			    tab.getStyleClass().remove("flashing");
+			});
+			Thread.sleep(150);
+			Platform.runLater(() -> {
+			    tab.getStyleClass().add("flashing");
+			});
+			Thread.sleep(150);
+			Platform.runLater(() -> {
+			    LOG.log(Level.FINE, "Finish flashing tab");
+			    tab.getStyleClass().remove("flashing");
+			    flashingTabs.remove(tab);
+			});
+		    } catch (InterruptedException ex) {
+			LOG.log(Level.SEVERE, null, ex);
+		    }
+		});
+		animationThread.start();
+	    }
+	});
     }
 
     /**
