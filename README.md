@@ -53,3 +53,8 @@ Zipped release builds can be found in the `builds/` directory.
 `Error: Could not find or load main class` occurs when your Java does not have
 JavaFX bundled with it (which is the case for OpenJDK8). Install the JavaFX
 package for your platform to fix this issue.
+
+## Software Credits
+
+This software bundles a binary of the *json-simple* library v1.1.1 for Java, which is
+licenced under the [Apache 2.0 licence](https://www.apache.org/licenses/LICENSE-2.0).
