@@ -96,8 +96,8 @@
 
 .album-details-view > .image-view-container {
     -fx-padding: 30px;
-    -fx-max-width: 250px;
-    -fx-max-height: 250px;
+    -fx-max-width: 350px;
+    -fx-max-height: 350px;
 }
 
 .details > .label, .details > .track-list > .label {
