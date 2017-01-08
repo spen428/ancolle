@@ -37,19 +37,34 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 
     static {
 	ALBUM_NODE_CONTEXT_MENU = new ContextMenu();
-	MenuItem menuItemHide = new MenuItem("Hide Album");
+
+	MenuItem menuItemReload = new MenuItem("Reload");
+	menuItemReload.setOnAction(evt -> {
+	    AlbumNode node = (AlbumNode) ALBUM_NODE_CONTEXT_MENU.getOwnerNode();
+	    node.reloadAlbum();
+	});
+//	ALBUM_NODE_CONTEXT_MENU.getItems().add(menuItemReload);
+
+	MenuItem menuItemHide = new MenuItem("Toggle hidden");
 	menuItemHide.setOnAction(evt -> {
 	    AlbumNode node = (AlbumNode) ALBUM_NODE_CONTEXT_MENU.getOwnerNode();
 	    node.toggleHidden();
 	});
 	ALBUM_NODE_CONTEXT_MENU.getItems().add(menuItemHide);
 
-	MenuItem menuItemReload = new MenuItem("Reload Album");
-	menuItemReload.setOnAction(evt -> {
+	MenuItem menuItemCollect = new MenuItem("Toggle collected");
+	menuItemCollect.setOnAction(evt -> {
 	    AlbumNode node = (AlbumNode) ALBUM_NODE_CONTEXT_MENU.getOwnerNode();
-	    node.reloadAlbum();
+	    node.toggleCollected();
 	});
-//	ALBUM_NODE_CONTEXT_MENU.getItems().add(menuItemReload);
+	ALBUM_NODE_CONTEXT_MENU.getItems().add(menuItemCollect);
+
+	MenuItem menuItemWish = new MenuItem("Toggled wished");
+	menuItemWish.setOnAction(evt -> {
+	    AlbumNode node = (AlbumNode) ALBUM_NODE_CONTEXT_MENU.getOwnerNode();
+	    node.toggledWished();
+	});
+	ALBUM_NODE_CONTEXT_MENU.getItems().add(menuItemWish);
 
 	ALBUM_NODE_CONTEXT_MENU.getItems().add(new MenuItem("Cancel"));
 	ALBUM_NODE_CONTEXT_MENU.setAutoHide(true);
@@ -58,6 +73,7 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
     private final AlbumView albumView;
 
     private boolean collected = false;
+    private boolean wished = false;
 
     public AlbumNode(AlbumView albumView) {
 	super();
@@ -69,6 +85,8 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 		case PRIMARY:
 		    if (evt.isControlDown()) {
 			openDetails(true);
+		    } else if (evt.isShiftDown()) {
+			toggledWished();
 		    } else {
 			toggleCollected();
 		    }
@@ -121,6 +139,7 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 	boolean contains = albumView.ancolle.getSettings().collectedAlbumIds.contains(album.id);
 	if (!contains) {
 	    albumView.ancolle.getSettings().collectedAlbumIds.add(album.id);
+	    albumView.ancolle.getSettings().wishedAlbumIds.remove(album.id);
 	} else {
 	    albumView.ancolle.getSettings().collectedAlbumIds.remove(album.id);
 	}
@@ -145,12 +164,43 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 	// albumView.fullAlbumMap.remove(album);
     }
 
+    private void cycleStatus() {
+	throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void toggledWished() {
+	AlbumPreview album = getAlbum();
+	if (album == null) {
+	    return;
+	}
+	boolean status = albumView.ancolle.getSettings().wishedAlbumIds
+		.contains(album.id);
+	if (!status) {
+	    albumView.ancolle.getSettings().wishedAlbumIds.add(album.id);
+	    albumView.ancolle.getSettings().collectedAlbumIds.remove(album.id);
+	} else {
+	    albumView.ancolle.getSettings().wishedAlbumIds.remove(album.id);
+	}
+	status = !status;
+	setWished(status);
+    }
+
+    void setWished(boolean wished) {
+	this.wished = wished;
+	if (wished) {
+	    getStyleClass().add("wished");
+	} else {
+	    getStyleClass().remove("wished");
+	}
+    }
+
     private void toggleHidden() {
 	AlbumPreview album = getAlbum();
 	if (album == null) {
 	    return;
 	}
-	boolean status = albumView.ancolle.getSettings().hiddenAlbumIds.contains(album.id);
+	boolean status = albumView.ancolle.getSettings().hiddenAlbumIds
+		.contains(album.id);
 	if (!status) {
 	    albumView.ancolle.getSettings().hiddenAlbumIds.add(album.id);
 	} else {

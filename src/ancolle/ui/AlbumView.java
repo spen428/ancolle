@@ -100,6 +100,7 @@ public final class AlbumView extends TilePaneView {
 	AlbumNode node = new AlbumNode(this);
 	node.setAlbum(album);
 	node.setHidden(ancolle.getSettings().hiddenAlbumIds.contains(album.id));
+	node.setWished(ancolle.getSettings().wishedAlbumIds.contains(album.id));
 
 	node.label1.setText(album.title_en);
 

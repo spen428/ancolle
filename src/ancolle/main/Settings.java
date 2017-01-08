@@ -53,6 +53,7 @@ public class Settings {
     // Keys (for JSON load/saving)
     private static final String TRACKED_PRODUCTS_KEY = "trackedProducts";
     private static final String COLLECTED_ALBUMS_KEY = "collectedAlbums";
+    private static final String WISHED_ALBUMS_KEY = "wishedAlbums";
     private static final String HIDDEN_ALBUMS_KEY = "hiddenAlbums";
     private static final String SHOW_HIDDEN_ITEMS_KEY = "showHiddenItems";
 
@@ -120,12 +121,14 @@ public class Settings {
     // Members
     public final List<Integer> trackedProductIds;
     public final Set<Integer> collectedAlbumIds;
+    public final Set<Integer> wishedAlbumIds;
     public final Set<Integer> hiddenAlbumIds;
     private boolean showHiddenItems;
 
     public Settings() {
 	this.trackedProductIds = new ArrayList<>(10);
 	this.collectedAlbumIds = new HashSet<>(50);
+	this.wishedAlbumIds = new HashSet<>(50);
 	this.hiddenAlbumIds = new HashSet<>(20);
 	this.showHiddenItems = false;
     }
@@ -149,6 +152,7 @@ public class Settings {
 	    JSONObject root = (JSONObject) new JSONParser().parse(r);
 	    loadIntegersFromJSONArray(root, TRACKED_PRODUCTS_KEY, trackedProductIds);
 	    loadIntegersFromJSONArray(root, COLLECTED_ALBUMS_KEY, collectedAlbumIds);
+	    loadIntegersFromJSONArray(root, WISHED_ALBUMS_KEY, wishedAlbumIds);
 	    loadIntegersFromJSONArray(root, HIDDEN_ALBUMS_KEY, hiddenAlbumIds);
 	    showHiddenItems = (boolean) root.getOrDefault(SHOW_HIDDEN_ITEMS_KEY, false);
 	} catch (ParseException | IOException ex) {
@@ -186,6 +190,7 @@ public class Settings {
 	    JSONObject root = new JSONObject();
 	    root.put(Settings.TRACKED_PRODUCTS_KEY, createJSONArray(trackedProductIds));
 	    root.put(Settings.COLLECTED_ALBUMS_KEY, createJSONArray(collectedAlbumIds));
+	    root.put(Settings.WISHED_ALBUMS_KEY, createJSONArray(wishedAlbumIds));
 	    root.put(Settings.HIDDEN_ALBUMS_KEY, createJSONArray(hiddenAlbumIds));
 	    root.put(Settings.SHOW_HIDDEN_ITEMS_KEY, showHiddenItems);
 

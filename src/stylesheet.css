@@ -82,6 +82,14 @@
     -fx-text-alignment: center;
 }
 
+.wished {
+    -fx-background-color: #99ccff;
+}
+
+.wished:hover {
+    -fx-background-color: #66b3ff;
+}
+
 .collected {
     -fx-background-color: #66cdaa;
 }
