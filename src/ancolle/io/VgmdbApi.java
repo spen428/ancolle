@@ -181,8 +181,17 @@ public class VgmdbApi {
 		int album_id = Integer.parseInt(spl[spl.length - 1]);
 		JSONObject titles = (JSONObject) obj.get("titles");
 		String album_title_en = (String) titles.get("en");
+		if (album_title_en == null) {
+		    album_title_en = "";
+		}
 		String album_title_ja = (String) titles.get("ja");
+		if (album_title_ja == null) {
+		    album_title_ja = "";
+		}
 		String albumTypeString = (String) obj.get("type");
+		if (albumTypeString == null) {
+		    albumTypeString = "";
+		}
 		String dateString = (String) obj.get("date");
 		Date date = null;
 		if (dateString != null) {
@@ -425,7 +434,13 @@ public class VgmdbApi {
 
 	    JSONObject titles = (JSONObject) product.get("names");
 	    String title_en = (String) titles.get("en");
+	    if (title_en == null) {
+		title_en = "";
+	    }
 	    String title_ja = (String) titles.get("ja");
+	    if (title_ja == null) {
+		title_ja = "";
+	    }
 	    String typeString = (String) product.get("type");
 	    ProductType type = ProductType.getProductTypeFromString(typeString);
 	    if (type == ProductType.UNKNOWN) {
