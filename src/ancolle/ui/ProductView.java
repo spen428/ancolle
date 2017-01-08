@@ -367,8 +367,9 @@ public final class ProductView extends TilePaneView {
 
 	private ProductAdderNode(ProductView productView) {
 	    getStyleClass().add("product-adder-node");
-	    getChildren().remove(label2);
+	    getChildren().remove(imageViewContainer);
 	    label1.setText("+");
+	    label2.setText("Click here to add a product to the tracker.");
 
 	    setOnMouseClicked(evt -> {
 		if (evt.getButton() == MouseButton.PRIMARY) {

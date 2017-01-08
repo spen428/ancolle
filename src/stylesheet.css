@@ -1,5 +1,6 @@
 .image-view-container {
     -fx-alignment: center;
+    -fx-padding: 10px;
 }
 
 .item-node:hover {
@@ -48,7 +49,6 @@
 }
 
 .album-node > .image-view-container {
-    -fx-padding: 10px;
     -fx-max-width: 130px;
     -fx-max-height: 130px;
 }
@@ -62,12 +62,20 @@
     -fx-max-height: 70px;
 }
 
-.product-node > .image-view {
+.product-node > .image-view-container {
+    -fx-max-width: 240px;
+    -fx-max-height: 70px;
 }
 
 .product-adder-node > .label1 {
     -fx-font: 40px "Arial";
     -fx-alignment: center;
+}
+
+.product-adder-node > .label2 {
+    -fx-max-width: 160px;
+    -fx-wrap-text: true;
+    -fx-text-alignment: center;
 }
 
 .collected {
