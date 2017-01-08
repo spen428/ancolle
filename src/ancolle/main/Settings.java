@@ -35,6 +35,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 /**
@@ -145,7 +146,7 @@ public class Settings {
 	}
 
 	try (Reader r = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
-	    JSONObject root = (JSONObject) IO.JSON_PARSER.parse(r);
+	    JSONObject root = (JSONObject) new JSONParser().parse(r);
 	    loadIntegersFromJSONArray(root, TRACKED_PRODUCTS_KEY, trackedProductIds);
 	    loadIntegersFromJSONArray(root, COLLECTED_ALBUMS_KEY, collectedAlbumIds);
 	    loadIntegersFromJSONArray(root, HIDDEN_ALBUMS_KEY, hiddenAlbumIds);

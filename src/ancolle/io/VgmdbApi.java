@@ -43,6 +43,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 /**
  * Static methods for interfacing with VGMdb, the Video Game (and Anime) Music
@@ -131,7 +132,7 @@ public class VgmdbApi {
 	}
 
 	try (Reader r = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
-	    return (JSONObject) IO.JSON_PARSER.parse(r);
+	    return (JSONObject) new JSONParser().parse(r);
 	} catch (org.json.simple.parser.ParseException | IOException ex) {
 	    LOG.log(Level.SEVERE, null, ex);
 	}
@@ -350,7 +351,7 @@ public class VgmdbApi {
 	}
 
 	try (Reader r = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
-	    return (JSONObject) IO.JSON_PARSER.parse(r);
+	    return (JSONObject) new JSONParser().parse(r);
 	} catch (IOException | org.json.simple.parser.ParseException ex) {
 	    LOG.log(Level.SEVERE, null, ex);
 	}

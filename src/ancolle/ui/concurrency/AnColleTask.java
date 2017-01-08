@@ -14,38 +14,39 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package ancolle.ui;
-
-import ancolle.ui.concurrency.AnColleTask;
-import java.util.logging.Logger;
-import javafx.scene.layout.TilePane;
+package ancolle.ui.concurrency;
 
 /**
- * View based on {@link TilePane} on top of which {@link AlbumView} and
- * {@link ProductView} are built.
- *
  * @author lykat
  */
-public abstract class TilePaneView extends TilePane {
+public class AnColleTask implements Runnable, Comparable<AnColleTask> {
 
-    /**
-     * The logger for this class.
-     */
-    private static final Logger LOG = Logger.getLogger(TilePaneView.class.getName());
+    private final Runnable runnable;
+    private final Object source;
+    private final Object userData;
+    private final int priority;
 
-    protected final AnColle ancolle;
-
-    public TilePaneView(AnColle ancolle) {
-	this.ancolle = ancolle;
-	getStyleClass().add("tile-pane-view");
+    @Deprecated
+    public AnColleTask(Runnable runnable) {
+	this(runnable, Integer.MAX_VALUE, null, null);
     }
 
-    public void submitBackgroundTask(AnColleTask task) {
-	ancolle.getTaskManager().submitTask(task);
+    public AnColleTask(Runnable runnable, int priority, Object source,
+	    Object userData) {
+	this.runnable = runnable;
+	this.priority = priority;
+	this.source = source;
+	this.userData = userData;
     }
 
-    public void cancelQueuedTasks() {
-	ancolle.getTaskManager().cancelTasks();
+    @Override
+    public void run() {
+	runnable.run();
+    }
+
+    @Override
+    public int compareTo(AnColleTask o) {
+	return Integer.compare(priority, o.priority);
     }
 
 }

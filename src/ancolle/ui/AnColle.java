@@ -18,6 +18,7 @@ package ancolle.ui;
 
 import ancolle.items.Product;
 import ancolle.main.Settings;
+import ancolle.ui.concurrency.AnColleTaskManager;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
@@ -64,12 +65,14 @@ public class AnColle extends VBox {
 
     private Window mainWindow = null;
     private final Tab albumViewTab;
-    private final Set<Tab> flashingTabs = new HashSet<>(4);
+    private final Set<Tab> flashingTabs;
+    private final AnColleTaskManager taskManager;
 
     public AnColle(Stage stage) {
 	super();
+	this.taskManager = new AnColleTaskManager();
+	this.flashingTabs = new HashSet<>(4);
 	this.mainWindow = stage;
-
 	this.productViewScrollPane = new ScrollPane();
 	this.albumViewScrollPane = new ScrollPane();
 	this.productView = new ProductView(this);
@@ -178,6 +181,10 @@ public class AnColle extends VBox {
 	mainWindow.setOnCloseRequest(evt -> {
 	    saveSettings();
 	});
+    }
+
+    public AnColleTaskManager getTaskManager() {
+	return taskManager;
     }
 
     /**

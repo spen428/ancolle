@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.image.Image;
-import org.json.simple.parser.JSONParser;
 
 /**
  * Contains constants and static methods related to I/O
@@ -30,12 +29,6 @@ import org.json.simple.parser.JSONParser;
  * @author lykat
  */
 public class IO {
-
-    /**
-     * Instance of {@link JSONParser}. Since there is no concurrent access to
-     * this constant, it makes sense not to reinstantiate the parser every time.
-     */
-    public static final JSONParser JSON_PARSER = new JSONParser();
 
     /**
      * The result of calling {@link System#getProperty} with the parameter
