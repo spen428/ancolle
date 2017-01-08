@@ -27,6 +27,8 @@ and are structured hierarchically according to the organisation of the GUI.
                 - AlbumDetailsView `.album-details-view`
                     - ImageViewContainer extends VBox `.image-view-container`
                         - ImageView `.image-view`
+                        - Label `.label1`
+                        - Label `.label2`
                     - ScrollPane `.details-scrollpane`
                         - VBox `.details`
                             - Label `.title-en`

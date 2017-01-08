@@ -73,8 +73,8 @@ public final class AlbumDetailsView extends HBox {
 
     private Album album;
 
-    private final ImageViewContainer albumCoverContainer = new ImageViewContainer();
-    private final VBox detailsVbox = new VBox();
+    private final ImageViewContainer albumCoverContainer;
+    private final VBox detailsVbox;
 
     private final Label labelTitleEn;
     private final Label labelTitleJa;
@@ -83,6 +83,8 @@ public final class AlbumDetailsView extends HBox {
 
     private final VBox trackList;
     private final PseudoClass pseudoClassHover;
+    private final Label labelAlbumlabel1;
+    private final Label labelAlbumlabel2;
 
     /**
      * Instantiate a new {@link AlbumDetailsView} to display details about the
@@ -91,6 +93,7 @@ public final class AlbumDetailsView extends HBox {
      * @param album the album whose details to display
      */
     public AlbumDetailsView(Album album) {
+	this.detailsVbox = new VBox();
 	pseudoClassHover = new PseudoClass() {
 	    @Override
 	    public String getPseudoClassName() {
@@ -100,7 +103,15 @@ public final class AlbumDetailsView extends HBox {
 	getStyleClass().add("album-details-view");
 
 	// VBox that holds the album cover
+	this.albumCoverContainer = new ImageViewContainer();
 	getChildren().add(albumCoverContainer);
+
+	// Labels underneath album cover
+	labelAlbumlabel1 = new Label();
+	labelAlbumlabel1.getStyleClass().add("label1");
+	labelAlbumlabel2 = new Label();
+	labelAlbumlabel2.getStyleClass().add("label2");
+	albumCoverContainer.getChildren().addAll(labelAlbumlabel1, labelAlbumlabel2);
 
 	// Scrollpane that holds the Details VBox
 	final ScrollPane detailsScrollPane = new ScrollPane();
@@ -179,6 +190,7 @@ public final class AlbumDetailsView extends HBox {
 	this.album = album;
 
 	albumCoverContainer.setImage(album.getPicture());
+	labelAlbumlabel1.setText(album.title_ja);
 
 	// Titles
 	labelTitleEn.setText("English Title: " + album.title_en);
@@ -191,6 +203,7 @@ public final class AlbumDetailsView extends HBox {
 	    dateString = new SimpleDateFormat("yyyy-MM-dd").format(album.date);
 	}
 	labelReleaseDate.setText("Release Date: " + dateString);
+	labelAlbumlabel2.setText(dateString);
 
 	// Track List
 	populateTrackList();
@@ -213,7 +226,7 @@ public final class AlbumDetailsView extends HBox {
 	    if (!track.trackLength.equals("Unknown")) {
 		trackLengthString = "[" + track.trackLength + "]";
 	    }
-	    String text = String.format("%02d-%02d. %s %s", track.discNumber,
+	    String text = String.format("    %02d-%02d. %s %s", track.discNumber,
 		    track.trackNumber, track.name, trackLengthString);
 	    trackLabel.setText(text);
 	    return trackLabel;

@@ -110,10 +110,32 @@
     -fx-background-color: #F0FFFF;
 }
 
+.details-scrollpane, .track-list {
+    -fx-background: #F0FFFF;
+}
+
+.details {
+    -fx-padding: 50px 0px 50px 0px;
+}
+
 .album-details-view > .image-view-container {
     -fx-padding: 30px;
     -fx-max-width: 350px;
     -fx-max-height: 350px;
+}
+
+.album-details-view > .image-view-container > .label1 {
+    -fx-padding: 10px 0px 5px 0px;
+}
+
+.album-details-view > .image-view-container > .label {
+    -fx-alignment: baseline-center;
+    -fx-text-alignment: center;
+    -fx-font: 11px "Meiryo";
+}
+
+.album-details-view > .image-view-container > .label:hover {
+    -fx-background-color: none;
 }
 
 .details > .label, .details > .track-list > .label {
