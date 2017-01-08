@@ -2,11 +2,6 @@
     -fx-background-color: #fffacd;
 }
 
-.image-view-container {
-    -fx-alignment: center;
-    -fx-padding: 10px;
-}
-
 .item-node:hover {
     -fx-background-color: #d9e5e5;
 }
@@ -33,6 +28,11 @@
 
 .image-view {
     -fx-smooth: true;
+}
+
+.image-view-container {
+    -fx-alignment: center;
+    -fx-padding: 10px;
 }
 
 .tile-pane-view {
@@ -87,7 +87,7 @@
 }
 
 .collected:hover {
-    -fx-background-color: #d8f3ea;
+    -fx-background-color: #329a77;
 }
 
 .new {
@@ -95,7 +95,7 @@
 }
 
 .new:hover {
-    -fx-background-color: #e6cf00;
+    -fx-background-color: #fff066;
 }
 
 .album-details-view > .image-view-container {
