@@ -16,14 +16,12 @@ and are structured hierarchically according to the organisation of the GUI.
         - TabPane `.tab-pane`
             - Tab `#product-view-tab`
                 - ScrollPane `.scroll-pane`
-                    - ProductView `.product-view`
-                        - ProductNode `.product-node`
-                            - See: ItemNode
+                    - ProductView extends TilePaneView `.product-view`
+                        - ProductNode extends ItemNode `.product-node`
             - Tab `#album-view-tab`
                 - ScrollPane `.scroll-pane`
-                    - AlbumView `.album-view`
-                        - AlbumNode `.album-node`
-                            - See: ItemNode
+                    - AlbumView extends TilePaneView `.album-view`
+                        - AlbumNode extends ItemNode `.album-node`
             - [Tab ...] `.album-details-tab`
                 - AlbumDetailsView `.album-details-view`
                     - VBox `.album-cover-container`
@@ -43,3 +41,5 @@ and are structured hierarchically according to the organisation of the GUI.
     - ImageView `.image-view`
     - Label `.label1`
     - Label `.label2`
+
+- TilePaneView `.tile-pane-view`
