@@ -21,7 +21,9 @@ import ancolle.items.Album;
 import ancolle.items.AlbumPreview;
 import ancolle.items.Product;
 import java.text.SimpleDateFormat;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,6 +45,7 @@ public final class AlbumView extends TilePaneView {
     private Product product;
 
     public final ConcurrentHashMap<AlbumPreview, Album> fullAlbumMap;
+    private final Set<AlbumPreview> albumChildren;
 
     public AlbumView(AnColle ancolle) {
 	this(ancolle, null);
@@ -51,6 +54,7 @@ public final class AlbumView extends TilePaneView {
     public AlbumView(AnColle ancolle, Product product) {
 	super(ancolle);
 	this.fullAlbumMap = new ConcurrentHashMap<>(20);
+	this.albumChildren = new HashSet<>(20);
 	getStyleClass().add("album-view");
 	setProduct(product);
 	startWorkerThread();
@@ -61,11 +65,16 @@ public final class AlbumView extends TilePaneView {
 	List<AlbumPreview> albums = product.getAlbums();
 	albums.forEach((album) -> {
 	    if (!showHidden && ancolle.getSettings().hiddenAlbumIds.contains(album.id)) {
-		// Don't add hidden item
+		LOG.log(Level.FINE, "Filtered hidden album with id #{0} from "
+			+ "being added to the AlbumView", album.id);
+	    } else if (albumChildren.contains(album)) {
+		LOG.log(Level.FINE, "Filtered duplicate album with id #{0} "
+			+ "from being added to the AlbumView", album.id);
 	    } else {
 		AlbumNode node = createAlbumNode(album);
 		node.setCollected(ancolle.getSettings().collectedAlbumIds.contains(album.id));
 		getChildren().add(node);
+		albumChildren.add(album);
 	    }
 	});
     }
@@ -77,6 +86,7 @@ public final class AlbumView extends TilePaneView {
 	this.product = product;
 	if (product != null) {
 	    fullAlbumMap.clear();
+	    albumChildren.clear();
 	    getChildren().clear();
 	    addAlbums();
 	}
@@ -126,6 +136,7 @@ public final class AlbumView extends TilePaneView {
     public void updateHiddenItems() {
 	if (ancolle.getSettings().isShowHiddenItems()) {
 	    getChildren().clear();
+	    albumChildren.clear();
 	    addAlbums();
 	} else {
 	    getChildren().removeIf(child -> ((AlbumNode) child).isHidden());
