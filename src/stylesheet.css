@@ -98,6 +98,10 @@
     -fx-background-color: #fff066;
 }
 
+.album-details-view, .details, .details-scrollpane, .track-list {
+    -fx-background-color: #F0FFFF;
+}
+
 .album-details-view > .image-view-container {
     -fx-padding: 30px;
     -fx-max-width: 350px;

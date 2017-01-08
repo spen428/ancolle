@@ -39,8 +39,6 @@ import javafx.scene.layout.VBox;
  */
 public final class AlbumDetailsView extends HBox {
 
-    public static final String CLASS_ALBUM_DETAILS_VIEW = "album-details-view";
-
     /**
      * The logger for this class.
      */
@@ -99,7 +97,7 @@ public final class AlbumDetailsView extends HBox {
 		return "hover";
 	    }
 	};
-	getStyleClass().add(CLASS_ALBUM_DETAILS_VIEW);
+	getStyleClass().add("album-details-view");
 
 	// VBox that holds the album cover
 	getChildren().add(albumCoverContainer);
