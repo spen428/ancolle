@@ -27,6 +27,8 @@ interface with VGMdb.
 
 ![Album tracker](doc/album-details.png)
 
+[More screenshots](doc/more-screenshots.md) | [Demo video (mp4)](doc/demo-video.mp4)
+
 ## Known bugs and limitations
 
 - Updating details about an album or product requires the user to delete the
