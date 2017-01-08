@@ -16,6 +16,7 @@
  */
 package ancolle.ui.concurrency;
 
+import java.util.concurrent.Executors;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -39,6 +40,11 @@ public class AnColleTaskManager {
 	this.taskPriorityQueue = new PriorityBlockingQueue<>();
 	this.threadPoolExecutor = new ThreadPoolExecutor(4, 16,
 		Integer.MAX_VALUE, TimeUnit.DAYS, taskPriorityQueue);
+	threadPoolExecutor.setThreadFactory((Runnable r) -> {
+	    Thread t = Executors.defaultThreadFactory().newThread(r);
+	    t.setDaemon(true);
+	    return t;
+	});
     }
 
     /**
@@ -61,7 +67,8 @@ public class AnColleTaskManager {
      * Decrements the task counter when an {@link AnColleTask} finishes
      * execution.
      */
-    private class AnColleTaskCallbackWrapper implements Runnable {
+    private class AnColleTaskCallbackWrapper implements Runnable,
+	    Comparable<AnColleTaskCallbackWrapper> {
 
 	private final AnColleTask task;
 
@@ -75,6 +82,11 @@ public class AnColleTaskManager {
 	    Platform.runLater(() -> {
 		final int count = taskCount.decrementAndGet();
 	    });
+	}
+
+	@Override
+	public int compareTo(AnColleTaskCallbackWrapper o) {
+	    return task.compareTo(o.task);
 	}
 
     }
