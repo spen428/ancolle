@@ -18,9 +18,11 @@ package ancolle.ui;
 
 import ancolle.items.Product;
 import ancolle.main.Settings;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckMenuItem;
@@ -71,7 +73,6 @@ public class AnColle extends VBox {
 	this.albumView = new AlbumView(this);
 	this.productViewTab = new Tab(PRODUCT_TRACKER_TAB_TITLE,
 		productViewScrollPane);
-	this.albumViewTab = new Tab("", albumViewScrollPane);
 	this.tabPane = new TabPane();
 	this.settings = new Settings();
 	this.statusBar = new StatusBar();
@@ -122,7 +123,7 @@ public class AnColle extends VBox {
 	    if (evt.getCode() == KeyCode.W && evt.isControlDown()) {
 		int idx = tabPane.getSelectionModel().getSelectedIndex();
 		if (idx != 0) {
-		    tabPane.getTabs().remove(idx);
+		    closeTab(tabPane.getTabs().get(idx));
 		}
 	    }
 	});
@@ -143,11 +144,13 @@ public class AnColle extends VBox {
 	VBox.setVgrow(albumViewScrollPane, Priority.ALWAYS);
 	albumViewScrollPane.setContent(albumView);
 
+	this.albumViewTab = new Tab("", albumViewScrollPane);
 	albumViewTab.setId("album-view-tab");
 	albumViewTab.setContent(albumViewScrollPane);
 	albumViewTab.setOnClosed(evt -> {
 	    albumView.cancelQueuedTasks();
 	    albumView.setProduct(null);
+	    selectTabToRight();
 	});
 
 	setOnKeyPressed(evt -> {
@@ -175,21 +178,58 @@ public class AnColle extends VBox {
     }
 
     /**
-     * Create a new tab and add it to the tab pane
+     * Create a new tab and add it to the tab pane. If a tab with the same title
+     * and content already exists, a new tab will not be created and a reference
+     * to the existing tab will instead be returned. The existing tab will also
+     * be highlighted visually on screen.
      *
      * @param title the tab title
      * @param content the tab content
      * @return the newly created tab
      */
     public Tab newTab(String title, Node content) {
+	for (Tab tab : tabPane.getTabs()) {
+	    if (tab.getText().equals(title) && tab.getContent().equals(content)) {
+		LOG.log(Level.INFO, "Not adding duplicate tab");
+		flashTab(tab);
+		return tab;
+	    }
+	}
+
 	Tab tab = new Tab(title, content);
+	tab.setOnClosed(evt -> {
+	    selectTabToRight();
+	});
 	tabPane.getTabs().add(tab);
 	return tab;
+    }
+
+    private void selectTabToRight() {
+	int selected = tabPane.getSelectionModel().getSelectedIndex();
+	if (tabPane.getTabs().size() > 1
+		&& selected + 1 < tabPane.getTabs().size()) {
+	    setSelectedTab(tabPane.getTabs().get(selected + 1));
+	}
+    }
+
+    private void flashTab(Tab tab) {
+
     }
 
     public void setSelectedTab(Tab tab) {
 	tabPane.getSelectionModel().select(tab);
 	tab.getContent().requestFocus();
+    }
+
+    /**
+     * Close a tab contained within the main tab pane. This is better than
+     * calling {@code remove()} on {@link TabPane#getTabs} because it propagates
+     * a close event to the tab, ensuring any event handlers still execute.
+     *
+     * @param tab the tab
+     */
+    private void closeTab(Tab tab) {
+	tabPane.fireEvent(new Event(tabPane, tab, Tab.TAB_CLOSE_REQUEST_EVENT));
     }
 
     /**
