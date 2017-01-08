@@ -16,9 +16,11 @@
  */
 package ancolle.ui;
 
+import ancolle.io.VgmdbApi;
 import ancolle.items.Album;
 import ancolle.items.AlbumPreview;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
@@ -38,12 +40,12 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
     static {
 	ALBUM_NODE_CONTEXT_MENU = new ContextMenu();
 
-	MenuItem menuItemReload = new MenuItem("Reload");
+	MenuItem menuItemReload = new MenuItem("Force reload");
 	menuItemReload.setOnAction(evt -> {
 	    AlbumNode node = (AlbumNode) ALBUM_NODE_CONTEXT_MENU.getOwnerNode();
 	    node.reloadAlbum();
 	});
-//	ALBUM_NODE_CONTEXT_MENU.getItems().add(menuItemReload);
+	ALBUM_NODE_CONTEXT_MENU.getItems().add(menuItemReload);
 
 	MenuItem menuItemHide = new MenuItem("Toggle hidden");
 	menuItemHide.setOnAction(evt -> {
@@ -160,8 +162,12 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 	if (album == null) {
 	    return;
 	}
-	// TODO
-	// albumView.fullAlbumMap.remove(album);
+
+	Platform.runLater(() -> {
+	    albumView.removeAlbum(album);
+	    VgmdbApi.removeFromCache(album);
+	    albumView.addAlbum(album);
+	});
     }
 
     private void cycleStatus() {

@@ -90,11 +90,7 @@ public class IO {
 
 	Image picture = null;
 	// Build the path to the cached image file
-	String[] spl = url.split("\\.");
-	String ext = spl[spl.length - 1];
-	File file = new File(VgmdbApi.CACHE_DIR + File.separator + itemDirName
-		+ File.separator + "pictures" + File.separator + fileName
-		+ "." + ext);
+	File file = new File(getImageCachePath(url, itemDirName, fileName));
 	// Download image if it cannot be found in the cache
 	if (!file.exists()) {
 	    if (cacheOnly) {
@@ -122,6 +118,15 @@ public class IO {
 	    LOG.log(Level.SEVERE, null, ex);
 	}
 	return picture;
+    }
+
+    public static String getImageCachePath(String url, String itemDirName,
+	    String fileName) {
+	String[] spl = url.split("\\.");
+	String ext = spl[spl.length - 1];
+	return VgmdbApi.CACHE_DIR + File.separator + itemDirName
+		+ File.separator + "pictures" + File.separator + fileName
+		+ "." + ext;
     }
 
     private IO() {

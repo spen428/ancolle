@@ -116,8 +116,7 @@ public class VgmdbApi {
      * @return a {@link JSONObject} representing the result of the query
      */
     public static JSONObject request(String subPath, int id, boolean cacheOnly) {
-	String filePath = CACHE_DIR + File.separator + subPath + File.separator
-		+ id + ".json";
+	String filePath = getFilePath(subPath, id);
 	File file = new File(filePath);
 	if (!file.exists()) {
 	    if (cacheOnly) {
@@ -436,6 +435,21 @@ public class VgmdbApi {
 	    results.add(new ProductPreview(id, title_en, title_ja, type));
 	}
 	return results;
+    }
+
+    public static void removeFromCache(String subPath, int id) {
+	File file = new File(getFilePath("album", id));
+	if (file.exists()) {
+	    file.delete();
+	}
+    }
+
+    public static void removeFromCache(AlbumPreview album) {
+	removeFromCache("album", album.id);
+    }
+
+    private static String getFilePath(String subPath, int id) {
+	return CACHE_DIR + File.separator + subPath + File.separator + id + ".json";
     }
 
     private VgmdbApi() {

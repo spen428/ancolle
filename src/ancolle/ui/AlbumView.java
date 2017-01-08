@@ -29,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 
 /**
@@ -61,22 +62,8 @@ public final class AlbumView extends TilePaneView {
     }
 
     private void addAlbums() {
-	boolean showHidden = ancolle.getSettings().isShowHiddenItems();
 	List<AlbumPreview> albums = product.getAlbums();
-	albums.forEach((album) -> {
-	    if (!showHidden && ancolle.getSettings().hiddenAlbumIds.contains(album.id)) {
-		LOG.log(Level.FINE, "Filtered hidden album with id #{0} from "
-			+ "being added to the AlbumView", album.id);
-	    } else if (albumChildren.contains(album)) {
-		LOG.log(Level.FINE, "Filtered duplicate album with id #{0} "
-			+ "from being added to the AlbumView", album.id);
-	    } else {
-		AlbumNode node = createAlbumNode(album);
-		node.setCollected(ancolle.getSettings().collectedAlbumIds.contains(album.id));
-		getChildren().add(node);
-		albumChildren.add(album);
-	    }
-	});
+	albums.forEach((album) -> addAlbum(album));
     }
 
     public void setProduct(Product product) {
@@ -101,6 +88,7 @@ public final class AlbumView extends TilePaneView {
 	node.setAlbum(album);
 	node.setHidden(ancolle.getSettings().hiddenAlbumIds.contains(album.id));
 	node.setWished(ancolle.getSettings().wishedAlbumIds.contains(album.id));
+	node.setCollected(ancolle.getSettings().collectedAlbumIds.contains(album.id));
 
 	node.label1.setText(album.title_en);
 
@@ -149,6 +137,44 @@ public final class AlbumView extends TilePaneView {
 	getChildren().clear();
 	albumChildren.clear();
 	addAlbums();
+    }
+
+    public void removeAlbum(AlbumPreview album) {
+	fullAlbumMap.remove(album);
+	albumChildren.remove(album);
+	getChildren().removeIf(child -> ((AlbumNode) child).getAlbum().equals(album));
+    }
+
+    public void addAlbum(AlbumPreview album) {
+	if (!ancolle.getSettings().isShowHiddenItems()
+		&& ancolle.getSettings().hiddenAlbumIds.contains(album.id)) {
+	    LOG.log(Level.FINE, "Filtered hidden album with id #{0} from "
+		    + "being added to the AlbumView", album.id);
+	} else if (albumChildren.contains(album)) {
+	    LOG.log(Level.FINE, "Filtered duplicate album with id #{0} "
+		    + "from being added to the AlbumView", album.id);
+	} else {
+	    AlbumNode node = createAlbumNode(album);
+	    insertChild(node);
+	    albumChildren.add(album);
+	}
+    }
+
+    /**
+     * Insert the given {@link AlbumNode} into the view such that the sorting
+     * order of the child nodes is preserved.
+     *
+     * @param node the node to insert
+     */
+    private void insertChild(AlbumNode node) {
+	int insertIdx;
+	for (insertIdx = 0; insertIdx < getChildren().size(); insertIdx++) {
+	    Node child = getChildren().get(insertIdx);
+	    if (ItemNodeComparators.ALBUM_NODE_COMPARATOR.compare(node, child) <= 0) {
+		break;
+	    }
+	}
+	getChildren().add(insertIdx, node);
     }
 
 }
