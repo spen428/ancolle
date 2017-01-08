@@ -67,20 +67,14 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 	setOnMouseClicked(evt -> {
 	    switch (evt.getButton()) {
 		case PRIMARY:
-		    toggleCollected();
+		    if (evt.isControlDown()) {
+			openDetails(true);
+		    } else {
+			toggleCollected();
+		    }
 		    break;
 		case MIDDLE:
-		    // If full album details are loaded, open details in a new tab
-		    Album fullAlbum = albumView.fullAlbumMap.get(getAlbum());
-		    if (fullAlbum != null) {
-			AlbumDetailsView adv = new AlbumDetailsView(fullAlbum);
-			Tab tab = albumView.ancolle.newTab(fullAlbum.title_ja,
-				adv, "adv_" + fullAlbum.id);
-			if (tab != null) {
-			    tab.getStyleClass().add("album-details-tab");
-			    // albumView.ancolle.setSelectedTab(tab);
-			}
-		    }
+		    openDetails();
 		    break;
 		case SECONDARY:
 		    showContextMenu(evt);
@@ -165,6 +159,26 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 	status = !status;
 	setHidden(status);
 	albumView.updateHiddenItems();
+    }
+
+    private void openDetails() {
+	openDetails(false);
+    }
+
+    private void openDetails(boolean selectTab) {
+	// If full album details are loaded, open details in a new tab
+	Album fullAlbum = albumView.fullAlbumMap.get(getAlbum());
+	if (fullAlbum != null) {
+	    AlbumDetailsView adv = new AlbumDetailsView(fullAlbum);
+	    Tab tab = albumView.ancolle.newTab(fullAlbum.title_ja,
+		    adv, "adv_" + fullAlbum.id);
+	    if (tab != null) {
+		tab.getStyleClass().add("album-details-tab");
+		if (selectTab) {
+		    albumView.ancolle.setSelectedTab(tab);
+		}
+	    }
+	}
     }
 
 }
