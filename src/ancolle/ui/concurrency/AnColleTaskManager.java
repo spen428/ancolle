@@ -16,16 +16,18 @@
  */
 package ancolle.ui.concurrency;
 
+import ancolle.ui.StatusBar;
 import java.util.concurrent.Executors;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 
 /**
+ * Executes background tasks
+ *
  * @author lykat
  */
 public class AnColleTaskManager {
@@ -35,11 +37,19 @@ public class AnColleTaskManager {
     private final ThreadPoolExecutor threadPoolExecutor;
     private final PriorityBlockingQueue<Runnable> taskPriorityQueue;
     private final AtomicInteger taskCount;
+    private final StatusBar statusBar;
 
-    public AnColleTaskManager() {
+    /**
+     * Instantiate a new {@link AnColleTaskManager}
+     *
+     * @param statusBar the {@link StatusBar} to use to display background task
+     * progress
+     */
+    public AnColleTaskManager(StatusBar statusBar) {
+	this.statusBar = statusBar;
 	this.taskCount = new AtomicInteger();
 	this.taskPriorityQueue = new PriorityBlockingQueue<>();
-	this.threadPoolExecutor = new ThreadPoolExecutor(4, 16,
+	this.threadPoolExecutor = new ThreadPoolExecutor(8, 16,
 		Integer.MAX_VALUE, TimeUnit.DAYS, taskPriorityQueue);
 	threadPoolExecutor.setThreadFactory((Runnable r) -> {
 	    Thread t = Executors.defaultThreadFactory().newThread(r);
@@ -55,10 +65,6 @@ public class AnColleTaskManager {
      */
     public void submitTask(AnColleTask task) {
 	threadPoolExecutor.execute(new AnColleTaskCallbackWrapper(task));
-	Platform.runLater(() -> {
-	    final int count = taskCount.incrementAndGet();
-	    LOG.log(Level.FINER, "{0} tasks running", count);
-	});
     }
 
     public void cancelTasks() {
@@ -67,15 +73,36 @@ public class AnColleTaskManager {
 
     /**
      * Cancel all tasks whose {@link AnColleTask#source} field matches the given
-     * object reference. This will not match {@code null} pointers.
+     * object reference. This will not match {@code null} pointers. This will
+     * fail if the task(s) have already been taken off the queue to be executed.
      *
      * @param source the object reference
+     * @return true if at least one task was cancelled
      */
-    public void cancelTasksFrom(Object source) {
-	taskPriorityQueue.removeIf(task -> {
+    public boolean cancelTasksFrom(Object source) {
+	return taskPriorityQueue.removeIf(task -> {
 	    if (source != null && task instanceof AnColleTask) {
 		AnColleTask at = (AnColleTask) task;
 		return at.source != null && at.source.equals(source);
+	    }
+	    return false;
+	});
+    }
+
+    /**
+     * Cancel all tasks whose {@link AnColleTask#userData} field matches the
+     * given object reference. This will not match {@code null} pointers. This
+     * will fail if the task(s) have already been taken off the queue to be
+     * executed.
+     *
+     * @param userData the object reference
+     * @return true if at least one task was cancelled
+     */
+    public boolean cancelTasksWith(Object userData) {
+	return taskPriorityQueue.removeIf(task -> {
+	    if (userData != null && task instanceof AnColleTask) {
+		AnColleTask at = (AnColleTask) task;
+		return at.userData != null && at.userData.equals(userData);
 	    }
 	    return false;
 	});
@@ -93,10 +120,21 @@ public class AnColleTaskManager {
 
 	@Override
 	public void run() {
+	    Platform.runLater(() -> {
+		final int running = taskCount.incrementAndGet();
+		final int queued = taskPriorityQueue.size();
+		statusBar.statusLabel.setText(String.format("%d background "
+			+ "tasks running, %d queued.", running, queued));
+	    });
 	    super.run();
 	    Platform.runLater(() -> {
-		final int count = taskCount.decrementAndGet();
-		LOG.log(Level.FINER, "{0} tasks running", count);
+		final int running = taskCount.decrementAndGet();
+		final int queued = taskPriorityQueue.size();
+		statusBar.statusLabel.setText(String.format("%d background "
+			+ "tasks running, %d queued.", running, queued));
+		if (running == 0 && queued == 0) {
+		    statusBar.statusLabel.setText("Ready.");
+		}
 	    });
 	}
 

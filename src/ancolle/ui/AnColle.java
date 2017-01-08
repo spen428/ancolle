@@ -70,7 +70,6 @@ public class AnColle extends VBox {
 
     public AnColle(Stage stage) {
 	super();
-	this.taskManager = new AnColleTaskManager();
 	this.flashingTabs = new HashSet<>(4);
 	this.mainWindow = stage;
 	this.productViewScrollPane = new ScrollPane();
@@ -83,6 +82,7 @@ public class AnColle extends VBox {
 	this.tabPane = new TabPane();
 	this.settings = new Settings();
 	this.statusBar = new StatusBar();
+	this.taskManager = new AnColleTaskManager(statusBar);
 
 	productViewTab.setClosable(false);
 	tabPane.getTabs().addAll(productViewTab);
