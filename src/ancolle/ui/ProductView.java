@@ -28,7 +28,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -41,7 +40,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
-import javafx.scene.text.Font;
 import javafx.stage.Modality;
 
 /**
@@ -368,11 +366,9 @@ public final class ProductView extends TilePaneView {
     private static class ProductAdderNode extends ItemNode<Object> {
 
 	private ProductAdderNode(ProductView productView) {
+	    getStyleClass().add("product-adder-node");
 	    getChildren().remove(label2);
 	    label1.setText("+");
-	    label1.setFont(new Font("Arial", 40));
-	    label1.setAlignment(Pos.CENTER);
-	    setAlignment(Pos.CENTER);
 
 	    setOnMouseClicked(evt -> {
 		if (evt.getButton() == MouseButton.PRIMARY) {

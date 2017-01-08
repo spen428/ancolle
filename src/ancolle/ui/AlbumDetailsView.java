@@ -204,8 +204,17 @@ public final class AlbumDetailsView extends HBox {
 	labelReleaseDate.setText("Release Date: " + dateString);
 
 	// Track List
+	populateTrackList();
+    }
+
+    public Album getAlbum() {
+	return this.album;
+    }
+
+    private void populateTrackList() {
 	trackList.getChildren().clear();
 	Label trackListHeader = createNewDetailsLabel();
+	trackListHeader.getStyleClass().add(".track-list-header");
 	trackListHeader.setText("Track List:");
 	trackList.getChildren().add(trackListHeader);
 	album.getTracks().stream().map((track) -> {
@@ -222,10 +231,6 @@ public final class AlbumDetailsView extends HBox {
 	}).forEachOrdered((trackLabel) -> {
 	    trackList.getChildren().add(trackLabel);
 	});
-    }
-
-    public Album getAlbum() {
-	return this.album;
     }
 
 }

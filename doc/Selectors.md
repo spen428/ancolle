@@ -18,6 +18,7 @@ and are structured hierarchically according to the organisation of the GUI.
                 - ScrollPane `.scroll-pane`
                     - ProductView extends TilePaneView `.product-view`
                         - ProductNode extends ItemNode `.product-node`
+                        - ProductAdderNode extends ItemNode `.product-adder-node`
             - Tab `#album-view-tab`
                 - ScrollPane `.scroll-pane`
                     - AlbumView extends TilePaneView `.album-view`
@@ -33,6 +34,7 @@ and are structured hierarchically according to the organisation of the GUI.
                             - Label `.title-ja-latn`
                             - Label `.release-date`
                             - VBox `.track-list`
+                                - Label `.track-list-header`
                                 - [Label ...] `.track`
         - StatusBar `.status-bar`
             - Label `.status-label`

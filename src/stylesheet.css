@@ -10,20 +10,16 @@
     -fx-background-color: #d9e5e5;
 }
 
-.item-node .hidden {
+.item-node.hidden {
     -fx-opacity: 0.4;
 }
 
 .item-node {
     -fx-background-color: none;
-    -fx-margin: 20;
-    -fx-padding: 10;
-    -fx-background-radius: 10;
+    -fx-margin: 20px;
+    -fx-padding: 10px;
+    -fx-background-radius: 10px;
     -fx-alignment: center;
-}
-
-.item-node > .image-view {
-    -fx-smooth: true;
 }
 
 .item-node > .label {
@@ -34,30 +30,56 @@
     -fx-font-weight: bold;
 }
 
+.image-view {
+    -fx-smooth: true;
+}
+
 .album-node {
-    -fx-max-width: 120;
-    -fx-max-height: 120;
+    -fx-max-width: 120px;
+    -fx-max-height: 150px;
+    -fx-background-insets: 2px;
 }
 
 .album-node > .image-view {
-    
 }
 
 .product-node {
-    -fx-max-width: 270;
-    -fx-max-height: 70;
+    -fx-max-width: 270px;
+    -fx-max-height: 70px;
+}
+
+.product-node > .image-view {
+}
+
+.product-adder-node > .label1 {
+    -fx-font: 40px "Arial";
+    -fx-alignment: center;
 }
 
 .collected {
-    -fx-background-color: mediumaquamarine;
+    -fx-background-color: #66cdaa;
+}
+
+.collected:hover {
+    -fx-background-color: #d8f3ea;
 }
 
 .new {
-    -fx-background-color: #FFFACD;
+    -fx-background-color: #fffacd;
 }
 
-.album-details-view .label {
-    -fx-background-color: none;
+.new:hover {
+    -fx-background-color: #e6cf00;
+}
+
+.album-cover-container {
+    -fx-padding: 30px;
+} 
+
+.details > .label, .details > .track-list > .label {
+    -fx-fit-to-width: true;
+    -fx-fill-width: true;
+    -fx-padding: 5px;
 }
 
 .album-details-view .label:hover {
@@ -70,18 +92,18 @@
 }
 
 .tile-pane-view {
-    -fx-padding: 25;
+    -fx-padding: 25px;
     -fx-alignment: baseline-center;
 }
 
 .status-bar {
-    -fx-height: 22;
+    -fx-height: 22px;
     -fx-alignment: center-left;
 }
 
 .status-label {
     -fx-alignment: center;
-    -fx-padding: 2 20 2 20;
+    -fx-padding: 2px 20px 2px 20px;
 }
 
 .label {
