@@ -143,7 +143,7 @@ public class AnColle extends VBox {
 	VBox.setVgrow(albumViewScrollPane, Priority.ALWAYS);
 	albumViewScrollPane.setContent(albumView);
 
-	this.albumViewTab = new Tab("", albumViewScrollPane);
+	this.albumViewTab = createTab("", albumViewScrollPane);
 	albumViewTab.setId("album-view-tab");
 	albumViewTab.setContent(albumViewScrollPane);
 	albumViewTab.setOnCloseRequest(evt -> handleTabOnCloseRequest(evt));
@@ -183,11 +183,16 @@ public class AnColle extends VBox {
      * @param content the tab content
      * @return the newly created tab
      */
-    public Tab newTab(String title, Node content) {
-	Tab tab = new Tab(title, content);
-	tab.setOnCloseRequest(evt -> handleTabOnCloseRequest(evt));
+    public MyTab newTab(String title, Node content) {
+	MyTab tab = createTab(title, content);
 	tabPane.getTabs().add(tab);
 	flashTab(tab);
+	return tab;
+    }
+
+    private MyTab createTab(String title, Node content) {
+	MyTab tab = new MyTab(title, content);
+	tab.setOnCloseRequest(evt -> handleTabOnCloseRequest(evt));
 	return tab;
     }
 
@@ -199,7 +204,7 @@ public class AnColle extends VBox {
 	}
     }
 
-    private void flashTab(Tab tab) {
+    private void flashTab(MyTab tab) {
 	// TODO: Requires a subclass, CSS pseudoclas and Timeline to animate
     }
 
@@ -224,14 +229,21 @@ public class AnColle extends VBox {
     }
 
     /**
-     * Close a tab contained within the main tab pane. This is better than
-     * calling {@code remove()} on {@link TabPane#getTabs} because it propagates
-     * a close event to the tab, ensuring any event handlers still execute.
+     * Close a tab contained within the main tab pane. This removes the tab from
+     * the main tab pane and then calls {@link AnColle#handleTabOnCloseRequest}
      *
      * @param tab the tab
+     * @return false if the tab does not exist in the tab pane
      */
-    private void closeTab(Tab tab) {
-	tabPane.fireEvent(new Event(tabPane, tab, Tab.TAB_CLOSE_REQUEST_EVENT));
+    private boolean closeTab(Tab tab) {
+	boolean exists = tabPane.getTabs().contains(tab);
+	if (!exists) {
+	    return false;
+	}
+
+	handleTabOnCloseRequest(new Event(tabPane, tab, Tab.CLOSED_EVENT));
+	tabPane.getTabs().remove(tab);
+	return true;
     }
 
     /**
