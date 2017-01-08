@@ -364,6 +364,10 @@ public class AnColle extends VBox {
      * @param product the product
      */
     public void view(Product product) {
+	if (product == null) {
+	    return;
+	}
+
 	if (albumView.getProduct() != product) {
 	    albumView.cancelQueuedTasks();
 	    albumView.setProduct(product);

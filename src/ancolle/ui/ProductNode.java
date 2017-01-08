@@ -67,8 +67,12 @@ public class ProductNode extends ItemNode<Product> {
 	// Mouse/key handlers
 	setOnMouseClicked(evt -> {
 	    if (evt.getButton() == MouseButton.PRIMARY) {
-		getStyleClass().remove("new");
-		productView.ancolle.view(getProduct());
+		if (getProduct() != null) {
+		    getStyleClass().remove("new");
+		    productView.ancolle.view(getProduct());
+		} else {
+		    // TODO: Move to top of priority queue
+		}
 	    } else if (evt.getButton() == MouseButton.SECONDARY) {
 		showContextMenu(evt);
 	    }
