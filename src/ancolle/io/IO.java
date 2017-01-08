@@ -67,6 +67,23 @@ public class IO {
      */
     public static Image retrievePicture(String url, String itemDirName,
 	    String fileName) {
+	return retrievePicture(url, itemDirName, fileName, false);
+    }
+
+    /**
+     * Get an image, downloading it from the given URL and storing it in the
+     * cache. If the image is already present in the cache, load it from disk.
+     *
+     * @param url the URL of the image
+     * @param itemDirName the name of the subdirectory inside the cache
+     * directory in which this image should be stored
+     * @param fileName the filename of the image to be stored in the cache
+     * @param cacheOnly return {@code null} if the item is not in the cache
+     * @return the {@link Image} or null if either it failed to be retrieved or
+     * does not exist.
+     */
+    public static Image retrievePicture(String url, String itemDirName,
+	    String fileName, boolean cacheOnly) {
 	if (DISABLE_IMAGES) {
 	    return null;
 	}
@@ -80,6 +97,10 @@ public class IO {
 		+ "." + ext);
 	// Download image if it cannot be found in the cache
 	if (!file.exists()) {
+	    if (cacheOnly) {
+		return null;
+	    }
+
 	    LOG.log(Level.FINE, "Downloading image");
 	    File parent = file.getParentFile();
 	    if (parent != null && !parent.exists()) {
