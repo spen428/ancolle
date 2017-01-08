@@ -16,9 +16,7 @@
  */
 package ancolle.ui;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Level;
+import ancolle.ui.concurrency.AnColleTask;
 import java.util.logging.Logger;
 import javafx.scene.layout.TilePane;
 
@@ -36,52 +34,23 @@ public abstract class TilePaneView extends TilePane {
     private static final Logger LOG = Logger.getLogger(TilePaneView.class.getName());
 
     protected final AnColle ancolle;
-    private final BlockingQueue<Runnable> jobQueue;
-    private final Thread workerThread;
 
     public TilePaneView(AnColle ancolle) {
 	this.ancolle = ancolle;
-	this.jobQueue = new LinkedBlockingQueue<>();
-	this.workerThread = new Thread(() -> {
-	    while (true) {
-		try {
-		    Runnable task = jobQueue.take();
-		    task.run();
-		} catch (InterruptedException ex) {
-		    LOG.log(Level.SEVERE, null, ex);
-		    break;
-		}
-	    }
-	});
-	this.workerThread.setDaemon(true);
-
 	getStyleClass().add("tile-pane-view");
     }
 
-    /**
-     * Start the worker thread for this {@link TilePaneView}
-     *
-     * @return false if already started
-     */
-    public final boolean startWorkerThread() {
-	if (!this.workerThread.isAlive()) {
-	    this.workerThread.start();
-	    return true;
-	}
-	return false;
-    }
-
-    /**
-     * Add a {@link Runnable} to the queue of background tasks.
-     *
-     * @param task the task
-     */
-    public void submitBackgroundTask(Runnable task) {
-	this.jobQueue.add(task);
+    public void submitBackgroundTask(AnColleTask task) {
+	ancolle.getTaskManager().submitTask(task);
     }
 
     public void cancelQueuedTasks() {
-	jobQueue.clear();
+	ancolle.getTaskManager().cancelTasksFrom(this);
     }
+
+    /**
+     * Clear and reload all item nodes.
+     */
+    public abstract void refreshItems();
 
 }

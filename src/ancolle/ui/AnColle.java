@@ -18,6 +18,7 @@ package ancolle.ui;
 
 import ancolle.items.Product;
 import ancolle.main.Settings;
+import ancolle.ui.concurrency.AnColleTaskManager;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
@@ -64,21 +65,24 @@ public class AnColle extends VBox {
 
     private Window mainWindow = null;
     private final Tab albumViewTab;
-    private final Set<Tab> flashingTabs = new HashSet<>(4);
+    private final Set<Tab> flashingTabs;
+    private final AnColleTaskManager taskManager;
 
     public AnColle(Stage stage) {
 	super();
+	this.flashingTabs = new HashSet<>(4);
 	this.mainWindow = stage;
-
 	this.productViewScrollPane = new ScrollPane();
 	this.albumViewScrollPane = new ScrollPane();
 	this.productView = new ProductView(this);
+	this.albumViewTab = createTab("", albumViewScrollPane, null);
 	this.albumView = new AlbumView(this);
 	this.productViewTab = new Tab(PRODUCT_TRACKER_TAB_TITLE,
 		productViewScrollPane);
 	this.tabPane = new TabPane();
 	this.settings = new Settings();
 	this.statusBar = new StatusBar();
+	this.taskManager = new AnColleTaskManager(statusBar);
 
 	productViewTab.setClosable(false);
 	tabPane.getTabs().addAll(productViewTab);
@@ -124,9 +128,19 @@ public class AnColle extends VBox {
 	getChildren().add(tabPane);
 	tabPane.setOnKeyPressed(evt -> {
 	    if (evt.getCode() == KeyCode.W && evt.isControlDown()) {
-		int idx = tabPane.getSelectionModel().getSelectedIndex();
-		if (idx != 0) {
-		    closeTab(tabPane.getTabs().get(idx));
+		Tab tab = tabPane.getSelectionModel().getSelectedItem();
+		if (tab != productViewTab) {
+		    closeTab(tab);
+		}
+	    } else if (evt.getCode() == KeyCode.F5
+		    || (evt.getCode() == KeyCode.R && evt.isControlDown())) {
+		Tab tab = tabPane.getSelectionModel().getSelectedItem();
+		if (tab == productViewTab) {
+		    productView.refreshItems();
+		} else if (tab == albumViewTab) {
+		    albumView.refreshItems();
+		} else {
+		    // TODO
 		}
 	    }
 	});
@@ -147,7 +161,6 @@ public class AnColle extends VBox {
 	VBox.setVgrow(albumViewScrollPane, Priority.ALWAYS);
 	albumViewScrollPane.setContent(albumView);
 
-	this.albumViewTab = createTab("", albumViewScrollPane, null);
 	albumViewTab.setId("album-view-tab");
 	albumViewTab.setContent(albumViewScrollPane);
 	albumViewTab.setOnCloseRequest(evt -> handleTabOnCloseRequest(evt));
@@ -178,6 +191,10 @@ public class AnColle extends VBox {
 	mainWindow.setOnCloseRequest(evt -> {
 	    saveSettings();
 	});
+    }
+
+    public AnColleTaskManager getTaskManager() {
+	return taskManager;
     }
 
     /**
@@ -347,6 +364,10 @@ public class AnColle extends VBox {
      * @param product the product
      */
     public void view(Product product) {
+	if (product == null) {
+	    return;
+	}
+
 	if (albumView.getProduct() != product) {
 	    albumView.cancelQueuedTasks();
 	    albumView.setProduct(product);

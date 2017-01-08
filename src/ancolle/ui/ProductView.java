@@ -20,6 +20,7 @@ import ancolle.io.VgmdbApi;
 import ancolle.items.Product;
 import ancolle.items.ProductPreview;
 import ancolle.items.ProductType;
+import ancolle.ui.concurrency.AnColleTask;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -64,8 +65,6 @@ public final class ProductView extends TilePaneView {
 
 	// Button for adding new products to track
 	getChildren().add(new ProductAdderNode(this));
-
-	startWorkerThread();
     }
 
     /**
@@ -109,14 +108,14 @@ public final class ProductView extends TilePaneView {
 	}
 
 	// Get product logo
-	submitBackgroundTask(() -> {
+	submitBackgroundTask(new AnColleTask(() -> {
 	    LOG.log(Level.FINE, "Fetching product cover for product #", product.id);
 	    final Image image = product.getPicture();
 	    LOG.log(Level.FINE, "Fetched product cover for product #", product.id);
 	    Platform.runLater(() -> {
 		node.imageViewContainer.setImage(image);
 	    });
-	});
+	}, 1, this, "product_" + product.id + "_picture"));
 
 	// Insert into view
 	if (idx != -1) {
@@ -175,18 +174,19 @@ public final class ProductView extends TilePaneView {
 	final Node placeholder = createProductNode("Product #" + id, "Loading...");
 	// Insert before "Add"  button
 	getChildren().add(getChildren().size() - 1, placeholder);
-	submitBackgroundTask(() -> {
+	submitBackgroundTask(new AnColleTask(() -> {
 	    final Product product = VgmdbApi.getProductById(id);
-	    // Ensure that UI operations occur on the correct thread.
-	    Platform.runLater(() -> {
-		boolean added = addProduct(product, highlight);
-		if (!added) {
-		    LOG.log(Level.INFO, "Product with id #{0} was not "
-			    + "added. Possible duplicate?", product.id);
-		}
-		getChildren().remove(placeholder);
-	    });
-	});
+	    if (product != null) {
+		Platform.runLater(() -> {
+		    boolean added = addProduct(product, highlight);
+		    if (!added) {
+			LOG.log(Level.INFO, "Product with id #{0} was not "
+				+ "added. Possible duplicate?", product.id);
+		    }
+		    getChildren().remove(placeholder);
+		});
+	    }
+	}, 0, this, "product_" + id));
     }
 
     public void doAddProductDialog() {
@@ -352,6 +352,11 @@ public final class ProductView extends TilePaneView {
 	// TODO: Setting the style to undecorated seems to prevent the dialog
 	// from appearing altogether...
 	return alert;
+    }
+
+    @Override
+    public void refreshItems() {
+	// TODO
     }
 
     /**

@@ -43,6 +43,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 /**
  * Static methods for interfacing with VGMdb, the Video Game (and Anime) Music
@@ -111,12 +112,18 @@ public class VgmdbApi {
      *
      * @param subPath the sub-path
      * @param id the id of the item requested
+     * @param cacheOnly return {@code null} if the item is not in the cache
      * @return a {@link JSONObject} representing the result of the query
      */
-    public static JSONObject request(String subPath, int id) {
-	String filePath = CACHE_DIR + File.separator + subPath + File.separator + id + ".json";
+    public static JSONObject request(String subPath, int id, boolean cacheOnly) {
+	String filePath = CACHE_DIR + File.separator + subPath + File.separator
+		+ id + ".json";
 	File file = new File(filePath);
 	if (!file.exists()) {
+	    if (cacheOnly) {
+		return null;
+	    }
+
 	    File parent = file.getParentFile();
 	    if (parent != null && !parent.exists()) {
 		boolean success = parent.mkdirs();
@@ -130,8 +137,9 @@ public class VgmdbApi {
 	    download(url, file);
 	}
 
-	try (Reader r = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
-	    return (JSONObject) IO.JSON_PARSER.parse(r);
+	try (Reader r = new InputStreamReader(new FileInputStream(file),
+		StandardCharsets.UTF_8)) {
+	    return (JSONObject) new JSONParser().parse(r);
 	} catch (org.json.simple.parser.ParseException | IOException ex) {
 	    LOG.log(Level.SEVERE, null, ex);
 	}
@@ -146,7 +154,19 @@ public class VgmdbApi {
      * if the query failed
      */
     public static Product getProductById(int id) {
-	JSONObject jo = request("product", id);
+	return getProductById(id, false);
+    }
+
+    /**
+     * Search the database for full details of the product with the given id
+     *
+     * @param id the product id
+     * @param cacheOnly return {@code null} if the item is not in the cache
+     * @return an instance of {@link Product} representing the product, or null
+     * if the query failed
+     */
+    public static Product getProductById(int id, boolean cacheOnly) {
+	JSONObject jo = request("product", id, cacheOnly);
 	if (jo != null) {
 	    String title_en = (String) jo.get("name");
 	    String title_ja = (String) jo.get("name_real");
@@ -235,7 +255,19 @@ public class VgmdbApi {
      * the query failed
      */
     public static Album getAlbumById(int id) {
-	JSONObject obj = request("album", id);
+	return getAlbumById(id, false);
+    }
+
+    /**
+     * Search the database for full details of the album with the given id
+     *
+     * @param id the album id
+     * @param cacheOnly return {@code null} if the item is not in the cache
+     * @return an instance of {@link Album} representing the album, or null if
+     * the query failed
+     */
+    public static Album getAlbumById(int id, boolean cacheOnly) {
+	JSONObject obj = request("album", id, cacheOnly);
 	if (obj == null) {
 	    LOG.log(Level.INFO, "Failed to retrieve album with id {0}", id);
 	    return null;
@@ -350,7 +382,7 @@ public class VgmdbApi {
 	}
 
 	try (Reader r = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
-	    return (JSONObject) IO.JSON_PARSER.parse(r);
+	    return (JSONObject) new JSONParser().parse(r);
 	} catch (IOException | org.json.simple.parser.ParseException ex) {
 	    LOG.log(Level.SEVERE, null, ex);
 	}

@@ -20,6 +20,7 @@ import ancolle.io.VgmdbApi;
 import ancolle.items.Album;
 import ancolle.items.AlbumPreview;
 import ancolle.items.Product;
+import ancolle.ui.concurrency.AnColleTask;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.List;
@@ -57,7 +58,6 @@ public final class AlbumView extends TilePaneView {
 	this.albumChildren = new HashSet<>(20);
 	getStyleClass().add("album-view");
 	setProduct(product);
-	startWorkerThread();
     }
 
     private void addAlbums() {
@@ -111,7 +111,7 @@ public final class AlbumView extends TilePaneView {
 	node.label2.setText(dateString);
 
 	// Fetch album cover in the background
-	submitBackgroundTask(() -> {
+	submitBackgroundTask(new AnColleTask(() -> {
 	    LOG.log(Level.FINE, "Fetching album cover for album #", album.id);
 	    Album fullAlbum = fullAlbumMap.get(album);
 	    if (fullAlbum == null) {
@@ -127,20 +127,27 @@ public final class AlbumView extends TilePaneView {
 		    node.imageViewContainer.setImage(image);
 		});
 	    } else {
-		LOG.log(Level.FINE, "Failed to fetch full album details for album #", album.id);
+		LOG.log(Level.FINE, "Failed to fetch full album details for "
+			+ "album #", album.id);
 	    }
-	});
+	}, 1, this, "album_" + album.id + "_picture"));
 	return node;
     }
 
     public void updateHiddenItems() {
 	if (ancolle.getSettings().isShowHiddenItems()) {
-	    getChildren().clear();
-	    albumChildren.clear();
-	    addAlbums();
+	    refreshItems();
 	} else {
 	    getChildren().removeIf(child -> ((AlbumNode) child).isHidden());
 	}
+    }
+
+    @Override
+    public void refreshItems() {
+	cancelQueuedTasks();
+	getChildren().clear();
+	albumChildren.clear();
+	addAlbums();
     }
 
 }
