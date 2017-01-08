@@ -438,7 +438,7 @@ public class VgmdbApi {
     }
 
     public static void removeFromCache(String subPath, int id) {
-	File file = new File(getFilePath("album", id));
+	File file = new File(getFilePath(subPath, id));
 	if (file.exists()) {
 	    file.delete();
 	}
@@ -446,6 +446,10 @@ public class VgmdbApi {
 
     public static void removeFromCache(AlbumPreview album) {
 	removeFromCache("album", album.id);
+    }
+
+    public static void removeFromCache(Product product) {
+	removeFromCache("product", product.id);
     }
 
     private static String getFilePath(String subPath, int id) {

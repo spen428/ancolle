@@ -16,8 +16,10 @@
  */
 package ancolle.ui;
 
+import ancolle.io.VgmdbApi;
 import ancolle.items.Product;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
@@ -36,7 +38,17 @@ public class ProductNode extends ItemNode<Product> {
 
     static {
 	PRODUCT_NODE_CONTEXT_MENU = new ContextMenu();
-	MenuItem menuItemRemoveProduct = new MenuItem("Remove Product");
+
+	MenuItem menuItemReload = new MenuItem("Force reload");
+	menuItemReload.setOnAction(evt -> {
+	    ProductNode anchor = (ProductNode) PRODUCT_NODE_CONTEXT_MENU.getOwnerNode();
+	    if (anchor != null) {
+		anchor.reloadProduct();
+	    }
+	});
+	PRODUCT_NODE_CONTEXT_MENU.getItems().add(menuItemReload);
+
+	MenuItem menuItemRemoveProduct = new MenuItem("Remove product");
 	menuItemRemoveProduct.setOnAction(evt -> {
 	    ProductNode anchor = (ProductNode) PRODUCT_NODE_CONTEXT_MENU.getOwnerNode();
 	    if (anchor != null) {
@@ -44,12 +56,6 @@ public class ProductNode extends ItemNode<Product> {
 	    }
 	});
 	PRODUCT_NODE_CONTEXT_MENU.getItems().add(menuItemRemoveProduct);
-
-	MenuItem menuItemReload = new MenuItem("Reload Product");
-	menuItemReload.setOnAction(evt -> {
-	    // TODO
-	});
-//	PRODUCT_NODE_CONTEXT_MENU.getItems().add(menuItemReload);
 
 	PRODUCT_NODE_CONTEXT_MENU.getItems().add(new MenuItem("Cancel"));
 	PRODUCT_NODE_CONTEXT_MENU.setAutoHide(true);
@@ -94,6 +100,16 @@ public class ProductNode extends ItemNode<Product> {
 
     private ProductView getProductView() {
 	return productView;
+    }
+
+    private void reloadProduct() {
+	Platform.runLater(() -> {
+	    Product product = getProduct();
+	    if (productView.removeProduct(product)) {
+		VgmdbApi.removeFromCache(product);
+		productView.addProductById(product.id, true);
+	    }
+	});
     }
 
 }
