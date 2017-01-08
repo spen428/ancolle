@@ -1,11 +1,14 @@
 # More screenshots
 
-![Album tracker](begin.png)
+The first thing a new user sees:
 
-![Album tracker](loading.png)
+![Begin](begin.png)
 
-![Album tracker](product-view.png)
+Some products have been entered into the tracker, and the details are currently
+being downloaded:
 
-![Album tracker](album-view.png)
+![Loading](loading.png)
 
-![Album tracker](album-details.png)
+The products have finished loading:
+
+![Product view](loaded.png)
