@@ -16,11 +16,20 @@
  */
 package ancolle.ui.concurrency;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 /**
  * @author lykat
  */
 public class AnColleTask implements Runnable, Comparable<AnColleTask> {
 
+    /**
+     * Counter for preserving FIFO order when {@link AnColleTask#compareTo}
+     * returns 0.
+     */
+    static final AtomicLong counter = new AtomicLong();
+
+    private final long ordinal;
     private final Runnable runnable;
     private final Object source;
     private final Object userData;
@@ -33,6 +42,7 @@ public class AnColleTask implements Runnable, Comparable<AnColleTask> {
 
     public AnColleTask(Runnable runnable, int priority, Object source,
 	    Object userData) {
+	this.ordinal = counter.getAndIncrement();
 	this.runnable = runnable;
 	this.priority = priority;
 	this.source = source;
@@ -46,7 +56,11 @@ public class AnColleTask implements Runnable, Comparable<AnColleTask> {
 
     @Override
     public int compareTo(AnColleTask o) {
-	return Integer.compare(priority, o.priority);
+	int c = Integer.compare(priority, o.priority);
+	if (c != 0) {
+	    return c;
+	}
+	return Long.compare(ordinal, o.ordinal);
     }
 
 }

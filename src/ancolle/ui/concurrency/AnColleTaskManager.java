@@ -72,10 +72,10 @@ public class AnColleTaskManager {
     private class AnColleTaskCallbackWrapper implements Runnable,
 	    Comparable<AnColleTaskCallbackWrapper> {
 
-	private final AnColleTask task;
+	protected final AnColleTask task;
 
-	AnColleTaskCallbackWrapper(AnColleTask t) {
-	    task = t;
+	AnColleTaskCallbackWrapper(AnColleTask task) {
+	    this.task = task;
 	}
 
 	@Override
