@@ -21,6 +21,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 
@@ -56,6 +57,7 @@ public class AnColleTaskManager {
 	threadPoolExecutor.execute(new AnColleTaskCallbackWrapper(task));
 	Platform.runLater(() -> {
 	    final int count = taskCount.incrementAndGet();
+	    LOG.log(Level.FINER, "{0} tasks running", count);
 	});
     }
 
@@ -81,6 +83,7 @@ public class AnColleTaskManager {
 	    task.run();
 	    Platform.runLater(() -> {
 		final int count = taskCount.decrementAndGet();
+		LOG.log(Level.FINER, "{0} tasks running", count);
 	    });
 	}
 
