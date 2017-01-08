@@ -146,10 +146,10 @@ public class AnColle extends VBox {
 	this.albumViewTab = new Tab("", albumViewScrollPane);
 	albumViewTab.setId("album-view-tab");
 	albumViewTab.setContent(albumViewScrollPane);
+	albumViewTab.setOnCloseRequest(evt -> handleTabOnCloseRequest(evt));
 	albumViewTab.setOnClosed(evt -> {
 	    albumView.cancelQueuedTasks();
 	    albumView.setProduct(null);
-	    selectTabToRight();
 	});
 
 	setOnKeyPressed(evt -> {
@@ -185,9 +185,7 @@ public class AnColle extends VBox {
      */
     public Tab newTab(String title, Node content) {
 	Tab tab = new Tab(title, content);
-	tab.setOnClosed(evt -> {
-	    selectTabToRight();
-	});
+	tab.setOnCloseRequest(evt -> handleTabOnCloseRequest(evt));
 	tabPane.getTabs().add(tab);
 	flashTab(tab);
 	return tab;
@@ -203,6 +201,21 @@ public class AnColle extends VBox {
 
     private void flashTab(Tab tab) {
 	// TODO: Requires a subclass, CSS pseudoclas and Timeline to animate
+    }
+
+    /**
+     * Select the tab to the right of the closed tab on close, rather than the
+     * one of the left (emulate browser tab closing behaviour)
+     *
+     * @param evt the close event
+     */
+    private void handleTabOnCloseRequest(Event evt) {
+	if (evt.getTarget() instanceof Tab) {
+	    Tab closedTab = (Tab) evt.getTarget();
+	    if (tabPane.getSelectionModel().getSelectedItem() == closedTab) {
+		selectTabToRight();
+	    }
+	}
     }
 
     public void setSelectedTab(Tab tab) {
