@@ -150,7 +150,7 @@
 
 .scroll-pane {
     -fx-fit-to-width: true;
-    -fx-fill-height: true;
+    -fx-fit-to-height: true;
 }
 
 .status-bar {
