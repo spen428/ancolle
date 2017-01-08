@@ -20,8 +20,6 @@ import ancolle.items.Album;
 import java.text.SimpleDateFormat;
 import java.util.logging.Logger;
 import javafx.css.PseudoClass;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -34,7 +32,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 
 /**
  * View an album
@@ -50,10 +47,6 @@ public final class AlbumDetailsView extends HBox {
      */
     private static final Logger LOG = Logger.getLogger(AlbumDetailsView.class.getName());
 
-    private static final int PANE_PADDING_PX = 25;
-    private static final double COVER_WIDTH_PX = 350;
-    private static final double COVER_PADDING_PX = 10;
-    private static final double LABEL_PADDING_PX = 5;
     private static final Album BLANK_ALBUM = new Album(-1, null, null, null,
 	    null, null, null, null);
 
@@ -108,37 +101,25 @@ public final class AlbumDetailsView extends HBox {
 	    }
 	};
 	getStyleClass().add(CLASS_ALBUM_DETAILS_VIEW);
-	setPadding(new Insets(PANE_PADDING_PX));
-	setAlignment(Pos.BASELINE_CENTER);
 
 	// VBox that holds the album cover
 	final VBox albumCoverContainer = new VBox();
 	albumCoverContainer.getStyleClass().add("album-cover-container");
 	VBox.setVgrow(albumCoverContainer, Priority.ALWAYS);
-	albumCoverContainer.setPadding(new Insets(COVER_PADDING_PX));
-	albumCoverContainer.setMaxWidth(COVER_WIDTH_PX + (2 * COVER_PADDING_PX));
-	albumCoverContainer.setAlignment(Pos.TOP_CENTER);
 	albumCoverContainer.getChildren().add(albumCover);
 	getChildren().add(albumCoverContainer);
 
 	// The album cover
 	albumCover.getStyleClass().add("album-cover");
-	albumCover.setSmooth(true);
 	albumCover.setPreserveRatio(true);
-	albumCover.setFitWidth(COVER_WIDTH_PX);
-	albumCover.setFitHeight(COVER_WIDTH_PX);
 
 	// Scrollpane that holds the Details VBox
 	final ScrollPane detailsScrollPane = new ScrollPane();
 	detailsScrollPane.getStyleClass().add("details-scrollpane");
-	detailsScrollPane.setFitToWidth(true);
 	detailsScrollPane.setContent(detailsVbox);
-	detailsScrollPane.setFitToWidth(true);
-	detailsScrollPane.setFitToHeight(true);
 	getChildren().add(detailsScrollPane);
 	HBox.setHgrow(detailsScrollPane, Priority.ALWAYS);
 	VBox.setVgrow(detailsScrollPane, Priority.ALWAYS);
-	detailsVbox.setFillWidth(true);
 	detailsVbox.getStyleClass().add("details");
 
 	// Details
@@ -177,10 +158,6 @@ public final class AlbumDetailsView extends HBox {
      */
     private Label createNewDetailsLabel() {
 	Label label = new Label();
-	label.maxWidthProperty().bind(detailsVbox.widthProperty());
-	label.setAlignment(Pos.BOTTOM_LEFT);
-	label.setPadding(new Insets(LABEL_PADDING_PX));
-	label.setFont(new Font("Meiryo", 16));
 	label.setOnMouseEntered(evt -> {
 	    label.pseudoClassStateChanged(pseudoClassHover, true);
 	    COPY_CONTEXT_MENU.hide();

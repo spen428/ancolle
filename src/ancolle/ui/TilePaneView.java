@@ -30,9 +30,6 @@ import javafx.scene.layout.TilePane;
  */
 public class TilePaneView extends TilePane {
 
-    public static final double PANE_PADDING = 25;
-    public static final double TILE_PADDING = 10;
-
     /**
      * The logger for this class.
      */
@@ -57,6 +54,8 @@ public class TilePaneView extends TilePane {
 	    }
 	});
 	this.workerThread.setDaemon(true);
+
+	getStyleClass().add("tile-pane-view");
     }
 
     /**

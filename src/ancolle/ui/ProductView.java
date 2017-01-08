@@ -28,7 +28,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -53,10 +52,6 @@ import javafx.stage.Modality;
  */
 public final class ProductView extends TilePaneView {
 
-    public static final double MIN_TILE_WIDTH = 50;
-    public static final double MAX_TILE_WIDTH = 250;
-    public static final String CLASS_PRODUCT_VIEW = "product-view";
-
     /**
      * The logger for this class.
      */
@@ -66,14 +61,12 @@ public final class ProductView extends TilePaneView {
 
     public ProductView(AnColle ancolle) {
 	super(ancolle);
-	getStyleClass().add(CLASS_PRODUCT_VIEW);
+	getStyleClass().add("product-view");
 	this.products = new HashSet<>(32);
 
 	// Button for adding new products to track
 	getChildren().add(new ProductAdderNode(this));
 
-	setPadding(new Insets(PANE_PADDING));
-	setAlignment(Pos.BASELINE_CENTER);
 	startWorkerThread();
     }
 

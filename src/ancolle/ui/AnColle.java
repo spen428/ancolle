@@ -133,8 +133,6 @@ public class AnColle extends VBox {
 
 	productViewScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 	productViewScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-	productViewScrollPane.setFitToWidth(true);
-	productViewScrollPane.setFitToHeight(true);
 	VBox.setVgrow(productViewScrollPane, Priority.ALWAYS);
 	productViewScrollPane.setContent(productView);
 
@@ -142,8 +140,6 @@ public class AnColle extends VBox {
 
 	albumViewScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 	albumViewScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-	albumViewScrollPane.setFitToWidth(true);
-	albumViewScrollPane.setFitToHeight(true);
 	VBox.setVgrow(albumViewScrollPane, Priority.ALWAYS);
 	albumViewScrollPane.setContent(albumView);
 

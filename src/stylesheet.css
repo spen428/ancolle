@@ -15,19 +15,41 @@
 }
 
 .item-node {
+    -fx-background-color: none;
+    -fx-margin: 20;
     -fx-padding: 10;
+    -fx-background-radius: 10;
+    -fx-alignment: center;
 }
 
-.franchise {
+.item-node > .image-view {
+    -fx-smooth: true;
+}
+
+.item-node > .label {
+    -fx-alignment: bottom-center;
+}
+
+.item-node.franchise > .label1 {
     -fx-font-weight: bold;
 }
 
 .album-node {
-    -fx-background-color: none;
+    -fx-max-width: 120;
+    -fx-max-height: 120;
+}
+
+.album-node > .image-view {
+    
+}
+
+.product-node {
+    -fx-max-width: 270;
+    -fx-max-height: 70;
 }
 
 .collected {
-    -fx-background-color: #228B22;
+    -fx-background-color: mediumaquamarine;
 }
 
 .new {
@@ -40,4 +62,32 @@
 
 .album-details-view .label:hover {
     -fx-background-color: #d9e5e5;
+}
+
+.scroll-pane {
+    -fx-fit-to-width: true;
+    -fx-fill-height: true;
+}
+
+.tile-pane-view {
+    -fx-padding: 25;
+    -fx-alignment: baseline-center;
+}
+
+.status-bar {
+    -fx-height: 22;
+    -fx-alignment: center-left;
+}
+
+.status-label {
+    -fx-alignment: center;
+    -fx-padding: 2 20 2 20;
+}
+
+.label {
+    -fx-font: 12px "Meiryo";
+}
+
+.tab {
+    -fx-font: 11px "Meiryo";
 }

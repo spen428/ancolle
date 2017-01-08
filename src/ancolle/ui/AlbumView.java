@@ -26,8 +26,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 
 /**
@@ -42,9 +40,6 @@ public final class AlbumView extends TilePaneView {
      */
     private static final Logger LOG = Logger.getLogger(AlbumView.class.getName());
 
-    public static final double MAX_TILE_WIDTH = 100;
-    public static final String CLASS_ALBUM_VIEW = "album-view";
-
     private Product product;
 
     public final ConcurrentHashMap<AlbumPreview, Album> fullAlbumMap;
@@ -56,9 +51,7 @@ public final class AlbumView extends TilePaneView {
     public AlbumView(AnColle ancolle, Product product) {
 	super(ancolle);
 	this.fullAlbumMap = new ConcurrentHashMap<>(20);
-	getStyleClass().add(CLASS_ALBUM_VIEW);
-	setPadding(new Insets(PANE_PADDING));
-	setAlignment(Pos.BASELINE_CENTER);
+	getStyleClass().add("album-view");
 	setProduct(product);
 	startWorkerThread();
     }

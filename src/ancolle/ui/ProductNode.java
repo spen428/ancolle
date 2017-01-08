@@ -17,7 +17,6 @@
 package ancolle.ui;
 
 import ancolle.items.Product;
-import static ancolle.ui.TilePaneView.TILE_PADDING;
 import java.util.logging.Logger;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -27,13 +26,6 @@ import javafx.scene.input.MouseButton;
  * @author lykat
  */
 public class ProductNode extends ItemNode<Product> {
-
-    public static final double DEFAULT_MIN_WIDTH = ProductView.MIN_TILE_WIDTH
-	    + (2 * TILE_PADDING);
-    public static final double DEFAULT_MAX_WIDTH = ProductView.MAX_TILE_WIDTH
-	    + (2 * TILE_PADDING);
-    public static final double DEFAULT_MAX_HEIGHT = DEFAULT_MAX_WIDTH / 4;
-    public static final String CLASS_PRODUCT_NODE = "product-node";
 
     private static final ContextMenu PRODUCT_NODE_CONTEXT_MENU;
 
@@ -68,10 +60,7 @@ public class ProductNode extends ItemNode<Product> {
     public ProductNode(ProductView productView) {
 	super();
 	this.productView = productView;
-	getStyleClass().add(CLASS_PRODUCT_NODE);
-	setMinWidth(DEFAULT_MIN_WIDTH);
-	setMaxWidth(DEFAULT_MAX_WIDTH);
-	setMaxHeight(DEFAULT_MAX_HEIGHT);
+	getStyleClass().add("product-node");
 
 	setProduct(null);
 

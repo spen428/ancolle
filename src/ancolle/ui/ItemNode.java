@@ -17,7 +17,6 @@
 package ancolle.ui;
 
 import javafx.css.PseudoClass;
-import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -46,7 +45,6 @@ public abstract class ItemNode<T> extends VBox {
 
     public ItemNode() {
 	getStyleClass().add("item-node");
-	setAlignment(Pos.BOTTOM_CENTER);
 	pseudoClassHover = new PseudoClass() {
 	    @Override
 	    public String getPseudoClassName() {
@@ -55,22 +53,15 @@ public abstract class ItemNode<T> extends VBox {
 	};
 
 	imageView = new ImageView();
-	imageView.setSmooth(true);
 	imageView.setPreserveRatio(true);
-	imageView.fitWidthProperty().bind(maxWidthProperty());
-	imageView.fitHeightProperty().bind(maxHeightProperty());
 	getChildren().add(imageView);
 
 	label1 = new Label();
 	label1.getStyleClass().add("label1");
-	label1.maxWidthProperty().bind(widthProperty());
-	label1.setAlignment(Pos.BOTTOM_CENTER);
 	getChildren().add(label1);
 
 	label2 = new Label();
 	label2.getStyleClass().add("label2");
-	label2.maxWidthProperty().bind(widthProperty());
-	label2.setAlignment(Pos.BOTTOM_CENTER);
 	getChildren().add(label2);
 
 	// Mouse hover highlighting
