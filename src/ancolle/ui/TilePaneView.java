@@ -28,7 +28,7 @@ import javafx.scene.layout.TilePane;
  *
  * @author lykat
  */
-public class TilePaneView extends TilePane {
+public abstract class TilePaneView extends TilePane {
 
     /**
      * The logger for this class.
