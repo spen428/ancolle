@@ -1,8 +1,7 @@
 # AnColle CSS Selectors
 
-This file documents the CSS selectors assigned to the GUI elements in this
-application. Selectors are organised by the Java class to which they pertain,
-and are structured hierarchically according to the organisation of the GUI.
+This file documents the CSS selectors assigned to the GUI elements in this application. Selectors are organised by the
+Java class to which they pertain, and are structured hierarchically according to the organisation of the GUI.
 
 - AnColle
     - VBox `#root`

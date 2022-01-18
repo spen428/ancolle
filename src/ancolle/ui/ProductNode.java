@@ -18,98 +18,99 @@ package ancolle.ui;
 
 import ancolle.io.VgmdbApi;
 import ancolle.items.Product;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
+
+import java.util.logging.Logger;
 
 /**
  * @author lykat
  */
 public class ProductNode extends ItemNode<Product> {
 
-    private static final ContextMenu PRODUCT_NODE_CONTEXT_MENU;
+	private static final ContextMenu PRODUCT_NODE_CONTEXT_MENU;
 
-    /**
-     * The logger for this class.
-     */
-    private static final Logger LOG = Logger.getLogger(ProductNode.class.getName());
+	/**
+	 * The logger for this class.
+	 */
+	private static final Logger LOG = Logger.getLogger(ProductNode.class.getName());
 
-    static {
-	PRODUCT_NODE_CONTEXT_MENU = new ContextMenu();
+	static {
+		PRODUCT_NODE_CONTEXT_MENU = new ContextMenu();
 
-	MenuItem menuItemReload = new MenuItem("Force reload");
-	menuItemReload.setOnAction(evt -> {
-	    ProductNode anchor = (ProductNode) PRODUCT_NODE_CONTEXT_MENU.getOwnerNode();
-	    if (anchor != null) {
-		anchor.reloadProduct();
-	    }
-	});
-	PRODUCT_NODE_CONTEXT_MENU.getItems().add(menuItemReload);
+		MenuItem menuItemReload = new MenuItem("Force reload");
+		menuItemReload.setOnAction(evt -> {
+			ProductNode anchor = (ProductNode) PRODUCT_NODE_CONTEXT_MENU.getOwnerNode();
+			if (anchor != null) {
+				anchor.reloadProduct();
+			}
+		});
+		PRODUCT_NODE_CONTEXT_MENU.getItems().add(menuItemReload);
 
-	MenuItem menuItemRemoveProduct = new MenuItem("Remove product");
-	menuItemRemoveProduct.setOnAction(evt -> {
-	    ProductNode anchor = (ProductNode) PRODUCT_NODE_CONTEXT_MENU.getOwnerNode();
-	    if (anchor != null) {
-		anchor.getProductView().removeProduct(anchor.getProduct());
-	    }
-	});
-	PRODUCT_NODE_CONTEXT_MENU.getItems().add(menuItemRemoveProduct);
+		MenuItem menuItemRemoveProduct = new MenuItem("Remove product");
+		menuItemRemoveProduct.setOnAction(evt -> {
+			ProductNode anchor = (ProductNode) PRODUCT_NODE_CONTEXT_MENU.getOwnerNode();
+			if (anchor != null) {
+				anchor.getProductView().removeProduct(anchor.getProduct());
+			}
+		});
+		PRODUCT_NODE_CONTEXT_MENU.getItems().add(menuItemRemoveProduct);
 
-	PRODUCT_NODE_CONTEXT_MENU.getItems().add(new MenuItem("Cancel"));
-	PRODUCT_NODE_CONTEXT_MENU.setAutoHide(true);
-    }
+		PRODUCT_NODE_CONTEXT_MENU.getItems().add(new MenuItem("Cancel"));
+		PRODUCT_NODE_CONTEXT_MENU.setAutoHide(true);
+	}
 
-    private final ProductView productView;
+	private final ProductView productView;
 
-    public ProductNode(ProductView productView) {
-	super();
-	this.productView = productView;
-	getStyleClass().add("product-node");
+	public ProductNode(ProductView productView) {
+		super();
+		this.productView = productView;
+		getStyleClass().add("product-node");
 
-	setProduct(null);
+		setProduct(null);
 
-	// Mouse/key handlers
-	setOnMouseClicked(evt -> {
-	    if (evt.getButton() == MouseButton.PRIMARY) {
-		if (getProduct() != null) {
-		    getStyleClass().remove("new");
-		    productView.ancolle.view(getProduct());
-		} else {
-		    // TODO: Move to top of priority queue
-		}
-	    } else if (evt.getButton() == MouseButton.SECONDARY) {
-		showContextMenu(evt);
-	    }
-	});
-    }
+		// Mouse/key handlers
+		setOnMouseClicked(evt -> {
+			if (evt.getButton() == MouseButton.PRIMARY) {
+				if (getProduct() != null) {
+					getStyleClass().remove("new");
+					productView.ancolle.view(getProduct());
+				} else {
+					// TODO: Move to top of priority queue
+				}
+			} else if (evt.getButton() == MouseButton.SECONDARY) {
+				showContextMenu(evt);
+			}
+		});
+	}
 
-    public Product getProduct() {
-	return getItem();
-    }
+	public Product getProduct() {
+		return getItem();
+	}
 
-    public final void setProduct(Product product) {
-	this.setItem(product);
-    }
+	public final void setProduct(Product product) {
+		this.setItem(product);
+	}
 
-    @Override
-    protected ContextMenu getContextMenu() {
-	return PRODUCT_NODE_CONTEXT_MENU;
-    }
+	@Override
+	protected ContextMenu getContextMenu() {
+		return PRODUCT_NODE_CONTEXT_MENU;
+	}
 
-    private ProductView getProductView() {
-	return productView;
-    }
+	private ProductView getProductView() {
+		return productView;
+	}
 
-    private void reloadProduct() {
-	Platform.runLater(() -> {
-	    Product product = getProduct();
-	    if (productView.removeProduct(product)) {
-		VgmdbApi.removeFromCache(product);
-		productView.addProductById(product.id, true);
-	    }
-	});
-    }
+	private void reloadProduct() {
+		Platform.runLater(() -> {
+			Product product = getProduct();
+			if (productView.removeProduct(product)) {
+				VgmdbApi.removeFromCache(product);
+				productView.addProductById(product.id, true);
+			}
+		});
+	}
 
 }

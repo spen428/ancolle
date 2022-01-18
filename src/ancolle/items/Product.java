@@ -17,12 +17,13 @@
 package ancolle.items;
 
 import ancolle.io.IO;
+import javafx.scene.image.Image;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
-import javafx.scene.image.Image;
 
 /**
  * Full product details
@@ -31,66 +32,66 @@ import javafx.scene.image.Image;
  */
 public class Product extends ProductPreview {
 
-    /**
-     * The logger for this class.
-     */
-    private static final Logger LOG = Logger.getLogger(Product.class.getName());
+	/**
+	 * The logger for this class.
+	 */
+	private static final Logger LOG = Logger.getLogger(Product.class.getName());
 
-    private Image picture;
+	private Image picture;
 
-    public final String pictureUrlSmall;
+	public final String pictureUrlSmall;
 
-    private final List<AlbumPreview> albums;
+	private final List<AlbumPreview> albums;
 
-    /**
-     * Instantiate a new {@link Product}
-     *
-     * @param id the product id
-     * @param title_en the English title
-     * @param title_ja the Japanese title
-     * @param type the {@link ProductType}
-     * @param pictureUrlSmall URL of the product image
-     * @param albums collection of {@link AlbumPreview} associated with this
-     * product
-     */
-    public Product(int id, String title_en, String title_ja, ProductType type,
-	    String pictureUrlSmall, Collection<AlbumPreview> albums) {
-	super(id, title_en, title_ja, type);
-	if (albums != null) {
-	    this.albums = new ArrayList<>(albums);
-	} else {
-	    this.albums = new ArrayList<>(0);
+	/**
+	 * Instantiate a new {@link Product}
+	 *
+	 * @param id              the product id
+	 * @param title_en        the English title
+	 * @param title_ja        the Japanese title
+	 * @param type            the {@link ProductType}
+	 * @param pictureUrlSmall URL of the product image
+	 * @param albums          collection of {@link AlbumPreview} associated with this
+	 *                        product
+	 */
+	public Product(int id, String title_en, String title_ja, ProductType type,
+	               String pictureUrlSmall, Collection<AlbumPreview> albums) {
+		super(id, title_en, title_ja, type);
+		if (albums != null) {
+			this.albums = new ArrayList<>(albums);
+		} else {
+			this.albums = new ArrayList<>(0);
+		}
+		this.pictureUrlSmall = pictureUrlSmall;
+		this.picture = null;
 	}
-	this.pictureUrlSmall = pictureUrlSmall;
-	this.picture = null;
-    }
 
-    /**
-     * Get a list of albums associated with this {@link Product}
-     *
-     * @return an unmodifiable list of albums
-     */
-    public List<AlbumPreview> getAlbums() {
-	return Collections.unmodifiableList(albums);
-    }
-
-    /**
-     * Get the image associated with this {@link Product} (typically the front
-     * album cover).
-     *
-     * @return the {@link Image} or null if either it failed to be retrieved or
-     * does not exist.
-     */
-    public Image getPicture() {
-	if (picture == null) {
-	    if (pictureUrlSmall == null) {
-		// No URL, can't retrive anything
-		return null;
-	    }
-	    picture = IO.retrievePicture(pictureUrlSmall, "product",
-		    id + "_small");
+	/**
+	 * Get a list of albums associated with this {@link Product}
+	 *
+	 * @return an unmodifiable list of albums
+	 */
+	public List<AlbumPreview> getAlbums() {
+		return Collections.unmodifiableList(albums);
 	}
-	return picture;
-    }
+
+	/**
+	 * Get the image associated with this {@link Product} (typically the front
+	 * album cover).
+	 *
+	 * @return the {@link Image} or null if either it failed to be retrieved or
+	 * does not exist.
+	 */
+	public Image getPicture() {
+		if (picture == null) {
+			if (pictureUrlSmall == null) {
+				// No URL, can't retrive anything
+				return null;
+			}
+			picture = IO.retrievePicture(pictureUrlSmall, "product",
+					id + "_small");
+		}
+		return picture;
+	}
 
 }

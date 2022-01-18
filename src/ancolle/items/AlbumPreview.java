@@ -26,32 +26,32 @@ import java.util.logging.Logger;
  */
 public class AlbumPreview extends Item {
 
-    /**
-     * The logger for this class.
-     */
-    private static final Logger LOG = Logger.getLogger(AlbumPreview.class.getName());
+	/**
+	 * The logger for this class.
+	 */
+	private static final Logger LOG = Logger.getLogger(AlbumPreview.class.getName());
 
-    public final String type;
+	public final String type;
 
-    /**
-     * The release date of this album
-     */
-    public final Date date;
+	/**
+	 * The release date of this album
+	 */
+	public final Date date;
 
-    /**
-     * Instantiate a new {@link AlbumPreview}
-     *
-     * @param id the album id
-     * @param title_en the English title
-     * @param title_ja the Japanese title
-     * @param type the album type
-     * @param date the release date
-     */
-    public AlbumPreview(int id, String title_en, String title_ja, String type,
-	    Date date) {
-	super(id, title_en, title_ja);
-	this.type = type;
-	this.date = date;
-    }
+	/**
+	 * Instantiate a new {@link AlbumPreview}
+	 *
+	 * @param id       the album id
+	 * @param title_en the English title
+	 * @param title_ja the Japanese title
+	 * @param type     the album type
+	 * @param date     the release date
+	 */
+	public AlbumPreview(int id, String title_en, String title_ja, String type,
+	                    Date date) {
+		super(id, title_en, title_ja);
+		this.type = type;
+		this.date = date;
+	}
 
 }

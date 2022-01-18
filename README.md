@@ -1,17 +1,15 @@
 AnColle
 =======
 
-AnColle is a GUI tool for keeping track of your anime and video game music
-collection. It allows you to track any products or franchises found at
-[VGMdb](http://vgmdb.net/). It uses the web API found at http://vgmdb.info/ to
-interface with VGMdb.
+AnColle is a GUI tool for keeping track of your anime and video game music collection. It allows you to track any
+products or franchises found at
+[VGMdb](http://vgmdb.net/). It uses the web API found at http://vgmdb.info/ to interface with VGMdb.
 
 ## Controls
 
 - Navigate with the mouse
 - On the Product Tracker:
-    - Add a product from the Product Tracker tab by clicking the "+" node, or by
-      pressing `A`
+    - Add a product from the Product Tracker tab by clicking the "+" node, or by pressing `A`
     - Remove a product from the Product Tracker by right-clicking it and selecting
       `Remove Product`
 - When viewing a product's albums (Album View):
@@ -42,19 +40,17 @@ Viewing an album's details:
 
 ## Build
 
-This project requires JDK 8 and JavaFX, and is built using the Ant build tool.
-From the project directory, running `ant` should build the project to an
-executable JAR which will be placed in the `dist/` directory.
+This project requires JDK 8 and JavaFX, and is built using the Ant build tool. From the project directory, running `ant`
+should build the project to an executable JAR which will be placed in the `dist/` directory.
 
 Zipped release builds can be found in the `builds/` directory.
 
 ## Common errors
 
-`Error: Could not find or load main class` occurs when your Java does not have
-JavaFX bundled with it (which is the case for OpenJDK8). Install the JavaFX
-package for your platform to fix this issue.
+`Error: Could not find or load main class` occurs when your Java does not have JavaFX bundled with it (which is the case
+for OpenJDK8). Install the JavaFX package for your platform to fix this issue.
 
 ## Software Credits
 
-This software bundles a binary of the *json-simple* library v1.1.1 for Java, which is
-licenced under the [Apache 2.0 licence](https://www.apache.org/licenses/LICENSE-2.0).
+This software bundles a binary of the *json-simple* library v1.1.1 for Java, which is licenced under
+the [Apache 2.0 licence](https://www.apache.org/licenses/LICENSE-2.0).

@@ -30,26 +30,26 @@ import javafx.scene.layout.VBox;
  */
 public class ImageViewContainer extends VBox {
 
-    public final ImageView imageView;
+	public final ImageView imageView;
 
-    public ImageViewContainer() {
-	getStyleClass().add("image-view-container");
-	this.imageView = new ImageView();
-	imageView.setPreserveRatio(true);
-	imageView.fitWidthProperty().bind(maxWidthProperty());
-	imageView.fitHeightProperty().bind(maxHeightProperty());
-	getChildren().add(imageView);
-	VBox.setVgrow(imageView, Priority.ALWAYS);
-    }
+	public ImageViewContainer() {
+		getStyleClass().add("image-view-container");
+		this.imageView = new ImageView();
+		imageView.setPreserveRatio(true);
+		imageView.fitWidthProperty().bind(maxWidthProperty());
+		imageView.fitHeightProperty().bind(maxHeightProperty());
+		getChildren().add(imageView);
+		VBox.setVgrow(imageView, Priority.ALWAYS);
+	}
 
-    /**
-     * Calls the {@link ImageView#setImage} method of the contained
-     * {@link ImageView}
-     *
-     * @param image the value to set
-     */
-    public void setImage(Image image) {
-	imageView.setImage(image);
-    }
+	/**
+	 * Calls the {@link ImageView#setImage} method of the contained
+	 * {@link ImageView}
+	 *
+	 * @param image the value to set
+	 */
+	public void setImage(Image image) {
+		imageView.setImage(image);
+	}
 
 }

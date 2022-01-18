@@ -24,15 +24,15 @@ import javafx.scene.layout.HBox;
  */
 public class StatusBar extends HBox {
 
-    public final Label statusLabel;
+	public final Label statusLabel;
 
-    public StatusBar() {
-	super();
-	getStyleClass().add("status-bar");
+	public StatusBar() {
+		super();
+		getStyleClass().add("status-bar");
 
-	statusLabel = new Label("Ready.");
-	statusLabel.getStyleClass().add("status-label");
-	getChildren().add(statusLabel);
-    }
+		statusLabel = new Label("Ready.");
+		statusLabel.getStyleClass().add("status-label");
+		getChildren().add(statusLabel);
+	}
 
 }

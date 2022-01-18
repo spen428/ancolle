@@ -17,12 +17,13 @@
 package ancolle.main;
 
 import ancolle.ui.AnColle;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The JavaFX application class
@@ -31,34 +32,34 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
 
-    /**
-     * The name of the application
-     */
-    public static final String APPLICATION_NAME = "AnColle";
+	/**
+	 * The name of the application
+	 */
+	public static final String APPLICATION_NAME = "AnColle";
 
-    /**
-     * Program version string. This does not change between builds, only between
-     * releases.
-     */
-    public static final String VERSION = "0.4a";
+	/**
+	 * Program version string. This does not change between builds, only between
+	 * releases.
+	 */
+	public static final String VERSION = "0.4a";
 
-    /**
-     * The logger for this class
-     */
-    private static final Logger LOG = Logger.getLogger(Main.class.getName());
+	/**
+	 * The logger for this class
+	 */
+	private static final Logger LOG = Logger.getLogger(Main.class.getName());
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-	Logger.getGlobal().setLevel(Level.ALL);
-	Logger.getGlobal().addHandler(new ConsoleHandler());
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		Logger.getGlobal().setLevel(Level.ALL);
+		Logger.getGlobal().addHandler(new ConsoleHandler());
 
-	AnColle ancolle = new AnColle(primaryStage);
-	Scene scene = new Scene(ancolle, 1280, 720);
-	scene.getStylesheets().add("stylesheet.css");
+		AnColle ancolle = new AnColle(primaryStage);
+		Scene scene = new Scene(ancolle, 1280, 720);
+		scene.getStylesheets().add("stylesheet.css");
 
-	primaryStage.setScene(scene);
-	primaryStage.setTitle(APPLICATION_NAME + " " + VERSION);
-	primaryStage.show();
-    }
+		primaryStage.setScene(scene);
+		primaryStage.setTitle(APPLICATION_NAME + " " + VERSION);
+		primaryStage.show();
+	}
 
 }

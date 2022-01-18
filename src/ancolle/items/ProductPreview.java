@@ -23,25 +23,25 @@ import java.util.logging.Logger;
  */
 public class ProductPreview extends Item {
 
-    /**
-     * The logger for this class.
-     */
-    private static final Logger LOG = Logger.getLogger(ProductPreview.class.getName());
+	/**
+	 * The logger for this class.
+	 */
+	private static final Logger LOG = Logger.getLogger(ProductPreview.class.getName());
 
-    public final ProductType type;
+	public final ProductType type;
 
-    /**
-     * Instantiate a new {@link ProductPreview}
-     *
-     * @param id the product id
-     * @param title_en the English title
-     * @param title_ja the Japanese title
-     * @param type the {@link ProductType}
-     */
-    public ProductPreview(int id, String title_en, String title_ja,
-	    ProductType type) {
-	super(id, title_en, title_ja);
-	this.type = type;
-    }
+	/**
+	 * Instantiate a new {@link ProductPreview}
+	 *
+	 * @param id       the product id
+	 * @param title_en the English title
+	 * @param title_ja the Japanese title
+	 * @param type     the {@link ProductType}
+	 */
+	public ProductPreview(int id, String title_en, String title_ja,
+	                      ProductType type) {
+		super(id, title_en, title_ja);
+		this.type = type;
+	}
 
 }
