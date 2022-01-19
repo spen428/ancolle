@@ -1,19 +1,3 @@
-/*  AnColle, an anime and video game music collection tracker
- *  Copyright (C) 2016-17  lykat
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package ancolle.ui;
 
 import javafx.css.PseudoClass;
@@ -33,9 +17,6 @@ public abstract class ItemNode<T> extends VBox {
 	public final Label label1;
 	public final Label label2;
 
-	/**
-	 * The {@link Item} represented by this node.
-	 */
 	private T item;
 
 	private boolean hidden = false;
@@ -129,4 +110,5 @@ public abstract class ItemNode<T> extends VBox {
 		return hidden;
 	}
 
+	public abstract void applyAdditionalStyles(T item);
 }

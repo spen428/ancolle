@@ -1,25 +1,10 @@
-/*  AnColle, an anime and video game music collection tracker
- *  Copyright (C) 2016-17  lykat
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package ancolle.io;
 
 import ancolle.items.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -32,34 +17,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-/**
- * Static methods for interfacing with VGMdb, the Video Game (and Anime) Music
- * database.
- *
- * @author lykat
- */
 public class VgmdbApi {
 
-	/**
-	 * The directory in which cached files for this program are stored.
-	 */
 	public static final String CACHE_DIR = IO.BASE_DIR + File.separator + "cache";
 
 	private static final String API_URL = "http://vgmdb.info";
 	private static final int DOWNLOAD_BUFFER_SIZE_BYTES = 1024;
 
-	/**
-	 * The logger for this class.
-	 */
 	private static final Logger LOG = Logger.getLogger(VgmdbApi.class.getName());
+	private static final Pattern DISC_REGEX = Pattern.compile("Disc (\\d+).*");
 
-	/**
-	 * Download the data found at the given URL and save it to the given file
-	 *
-	 * @param url  the URL, as a string
-	 * @param file the output file
-	 */
 	public static void download(String url, File file) {
 		try {
 			download(new URL(url), file);
@@ -68,12 +38,6 @@ public class VgmdbApi {
 		}
 	}
 
-	/**
-	 * Download the data found at the given URL and save it to the given file
-	 *
-	 * @param url  the URL
-	 * @param file the output file
-	 */
 	public static void download(URL url, File file) {
 		try (InputStream in = url.openStream();
 		     FileOutputStream fos = new FileOutputStream(file)) {
@@ -89,20 +53,6 @@ public class VgmdbApi {
 		}
 	}
 
-	/**
-	 * Perform a request on the database at the given URL sub-path. This will
-	 * request data from {@link VgmdbApi#API_URL}/{@code subpath}/{@code id} and
-	 * return the results in the JSON format.
-	 *
-	 * <p>
-	 * The sub-path determines what data is looked up, for example to look up an
-	 * album the sub-path should be "album" and the id should be the album id.
-	 *
-	 * @param subPath   the sub-path
-	 * @param id        the id of the item requested
-	 * @param cacheOnly return {@code null} if the item is not in the cache
-	 * @return a {@link JSONObject} representing the result of the query
-	 */
 	public static JSONObject request(String subPath, int id, boolean cacheOnly) {
 		String filePath = getFilePath(subPath, id);
 		File file = new File(filePath);
@@ -133,25 +83,10 @@ public class VgmdbApi {
 		return null;
 	}
 
-	/**
-	 * Search the database for full details of the product with the given id
-	 *
-	 * @param id the product id
-	 * @return an instance of {@link Product} representing the product, or null
-	 * if the query failed
-	 */
 	public static Product getProductById(int id) {
 		return getProductById(id, false);
 	}
 
-	/**
-	 * Search the database for full details of the product with the given id
-	 *
-	 * @param id        the product id
-	 * @param cacheOnly return {@code null} if the item is not in the cache
-	 * @return an instance of {@link Product} representing the product, or null
-	 * if the query failed
-	 */
 	public static Product getProductById(int id, boolean cacheOnly) {
 		JSONObject jo = request("product", id, cacheOnly);
 		if (jo != null) {
@@ -160,34 +95,7 @@ public class VgmdbApi {
 			String typeString = (String) jo.get("type");
 			String pictureUrl = (String) jo.get("picture_small");
 			// Get albums
-			JSONArray arr = (JSONArray) jo.get("albums");
-			ArrayList<AlbumPreview> albums = new ArrayList<>(arr.size());
-			for (int i = 0; i < arr.size(); i++) {
-				JSONObject obj = (JSONObject) arr.get(i);
-				String link = (String) obj.get("link");
-				String[] spl = link.split("/");
-				int album_id = Integer.parseInt(spl[spl.length - 1]);
-				JSONObject titles = (JSONObject) obj.get("titles");
-				String album_title_en = (String) titles.get("en");
-				if (album_title_en == null) {
-					album_title_en = "";
-				}
-				String album_title_ja = (String) titles.get("ja");
-				if (album_title_ja == null) {
-					album_title_ja = "";
-				}
-				String albumTypeString = (String) obj.get("type");
-				if (albumTypeString == null) {
-					albumTypeString = "";
-				}
-				String dateString = (String) obj.get("date");
-				Date date = null;
-				if (dateString != null) {
-					date = parseDate(dateString);
-				}
-				albums.add(new AlbumPreview(album_id, album_title_en,
-						album_title_ja, albumTypeString, date));
-			}
+			ArrayList<AlbumPreview> albums = getAlbumPreviews(jo, "albums");
 			ProductType type = ProductType.getProductTypeFromString(typeString);
 			if (type == ProductType.UNKNOWN) {
 				LOG.log(Level.WARNING, "Unknown ProductType string: {0}", typeString);
@@ -213,13 +121,6 @@ public class VgmdbApi {
 		return null;
 	}
 
-	/**
-	 * Attempt to parse a UTC date string into a {@link Date} object. Supported
-	 * forms are yyyy-MM-dd, yyyy-MM, and yyyy.
-	 *
-	 * @param dateString the date string, e.g. "2000-01-02" or "2003-06"
-	 * @return the {@link Date} object, or null if the string failed to parse
-	 */
 	private static Date parseDate(String dateString) {
 		try {
 			return new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
@@ -243,25 +144,10 @@ public class VgmdbApi {
 		return null;
 	}
 
-	/**
-	 * Search the database for full details of the album with the given id
-	 *
-	 * @param id the album id
-	 * @return an instance of {@link Album} representing the album, or null if
-	 * the query failed
-	 */
 	public static Album getAlbumById(int id) {
 		return getAlbumById(id, false);
 	}
 
-	/**
-	 * Search the database for full details of the album with the given id
-	 *
-	 * @param id        the album id
-	 * @param cacheOnly return {@code null} if the item is not in the cache
-	 * @return an instance of {@link Album} representing the album, or null if
-	 * the query failed
-	 */
 	public static Album getAlbumById(int id, boolean cacheOnly) {
 		JSONObject obj = request("album", id, cacheOnly);
 		if (obj == null) {
@@ -306,12 +192,14 @@ public class VgmdbApi {
 			JSONObject disc = (JSONObject) discs.get(i);
 			String discName = (String) disc.get("name");
 			int discNumber = 0;
-			try {
-				discNumber = Integer.parseInt(discName.split("Disc ")[1]);
-			} catch (NumberFormatException ex) {
-				LOG.log(Level.SEVERE, "Failed to parse disc number from disc "
-						+ "name: {0}", discName);
+
+			Matcher matcher = DISC_REGEX.matcher(discName);
+			if (matcher.matches()) {
+				discNumber = Integer.parseInt(matcher.group(1));
+			} else {
+				LOG.log(Level.SEVERE, "Failed to parse disc number from disc name: {0}", discName);
 			}
+
 			JSONArray tracks = (JSONArray) disc.get("tracks");
 			for (int j = 0; j < tracks.size(); j++) {
 				JSONObject track = (JSONObject) tracks.get(j);
@@ -331,18 +219,9 @@ public class VgmdbApi {
 		}
 
 		return new Album(album_id, title_en, title_ja, title_ja_latn, type,
-				date, picture_small, trackList);
+				date, picture_small, trackList, null, null, false);
 	}
 
-	/**
-	 * Perform a search query on the database at the given URL sub-path. See
-	 * also {@link VgmdbApi#request} for more information about the sub-path.
-	 *
-	 * @param subPath      the sub-path
-	 * @param searchString the search query
-	 * @return a {@link JSONObject} representing the result of the query
-	 * @see VgmdbApi#request
-	 */
 	private static JSONObject search(String subPath, String searchString) {
 		String filePath = CACHE_DIR + File.separator + subPath + File.separator
 				+ "search.json";
@@ -385,13 +264,6 @@ public class VgmdbApi {
 		return null;
 	}
 
-	/**
-	 * Search the database for products matching the given search terms
-	 *
-	 * @param text the search query
-	 * @return a list of {@link ProductPreview} representing the products that
-	 * matched the query
-	 */
 	public static List<ProductPreview> searchProducts(String text) {
 		JSONObject rootObj = search("products", text);
 		if (rootObj == null) {
@@ -421,14 +293,8 @@ public class VgmdbApi {
 			}
 
 			JSONObject titles = (JSONObject) product.get("names");
-			String title_en = (String) titles.get("en");
-			if (title_en == null) {
-				title_en = "";
-			}
-			String title_ja = (String) titles.get("ja");
-			if (title_ja == null) {
-				title_ja = "";
-			}
+			String title_en = (String) titles.getOrDefault("en", "");
+			String title_ja = (String) titles.getOrDefault("ja", "");
 			String typeString = (String) product.get("type");
 			ProductType type = ProductType.getProductTypeFromString(typeString);
 			if (type == ProductType.UNKNOWN) {
@@ -440,19 +306,59 @@ public class VgmdbApi {
 		return results;
 	}
 
+	public static List<ArtistPreview> searchArtists(String text) {
+		JSONObject rootObj = search("artists", text);
+		if (rootObj == null) {
+			return new ArrayList<>(0);
+		}
+
+		JSONObject resultsObj = (JSONObject) rootObj.get("results");
+		JSONArray artistsObjs = (JSONArray) resultsObj.get("artists");
+		if (artistsObjs == null) {
+			return new ArrayList<>(0);
+		}
+
+		ArrayList<ArtistPreview> results = new ArrayList<>(artistsObjs.size());
+		for (int i = 0; i < artistsObjs.size(); i++) {
+			JSONObject product = (JSONObject) artistsObjs.get(i);
+
+			String link = (String) product.get("link");
+			// The link above contains the album id, parse it
+			String[] spl = link.split("/");
+			String id_str = spl[spl.length - 1];
+			int id = -1;
+			try {
+				id = Integer.parseInt(id_str);
+			} catch (NumberFormatException ex) {
+				LOG.log(Level.SEVERE, "Failed to parse string as integer {0}",
+						id_str);
+			}
+
+			JSONObject titles = (JSONObject) product.get("names");
+			String title_en = (String) titles.get("en");
+			if (title_en == null) {
+				title_en = "";
+			}
+			String title_ja = (String) titles.get("ja");
+			if (title_ja == null) {
+				title_ja = "";
+			}
+
+			JSONArray aliasesArr = (JSONArray) product.get("aliases");
+			String[] aliases = new String[0];
+			if (aliasesArr != null) {
+				aliases = (String[]) aliasesArr.toArray(new String[aliasesArr.size()]);
+			}
+			results.add(new ArtistPreview(id, title_en, title_ja, aliases));
+		}
+		return results;
+	}
+
 	public static void removeFromCache(String subPath, int id) {
 		File file = new File(getFilePath(subPath, id));
 		if (file.exists()) {
 			file.delete();
 		}
-	}
-
-	public static void removeFromCache(AlbumPreview album) {
-		removeFromCache("album", album.id);
-	}
-
-	public static void removeFromCache(Product product) {
-		removeFromCache("product", product.id);
 	}
 
 	private static String getFilePath(String subPath, int id) {
@@ -462,4 +368,87 @@ public class VgmdbApi {
 	private VgmdbApi() {
 	}
 
+	public static Artist getArtistById(int id, boolean cacheOnly) {
+		JSONObject jo = request("artist", id, cacheOnly);
+		if (jo == null) {
+			return null;
+		}
+
+		String title_en = (String) jo.get("name");
+		String title_ja = (String) jo.get("name_real");
+		String typeString = (String) jo.get("type");
+		String sex = (String) jo.get("sex");
+		String birthplace = (String) jo.get("birthplace");
+		String birthdateString = (String) jo.get("birthdate");
+		String pictureUrl = (String) jo.get("picture_small");
+		String notes = (String) jo.get("notes");
+
+		ArrayList<AlbumPreview> discography = getAlbumPreviews(jo, "discography");
+		ArrayList<AlbumPreview> featured_on = getAlbumPreviews(jo, "featured_on");
+		return new Individual(id, title_en, title_ja, pictureUrl, discography, featured_on);
+	}
+
+	private static ArrayList<AlbumPreview> getAlbumPreviews(JSONObject jo, String discography) {
+		JSONArray arr = (JSONArray) jo.get(discography);
+		ArrayList<AlbumPreview> albums = new ArrayList<>(arr.size());
+		for (int i = 0; i < arr.size(); i++) {
+			JSONObject obj = (JSONObject) arr.get(i);
+			String catalog = (String) obj.getOrDefault("catalog", "");
+			boolean reprint = (boolean) obj.getOrDefault("reprint", false);
+			String link = (String) obj.get("link");
+			String[] spl = link.split("/");
+			int album_id = Integer.parseInt(spl[spl.length - 1]);
+			JSONObject titles = (JSONObject) obj.get("titles");
+			String album_title_en = (String) titles.getOrDefault("en", "");
+			String album_title_ja = (String) titles.getOrDefault("ja", "");
+			String albumTypeString = (String) obj.getOrDefault("type", "");
+			String dateString = (String) obj.get("date");
+			Date date = null;
+			if (dateString != null) {
+				date = parseDate(dateString);
+			}
+			JSONArray roleArr = (JSONArray) obj.getOrDefault("roles", null);
+			ArrayList<String> roles = new ArrayList<>(4);
+			if (roleArr != null) {
+				for (Object role : roleArr) {
+					roles.add((String) role);
+				}
+			}
+			albums.add(new AlbumPreview(album_id, album_title_en, album_title_ja, albumTypeString,
+					roles.toArray(new String[roles.size()]), catalog, reprint, date));
+		}
+		return albums;
+	}
+
+	public static <T extends Item> T getById(String itemTypeName, int id) {
+		if ("product".equals(itemTypeName)) {
+			return (T) getProductById(id);
+		}
+
+		if ("album".equals(itemTypeName)) {
+			return (T) getAlbumById(id);
+		}
+
+		if ("artist".equals(itemTypeName)) {
+			return (T) getArtistById(id, false);
+		}
+
+		throw new NotImplementedException();
+	}
+
+	public static <TPreview extends Item> List<TPreview> searchFor(String itemTypeName, String text) {
+		if ("product".equals(itemTypeName)) {
+			return (List<TPreview>) searchProducts(text);
+		}
+
+		if ("artist".equals(itemTypeName)) {
+			return (List<TPreview>) searchArtists(text);
+		}
+
+		throw new NotImplementedException();
+	}
+
+	public static <T extends Item> void removeFromCache(T item) {
+		removeFromCache(item.getSubPath(), item.id);
+	}
 }

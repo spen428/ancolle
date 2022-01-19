@@ -1,24 +1,9 @@
-/*  AnColle, an anime and video game music collection tracker
- *  Copyright (C) 2016-17  lykat
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package ancolle.ui;
 
 import ancolle.io.VgmdbApi;
 import ancolle.items.Album;
 import ancolle.items.AlbumPreview;
+import ancolle.main.Main;
 import javafx.application.Platform;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -134,6 +119,11 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 		return ALBUM_NODE_CONTEXT_MENU;
 	}
 
+	@Override
+	public void applyAdditionalStyles(AlbumPreview item) {
+
+	}
+
 	private void toggleCollected() {
 		AlbumPreview album = getAlbum();
 		if (album == null) {
@@ -142,14 +132,14 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 
 		if (wished) {
 			setWished(false);
-			albumView.ancolle.getSettings().wishedAlbumIds.remove(album.id);
+			Main.settings.wishedAlbumIds.remove(album.id);
 		}
 
-		boolean contains = albumView.ancolle.getSettings().collectedAlbumIds.contains(album.id);
+		boolean contains = Main.settings.collectedAlbumIds.contains(album.id);
 		if (!contains) {
-			albumView.ancolle.getSettings().collectedAlbumIds.add(album.id);
+			Main.settings.collectedAlbumIds.add(album.id);
 		} else {
-			albumView.ancolle.getSettings().collectedAlbumIds.remove(album.id);
+			Main.settings.collectedAlbumIds.remove(album.id);
 		}
 		contains = !contains;
 		setCollected(contains);
@@ -184,16 +174,16 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 
 		if (collected) {
 			setCollected(false);
-			albumView.ancolle.getSettings().collectedAlbumIds.remove(album.id);
+			Main.settings.collectedAlbumIds.remove(album.id);
 		}
 
-		boolean status = albumView.ancolle.getSettings().wishedAlbumIds
+		boolean status = Main.settings.wishedAlbumIds
 				.contains(album.id);
 		if (!status) {
-			albumView.ancolle.getSettings().wishedAlbumIds.add(album.id);
-			albumView.ancolle.getSettings().collectedAlbumIds.remove(album.id);
+			Main.settings.wishedAlbumIds.add(album.id);
+			Main.settings.collectedAlbumIds.remove(album.id);
 		} else {
-			albumView.ancolle.getSettings().wishedAlbumIds.remove(album.id);
+			Main.settings.wishedAlbumIds.remove(album.id);
 		}
 		status = !status;
 		setWished(status);
@@ -213,12 +203,12 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 		if (album == null) {
 			return;
 		}
-		boolean status = albumView.ancolle.getSettings().hiddenAlbumIds
+		boolean status = Main.settings.hiddenAlbumIds
 				.contains(album.id);
 		if (!status) {
-			albumView.ancolle.getSettings().hiddenAlbumIds.add(album.id);
+			Main.settings.hiddenAlbumIds.add(album.id);
 		} else {
-			albumView.ancolle.getSettings().hiddenAlbumIds.remove(album.id);
+			Main.settings.hiddenAlbumIds.remove(album.id);
 		}
 		status = !status;
 		setHidden(status);
@@ -231,7 +221,7 @@ public class AlbumNode extends ItemNode<AlbumPreview> {
 
 	private void openDetails(boolean selectTab) {
 		// If full album details are loaded, open details in a new tab
-		Album fullAlbum = albumView.fullAlbumMap.get(getAlbum());
+		Album fullAlbum = (Album) albumView.fullAlbumMap.get(getAlbum());
 		if (fullAlbum != null) {
 			AlbumDetailsView adv = new AlbumDetailsView(fullAlbum);
 			Tab tab = albumView.ancolle.newTab(fullAlbum.title_ja,

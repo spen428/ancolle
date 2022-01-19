@@ -1,19 +1,3 @@
-/*  AnColle, an anime and video game music collection tracker
- *  Copyright (C) 2016-17  lykat
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package ancolle.ui;
 
 import ancolle.items.AlbumPreview;
@@ -63,8 +47,8 @@ public class ItemNodeComparators {
 
 			ProductNode pn1 = (ProductNode) o1;
 			ProductNode pn2 = (ProductNode) o2;
-			ProductPreview product1 = pn1.getProduct();
-			ProductPreview product2 = pn2.getProduct();
+			ProductPreview product1 = pn1.getItem();
+			ProductPreview product2 = pn2.getItem();
 			if (product1 != null && product2 != null) {
 				return ItemComparators.PRODUCT_PREVIEW_COMPARATOR
 						.compare(product1, product2);
